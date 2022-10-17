@@ -1,3 +1,10 @@
+
+import sys, os
+
+sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'logLib'))
+
+import log
+
 from multiprocessing import Process
 
 class Launcher :
@@ -7,23 +14,23 @@ class Launcher :
     #pour chaque lancement de processus, il faut return le 
     #processus pour pouvoir bosser avec après
     def processLIDAR(self):
-        print("start the lidar processus")
+        log.logMessage(2, "start the lidar processus")
 
     def processMicro1(self):
-        print("start the micro1 processus")
+        log.logMessage(2, "start the micro1 processus")
 
     def processMicro2(self):
-        print("start the micro2 processus")
+        log.logMessage(2, "start the micro2 processus")
 
     def processCamBot(self):
-        print("start the camBot process")
+        log.logMessage(2, "start the camBot process")
 
     def processCamMat(self):
-        print("start the camMat processus")
+        log.logMessage(2, "start the camMat processus")
 
     
     def config1(self): 
-        print("start config1")
+        log.logMessage(2, "start config1")
         self.processCamBot()
         self.processCamMat()
         self.processLIDAR()
@@ -32,7 +39,7 @@ class Launcher :
     
     
     def launche(self):
-        print("start launching")
+        log.logMessage(2, "start launching")
         if (self.version == 1):
             self.config1()
 
