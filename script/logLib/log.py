@@ -1,6 +1,7 @@
 
 MessageType = ['error : ', 'sucess : ', 'information : ' ,  'warning : ' ]
 
+
 def logMessage(logErrorNumber, message):
     if (logErrorNumber <= 3) :
         log_msg = "LOG BOT : "
