@@ -1,8 +1,11 @@
 
+from email.policy import strict
 import sys, os
 
+#path managing
 sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'logLib'))
 
+#import part
 import log
 
 from multiprocessing import Process
@@ -23,7 +26,7 @@ class Launcher :
         log.logMessage(2, "start the micro2 processus")
 
     def processCamBot(self):
-        log.logMessage(2, "start the camBot process")
+        log.logMessage(2, "start the camBot processus")
 
     def processCamMat(self):
         log.logMessage(2, "start the camMat processus")
@@ -31,19 +34,31 @@ class Launcher :
     
     def config1(self): 
         log.logMessage(2, "start config1")
-        self.processCamBot()
-        self.processCamMat()
-        self.processLIDAR()
-        self.processMicro1()
-        self.processMicro2()
+        procCamBot = Process(target = self.processCamBot)
+        procCamMat = Process(target = self.processCamMat)
+        procLIDAR = Process(target = self.processLIDAR)
+        procMicro1 = Process(target = self.processMicro1)
+        procMicro2 = Process(target = self.processMicro2)
+
+        processList= [procCamBot, procCamMat, procLIDAR, procMicro1, procMicro2]
+        for iter in range(len(processList)) :
+            try :
+                processList[iter].start()
+            except :
+                msg=  "process number" + str(iter) + " of the version" + str(self.version) + " failed to launch"
+                log.Message(0,msg)
+        
+        return processList 
+
     
     
-    def launche(self):
+    def launch(self):
         log.logMessage(2, "start launching")
         if (self.version == 1):
-            self.config1()
+            return self.config1()
+            
 
 if __name__ == "__main__" :
     starter = Launcher(1)
-    starter.config1()
+    list = starter.launch()
 
