@@ -103,14 +103,14 @@ def move_square():
         yield ROTATE, 1, 500
 
 
-def do_shit():
+def do_stuff():
     yield SET_PUMPS, 0, 0x00ff
     yield MOTOR_TIME, 15, 5000
 
 
 def pseudo_main(micro_conn: Connection):
     move_queue = [move_square]
-    action_queue = [do_shit]
+    action_queue = [do_stuff]
 
     while True:
         if micro_conn.poll():
