@@ -3,7 +3,6 @@ from multiprocessing.connection import Connection
 import multiprocessing as mp
 from logger import Logger
 from constants import *
-import sys
 
 
 class MicroManager:
@@ -122,6 +121,7 @@ def pseudo_main(micro_conn: Connection):
 
 
 if __name__ == '__main__':
+    import sys
     main_parent, main_child = mp.Pipe(duplex=True)
     lidar_parent, lidar_child = mp.Pipe(duplex=True)
 
