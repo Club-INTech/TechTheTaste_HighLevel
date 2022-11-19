@@ -3,6 +3,7 @@ from multiprocessing.connection import Connection
 import multiprocessing as mp
 from logger import Logger
 from constants import *
+import sys
 
 
 class MicroManager:
@@ -51,7 +52,10 @@ class MicroProcces(MicroManager):
         self.pull(ACTION)
 
         # start the process
-        self.main_loop()
+        try:
+            self.main_loop()
+        except KeyboardInterrupt:
+            pass
 
     @Logger.log_manage_feedback
     def manage_feedback(self, id_, order_id):
@@ -103,29 +107,40 @@ def move_square():
         yield ROTATE, 1, 500
 
 
-def do_stuff():
+def do_shit():
     yield SET_PUMPS, 0, 0x00ff
     yield MOTOR_TIME, 15, 5000
 
 
 def pseudo_main(micro_conn: Connection):
     move_queue = [move_square]
-    action_queue = [do_stuff]
+    action_queue = [do_shit]
 
-    while True:
-        if micro_conn.poll():
-            type_ = micro_conn.recv()
-            q = (move_queue, action_queue)[type_]
-            if q:
-                micro_conn.send((type_, q.pop()))
+    try:
+        while True:
+            if micro_conn.poll():
+                type_ = micro_conn.recv()
+                q = (move_queue, action_queue)[type_]
+                if q:
+                    micro_conn.send((type_, q.pop()))
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == '__main__':
-    import sys
     main_parent, main_child = mp.Pipe(duplex=True)
     lidar_parent, lidar_child = mp.Pipe(duplex=True)
 
-    main_ = mp.Process(target=pseudo_main, args=(main_parent,))
-    main_.start()
-    micro = mp.Process(target=MicroProcces, args=(sys.argv[1], 115200, main_child, lidar_child))
-    micro.start()
+    main = mp.Process(target=pseudo_main, args=(main_parent,))
+    log_arg = LOG_NOTHING if len(sys.argv) < 3 else {'LOG_NOTHING': LOG_NOTHING, 'LOG_NECESSARY': LOG_NECESSARY, 'LOG_EVERYTHING': LOG_EVERYTHING}[sys.argv[2]]
+    micro = mp.Process(target=MicroProcces, args=(sys.argv[1], 115200, main_child, lidar_child), kwargs={'log_level': log_arg})
+
+    try:
+        main.start()
+        micro.start()
+        main.join()
+        micro.join()
+    except KeyboardInterrupt:
+        print("Terminated")
+        main.terminate()
+        micro.terminate()
