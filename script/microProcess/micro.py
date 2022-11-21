@@ -28,15 +28,15 @@ class MicroManager:
         return self.serial.read(self.FEEDBACK_LENGTH)
 
 
-class MicroProcces(MicroManager):
+class MicroProcess(MicroManager):
     cnt = 0
 
     def __repr__(self):
         return self.name
 
     def __init__(self, port: str, baudrate: int, main_conn, lidar_conn, name='', log_level=LOG_NECESSARY):
-        self.id_ = MicroProcces.cnt
-        MicroProcces.cnt += 1
+        self.id_ = MicroProcess.cnt
+        MicroProcess.cnt += 1
         self.name = name if name else f'MicroProcess{self.id_}'
         self.log_level = log_level
 
@@ -95,20 +95,9 @@ class MicroProcces(MicroManager):
         except KeyboardInterrupt:
             pass
 
-    def shell(self):
-        try:
-            while True:
-                print(input(f'{self} < '))
-        except KeyboardInterrupt:
-            pass
-
 
 def mainloop(port: str, baudrate: int, main_conn: Connection, lidar_conn: Connection, name='', log_level=LOG_NECESSARY):
-    MicroProcces(port, baudrate, main_conn, lidar_conn, name, log_level).mainloop()
-
-
-def shell(port, baudrate, name='', log_level=LOG_NOTHING):
-    MicroProcces(port, baudrate, None, None, name, log_level=log_level).shell()
+    MicroProcess(port, baudrate, main_conn, lidar_conn, name, log_level).mainloop()
 
 
 # ----------------------------------------------- For testing purposes -------------------------------------------------
@@ -162,13 +151,5 @@ def main1():
         micro.terminate()
 
 
-def main2():
-    log_arg = LOG_NOTHING if len(sys.argv) < 3 else \
-        {'LOG_NOTHING': LOG_NOTHING, 'LOG_NECESSARY': LOG_NECESSARY, 'LOG_EVERYTHING': LOG_EVERYTHING}[sys.argv[2]]
-
-    shell(sys.argv[1], 115200, log_level=log_arg)
-
-
 if __name__ == '__main__':
-    # main1()
-    main2()
+    main1()
