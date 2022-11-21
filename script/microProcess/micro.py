@@ -34,7 +34,7 @@ class MicroProcces(MicroManager):
     def __repr__(self):
         return self.name
 
-    def __init__(self, port: str, baudrate: int, main_conn: Connection, lidar_conn: Connection, name='', log_level=LOG_NECESSARY):
+    def __init__(self, port: str, baudrate: int, main_conn, lidar_conn, name='', log_level=LOG_NECESSARY):
         self.id_ = MicroProcces.cnt
         MicroProcces.cnt += 1
         self.name = name if name else f'MicroProcess{self.id_}'
@@ -47,15 +47,6 @@ class MicroProcces(MicroManager):
 
         # generators for MOVEMENT orders and ACTION orders
         self.current_sequences = [iter([]), iter([])]
-
-        self.pull(MOVEMENT)
-        self.pull(ACTION)
-
-        # start the process
-        try:
-            self.main_loop()
-        except KeyboardInterrupt:
-            pass
 
     @Logger.log_manage_feedback
     def manage_feedback(self, id_, order_id):
@@ -94,16 +85,38 @@ class MicroProcces(MicroManager):
             feedback = self.receive()
             self.manage_feedback(feedback[0] >> 4, feedback[0] & 0xf)
 
-    def main_loop(self):
-        while True:
-            self._loop()
+    def mainloop(self):
+        # start the process
+        try:
+            self.pull(MOVEMENT)
+            self.pull(ACTION)
+            while True:
+                self._loop()
+        except KeyboardInterrupt:
+            pass
+
+    def shell(self):
+        try:
+            while True:
+                print(input(f'{self} < '))
+        except KeyboardInterrupt:
+            pass
+
+
+def mainloop(port: str, baudrate: int, main_conn: Connection, lidar_conn: Connection, name='', log_level=LOG_NECESSARY):
+    MicroProcces(port, baudrate, main_conn, lidar_conn, name, log_level).mainloop()
+
+
+def shell(port, baudrate, name='', log_level=LOG_NOTHING):
+    MicroProcces(port, baudrate, None, None, name, log_level=log_level).shell()
 
 
 # ----------------------------------------------- For testing purposes -------------------------------------------------
 
+
 def move_square():
     for _ in range(4):
-        yield FORWARDS, 1, 800
+        yield MOVE, 1, 800
         yield ROTATE, 1, 500
 
 
@@ -127,13 +140,16 @@ def pseudo_main(micro_conn: Connection):
         pass
 
 
-if __name__ == '__main__':
+def main1():
+    print(sys.argv)
     main_parent, main_child = mp.Pipe(duplex=True)
     lidar_parent, lidar_child = mp.Pipe(duplex=True)
 
     main = mp.Process(target=pseudo_main, args=(main_parent,))
-    log_arg = LOG_NOTHING if len(sys.argv) < 3 else {'LOG_NOTHING': LOG_NOTHING, 'LOG_NECESSARY': LOG_NECESSARY, 'LOG_EVERYTHING': LOG_EVERYTHING}[sys.argv[2]]
-    micro = mp.Process(target=MicroProcces, args=(sys.argv[1], 115200, main_child, lidar_child), kwargs={'log_level': log_arg})
+    log_arg = LOG_NOTHING if len(sys.argv) < 3 else \
+        {'LOG_NOTHING': LOG_NOTHING, 'LOG_NECESSARY': LOG_NECESSARY, 'LOG_EVERYTHING': LOG_EVERYTHING}[sys.argv[2]]
+    micro = mp.Process(target=mainloop, args=(sys.argv[1], 115200, main_child, lidar_child),
+                       kwargs={'log_level': log_arg})
 
     try:
         main.start()
@@ -144,3 +160,15 @@ if __name__ == '__main__':
         print("Terminated")
         main.terminate()
         micro.terminate()
+
+
+def main2():
+    log_arg = LOG_NOTHING if len(sys.argv) < 3 else \
+        {'LOG_NOTHING': LOG_NOTHING, 'LOG_NECESSARY': LOG_NECESSARY, 'LOG_EVERYTHING': LOG_EVERYTHING}[sys.argv[2]]
+
+    shell(sys.argv[1], 115200, log_level=log_arg)
+
+
+if __name__ == '__main__':
+    # main1()
+    main2()
