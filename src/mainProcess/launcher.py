@@ -1,6 +1,7 @@
 
 from email.policy import strict
 import sys, os
+import mainProcess
 from hokuyolx import hokuyo
 from hokuyolx import lidarstop
 from lpastar_pf import LPAStarPathFinder
@@ -18,6 +19,11 @@ from multiprocessing import Process, Pipe
 class Launcher :
     def __init__(self, version):
         self.version=version
+
+
+    def processMain(self, pipeMicro1, pipeMicro2):
+        log.logMessage(2, "start the main processus")
+        mainProcss = mainProcess.MainProcess()
 
     def processLIDAR(self,conn):
         log.logMessage(2, "start the lidar processus")
@@ -54,14 +60,20 @@ class Launcher :
         parent_Micro1_conn, child_Micro1_conn = Pipe()
         parent_Lpastar_conn, child_Lpastar_conn = Pipe()
         
+        #a pipe has the nomenclature parent_child_pipe(Parent or Child)
+        main_micro1_pipeMain, main_micro1_pipeMicro1 = Pipe()
+        main_micro2_pipeMain, main_micro2_pipeMicro2 = Pipe()
+
+
         procCamBot = Process(target = self.processCamBot)
         procCamMat = Process(target = self.processCamMat, args = (parent_CamMat_conn,))
         procLIDAR = Process(target = self.processLIDAR, args = (child_LIDAR_conn,))
         procMicro1 = Process(target = self.processMicro1, args = (child_Micro1_conn,))
         procMicro2 = Process(target = self.processMicro2)
         procLpastar = Process(target = self.processLpastar, args = (child_Lpastar_conn, child_CamMat_conn, child_Micro1_conn,))
+        procMain = Process(target= self.processMain, args = (main_micro1_pipeMain, main_micro2_pipeMain,) )
 
-        processList= [procCamBot, procCamMat, procLIDAR, procMicro1, procMicro2, procLpastar]
+        processList= [procMain, procCamBot, procCamMat, procLIDAR, procMicro1, procMicro2, procLpastar]
         for iter in range(len(processList)) :
             try :
                 processList[iter].start()

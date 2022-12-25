@@ -30,6 +30,16 @@ class OrderToMicroProcress:
     #know which id correspond to wich order
     #then we send the necessary data
 
+    #blocking function that finish when juper is off
+    def jumperState(self):
+        jumper = False
+        while(jumper):  
+            jumper = True
+            #read the state of the jumper and stock this value in the var jumper
+            
+        return 1
+        
+
     #ticks has to be on 16bits
     def moovForward(self, ticks):
         self.sendDataToMicro1(1)
