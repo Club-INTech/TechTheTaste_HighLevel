@@ -9,10 +9,10 @@ from Process import CamBotProcess
 
 
 #path managing
-sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'logLib'))
+sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'utils'))
 
 #import part
-from logging import log
+import log
 
 from multiprocessing import Process, Pipe
 
