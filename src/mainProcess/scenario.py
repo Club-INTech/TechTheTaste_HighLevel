@@ -11,9 +11,9 @@ sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'utils'))
 #import part
 import log
 
-def scenarioSimple(pipeMainToMicro1, pipeMainToMicro2):
+def scenarioSimple(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     log.logMessage(2,"début du scenario!")
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
 
     OrderManager.jumperState()
     log.logMessage(1,"start of the match!!!")
