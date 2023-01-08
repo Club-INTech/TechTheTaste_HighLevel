@@ -3,11 +3,6 @@ from lpastar_pf.pf_exceptions import MapInitializationException
 from lpastar_pf.pf_exceptions import ImpossibleTransitionException
 from math import sqrt
 
-#La classe procure l'état de la map avec les obstacles en 2D
-#Chaque sommet se trouve au centre du carré
-
-#Il existe 2 types de sommets : libre et occupé
-#Implémentation choisit seulement d'utiliser une liste d'obstacle où le reste des cases est libre
 
 class GMap():
     """ A class that represents a map. User must provide attributes
@@ -20,12 +15,10 @@ class GMap():
     There is only 2 types of vertices: free vertices and obstacle
     vertices. We maintain only the list of obstacles and we use
     **get_transition_cost** to retreive the edge cost and
-    **get_heuristics_cost** to retreive the heuristics cost. """
+    **get_heuristics_cost** to retreive the heuristics cost.
 
-    #get_transition_cost : récupère le coût pour aller à un sommet
-    #get_heuristics_cost : récupère le coût de heuristics d'un sommet
 
-    """Attributes
+    Attributes
     ----------
     width: int
         The width of the map.
@@ -34,65 +27,45 @@ class GMap():
     resolution: int
         The dimension of the square case representable
         by a vertex.
-    """
     
-    """
     rows: int
         Number of cases' rows in map representation.
     columns: int
         Number of cases' columns in map representation.
-    """    
-    #rows : numéro de la rangée
-    #columns : numéro de la colonne
     
-    """    
+      
     free_case_value: int
         A multiplier for a transition from free case
         to the another free case.
     obstacle_case_value: int
         A multiplier for a transition from or
         to the obstacle case.
-    """
-    #free_case_value :
-    #Obstacle_case_value :
     
-    """
     obstacles: Iterable[Tuple[int, int]]
         A list of obstacles represented by
         theirs indices **(i, j)**
     heuristics_multiplier: int
         A multiplier for a heuristics transition cost.
-    """
-    #obstales : liste des obstacles
-    #heuristics_multiplier :
-    
-    """
+   
     Methods
     -------
 
     __param_getter(param_name, params):
         Helper function, which allows to get
         information from a dictionary given in parameters.
-    """
-    #
     
-    """
     coors_to_indexes(x, y):
         Helper function used to convert real
         life coordinates to their graph representation.
     indexes_to_coors(i, j):
         Helper function used to convert graph representation
         indices to the real life coordinates.
-    """
     
-    """
     convert_obstacles_to_graph(obstacles):
         Helper function which allows create graph representation
         obstacles from real life obstacles according
         to their width.
-    """
     
-    """
     get_transition_cost(_from, _to):
         Gets the edge cost from vertex **_from** to
         the vertex **_to**.
@@ -122,10 +95,7 @@ class GMap():
             params (Dict[str, int]):
                 A dictionary with attributes to initialize.
         """
-        #params : un dictionnaire d'attribut initialiser avant, comme une liste avec des indices que l'on choisit 
-        #obstacles : est une liste d'obstacle dans la vrai vie
-        
-        #__param_getter : permet d'aller chercher les différentes variables 
+       
         self.width = self.__param_getter("width", params) 
         self.height = self.__param_getter("height", params)
         self.resolution = self.__param_getter("resolution", params)
@@ -145,7 +115,6 @@ class GMap():
             .__param_getter("heuristics_multiplier",
                             params)
 
-    #La fonciton permet d'extraire des donnés d'un dictionnaire et vérifier qu'on a tous les argument nécessaire
     def __param_getter(self, param_name: str, params: Dict[str, Any]) -> Any:
         """ A function which is used to extract data from
             dictionary and verify that all required arguments
@@ -160,24 +129,19 @@ class GMap():
         Raises:
             MapInitializationException: Occurs when the required
             argument is missing
-        """
-        #Cela apparaît lorsqu'un arguement est manquant 
-        
-        """
+            
         Returns:
             Any: A value extracted from **params**
             associated to the key **param_name**
         """
-        #Retourne une key et sa value 
+
         
-        #recherche si para_name est dans le dictionnaire
-        if param_name in params.keys(): #param.keys() permet d'afficher les keys qui sont définis
+        if param_name in params.keys():
             return params[param_name]
         raise MapInitializationException(
-            "Parameter required, but not provided: " + param_name) #affiche le message d'erreur
-        #Raise permet de déclencher une exception spécifique
+            "Parameter required, but not provided: " + param_name) 
+
     
-    #Fontion qui convertit des coordonnées cartésiennes en point d'une matrice
     def convert_obstacles_to_graph(self,
                                    obstacles:
                                    Iterable[Tuple[float, float, float]]
@@ -200,19 +164,16 @@ class GMap():
         for obstacle in obstacles:
             x = obstacle[0]
             y = obstacle[1]
-            w = obstacle[2] / 2 #obstacle[2] représente la largeur de l'obstacle donc w son rayon
+            w = obstacle[2] / 2 
 
-            #coordonnées réelles de l'extrémité de l'obstacle en bas à gauche 
             square_left_i, square_top_j = self.coors_to_indexes(
                 max(0.0, x - w),
                 max(0.0, y - w))
 
-            #coordonnées réelles de l'extrémité de l'obstacle en haut à droite
             square_right_i, square_bottom_j = self.coors_to_indexes(
                 min(self.width, x + w),
                 min(self.height, y + w))
 
-            #On ajoute toutes les coordonnées se situtant des 
             for i in range(square_left_i, square_right_i + 1):
                 for j in range(square_top_j, square_bottom_j + 1):
                     model_obstacles.append((i, j))
@@ -255,7 +216,6 @@ class GMap():
         """
         return float(i * self.resolution), float(j * self.resolution)
 
-    #La fonction donne le coût de transition entre deux sommets
     def get_transition_cost(self,
                             _from: Tuple[int, int],
                             _to: Tuple[int, int]) -> float:
@@ -275,8 +235,8 @@ class GMap():
         Returns:
             float: A transition cost from **_from** to **_to**
         """
-        #Vérification que le sommet est bien un voisin selon l'axe x ou l'axe y
-        #Si la différence est plus grande que 1, alors ce n'est pas un voisin
+
+
         if abs(_from[0] - _to[0]) > 1 or abs(_from[1] - _to[1]) > 1:
             raise ImpossibleTransitionException("Impossible transition from ("
                                                 + str(_from[0])
@@ -285,16 +245,16 @@ class GMap():
                                                 + ") to ("
                                                 + str(_to[0])
                                                 + ","
-                                                + str(_to[1])) #Message d'erreur
+                                                + str(_to[1])) 
 
-        if _to in self.obstacles or _from in self.obstacles: #Regarde si le voisin est un obstacle 
-            return self.obstacle_case_value #renvoie la valeur d'un obstacle (très grand voir infinie)
+        if _to in self.obstacles or _from in self.obstacles: 
+            return self.obstacle_case_value 
         else:
             return self.free_case_value * \
                 sqrt(abs(_from[1] - _to[1]) +
-                     abs(_from[0] - _to[0])) #renvoie la multiplication d'une free_case_value 
+                     abs(_from[0] - _to[0])) 
 
-    #La fonction donne tous les sommets voisins
+
     def get_neighbours(self,
                        vertex: Tuple[int, int]) -> Iterable[Tuple[int, int]]:
         """ Gets all neighbours of the **vertex**
@@ -310,23 +270,22 @@ class GMap():
         i,j = vertex
         neighbours = []
         
-        #Les différents tests considèrent également les positions collées aux murs
-        #On admet que l'origine est en haut à gauche comme pour les matrices
-        if i - 1 >= 0: #haut
+
+
+        if i - 1 >= 0: 
             neighbours.append((i-1, j))
-            if j - 1 >= 0: #haut/gauche
+            if j - 1 >= 0:
                 neighbours.append((i-1, j-1))
-            if j + 1 < self.columns : #haut/droite
+            if j + 1 < self.columns :
                 neighbours.append((i-1, j+1))
-        if i + 1 < self.rows: #bas 
+        if i + 1 < self.rows: 
             neighbours.append((i+1, j))
             if j - 1 >= 0:
-                neighbours.append((i, j-1)) #gauche
-                neighbours.append((i+1, j-1)) #gauche/bas
-                #On peut mettre les deux directement car (bas + gauche) => bas/gauche
+                neighbours.append((i, j-1)) 
+                neighbours.append((i+1, j-1)) 
             if j + 1 < self.columns: 
-                neighbours.append((i, j+1)) #droite
-                neighbours.append((i+1, j+1)) #doite/bas
+                neighbours.append((i, j+1)) 
+                neighbours.append((i+1, j+1))
         
         
         """
@@ -350,7 +309,6 @@ class GMap():
         return neighbours
     
 
-    #La fonction renvoie le coût heuristique entre deux sommets
     def get_heurisitcs_cost(self,
                             _from: Tuple[int, int],
                             _to: Tuple[int, int]) -> float:
@@ -367,7 +325,7 @@ class GMap():
         """
         return self.heuristics_multiplier * \
             sqrt(abs(_from[1] - _to[1]) ** 2 +
-                 abs(_from[0] - _to[0]) ** 2) #Distance euclienne * heuristics_multiplier 
+                 abs(_from[0] - _to[0]) ** 2) #flying distance * heuristics_multiplier 
 
     def get_resolution(self) -> int:
         """ Gets the resolution
@@ -385,7 +343,6 @@ class GMap():
         """
         return self.obstacles
 
-    #La fonction met de nouveaux obstacles sur la map
     def set_obstacles(self, _obstacles: Iterable[Tuple[int, int]]) -> None:
         """ Puts new list of obstacles on the map
 

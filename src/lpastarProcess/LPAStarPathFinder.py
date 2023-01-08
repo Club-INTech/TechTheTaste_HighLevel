@@ -52,9 +52,6 @@ class LPAStarPathFinder:
     __shrink_path(model_path):
         Takes model_path and adds only key vertices in each path
         direction to avoid agent movements to be jerky.     
-    """
-    #Ajoute les priorités des obstacles
-    """
     __calculate_key(i, j):
         Calculates the key of vertex associated to the case
         (i, j) to insert it in priority queue.
@@ -104,18 +101,14 @@ class LPAStarPathFinder:
         self.goal = None
         self.start = None
 
-        #Initialisation d'une matrice des valeurs de g selon les cases avec infinity partout 
         self.g = [[self.infinity for _ in range(self.map.columns)]
                   for _ in range(self.map.rows)]
 
-        #Initialisation d'une matrice des valeurs de rhs selon les cases avec infinity partout 
         self.rhs = [[self.infinity for _ in range(self.map.columns)]
                     for _ in range(self.map.rows)]
 
-        #discover_order devient la classe PriorityQueue
         self.discover_order = PriorityQueue()
 
-    #Réactualise les informations pour réappliquer le path-finding
     def reset(self, goal: Tuple[float, float], conn_sensor) -> None:
         """ Resets g-values and rhs-values. Initializes start and goal
             positions for the algorithm.
@@ -124,25 +117,24 @@ class LPAStarPathFinder:
             goal (Tuple[float, float]):
                 The goal vertex
         """
-        #Initialisation matrice de g avec infinity partout 
+
         self.g = [[self.infinity for _ in range(self.map.columns)]
                   for _ in range(self.map.rows)]
 
-        #Initialisation matrice de rhs avec infinity partout
         self.rhs = [[self.infinity for _ in range(self.map.columns)]
                     for _ in range(self.map.rows)]
 
-        #Application de l'algorithme de priorité 
         self.discover_order = PriorityQueue()
         
-        self.goal = self.map.coors_to_indexes(*goal)#convertion des coordonnées en (i,j)
-        x, y, _ = self.agent.get_position(self,conn_sensor=conn_sensor) #récupère les coordonnées du robot en réel
-        i, j = self.map.coors_to_indexes(x, y) #récupère les coordonnées du robot en (i,j)
+        self.goal = self.map.coors_to_indexes(*goal)
+        x, y, _ = self.agent.get_position(self,conn_sensor=conn_sensor) 
+        i, j = self.map.coors_to_indexes(x, y) 
         self.start = (i, j)
-        self.rhs[i][j] = 0 #initialisation du rhs à 0 
-        self.discover_order.insert((self.__calculate_key(i, j)), (i, j)) #on insert la (calcul de priorité en (i,j),(i,j))
+        self.rhs[i][j] = 0 
+        self.discover_order.insert((self.__calculate_key(i, j)), (i, j))
 
-    def find_path(self, goal: Tuple[float, float], conn_main_process, conn_sensor, conn_destination) -> None:
+    #micro1_lpastar_pipeLpastar, CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar
+    def find_path(self, goal: Tuple[float, float], micro1_lpastar_pipeLpastar, CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar) -> None:
         """ Entry point function which is responsible to rescan map,
             recalculate optimal path if necessary and update agent.
             First, it calls reset, after that it calls sensor's scan function,
@@ -157,37 +149,36 @@ class LPAStarPathFinder:
         """
 
         # Reset of rhs-values, g-values, start and goal.
-        self.reset(goal, conn_sensor)
-        begin = time.time_ns() #On stock dans begin l'heure de commencement en nanosec
-        while True: #boucle infinie 
+        self.reset(goal, CamMat_Lpastar_pipeLpastar)
+        begin = time.time_ns()
+        while True: 
 
             # Break if timeout has occured
-            if time.time_ns() - begin > (self.timeout * 1e9): #Si le temps écoulé est trop long, renvoie une erreur
+            if time.time_ns() - begin > (self.timeout * 1e9):
                 raise TimeoutException("Timeout for \
                                         find_path has been reached")
 
             # Break if the agent has reached the goal.
-            x, y, _ = self.agent.get_position(self, conn_sensor) #on récupère la position du robot
+            x, y, _ = self.agent.get_position(self, CamMat_Lpastar_pipeLpastar) 
             if (x - goal[0]) ** 2 + (y - goal[1]) \
                <= (self.map.get_resolution() ** 2): 
 
-                self.agent.stop_trajectory(conn_main_process)
+                self.agent.stop_trajectory(lpastar_main_pipeLpastar)
                 break
 
             # Sensor scan.
-            current_obstacles = self.map.get_obstacles() #récupération des obstacles déjà répertoriés format (i,j)
+            current_obstacles = self.map.get_obstacles() 
             new_obstacles = self \
                 .map \
                 .convert_obstacles_to_graph(
                                 self
                                 .sensor
-                                .scan(self, conn_sensor,origin=self.agent.get_position(self,conn_sensor))) #Récupère les nouveaux obstacles en les convertissant avec le scan
+                                .scan(self, CamMat_Lpastar_pipeLpastar,origin=self.agent.get_position(self, micro1_lpastar_pipeLpastar)))
 
             # If there is difference between previous
             # obstacles and current obstacles.
             if not collections.Counter(current_obstacles) \
-                    == collections.Counter(new_obstacles): #Collections.Counter permet de transformer une liste en dictionnaire 
-                        #Ici, on regarde si les deux listes sont différents
+                    == collections.Counter(new_obstacles):
                 self.map.set_obstacles(new_obstacles)
 
                 # Update vertices with changed cost.
@@ -201,7 +192,7 @@ class LPAStarPathFinder:
 
                 try:
                     # Compute path and shrink it.
-                    model_path = self.compute_shortest_path(conn_sensor)
+                    model_path = self.compute_shortest_path(CamMat_Lpastar_pipeLpastar)
                     shrunk_path, shrunk_vertex_path = self.__shrink_path(model_path)
                     #real_path = map(
                     #    lambda point: self.map.indexes_to_coors(*point),
@@ -212,7 +203,7 @@ class LPAStarPathFinder:
                     #conn.send(model_path[0]) #renvoie chaque position
                     #conn.send(shrunk_path[0]) #renvoie seulement les positions qui changent
                     
-                    conn_destination.send(shrunk_vertex_path) #renvoie une liste de vecteur
+                    lpastar_main_pipeLpastar.send(shrunk_vertex_path) #renvoie une liste de vecteur
                 except PathDoesNotExistException:
                     self.__pause()
 
@@ -222,7 +213,7 @@ class LPAStarPathFinder:
         # Clean up.
         if self.agent.worker.is_alive():
             self.agent.worker.kill()
-            self.agent.stop(conn_main_process)
+            self.agent.stop(lpastar_main_pipeLpastar)
 
     def __shrink_path(self,
                       model_path: List[Tuple[int, int]]) \
@@ -399,7 +390,7 @@ class LPAStarPathFinder:
             Any: A value extracted from **params**
             associated to the key **param_name**
         """
-        if param_name in params.keys(): #regarde si le key est dans le dictionnaire
+        if param_name in params.keys():
             return params[param_name]
         raise MapInitializationException("Parameter required, \
                         but not provided: " + param_name)

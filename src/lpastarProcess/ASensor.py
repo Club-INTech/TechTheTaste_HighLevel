@@ -1,13 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Iterable, Tuple
 
-#importation de la library Abstract Base Classes: 
-#Le module 'abc' permet donner les éléments pour créer des bases de classes abstraites personnalisées.
-#'abc' permet de marquer les méthodes de la base comme abstraite
-#La classe ABC permet de définir la base des classes abstraites
-#ABC est un helper qui peut être utiliser à la place de abc.ABC
-
-
 class ASensor(ABC):
 
     """ Abstract class ASensor that simulates any sensor.
@@ -21,9 +14,6 @@ class ASensor(ABC):
         absolute coordinates of obstacles.
     """
     
-
-    #Entrée : Position du robot avec (x,y,alpha)
-    #Sortie : Matrice de la map avec les obstacles 
     @abstractmethod
     def scan(self, origin: Tuple[float, float, float], conn_sensor) -> \
             Iterable[Tuple[float, float, float]]:
@@ -45,5 +35,5 @@ class ASensor(ABC):
             is its width
         """
         
-        positions = conn_sensor.recv() # [position actuelle, [obstacles]]
+        positions = conn_sensor.recv() # [current position, [obstacles]]
         return positions[-1]

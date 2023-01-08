@@ -60,30 +60,28 @@ class GAgent:
             i = 0
 
             while True:
-                if conn.poll(): #retour vrai ou faux selon si des données sont disponible à la lecture
-                    _points_cp = conn.recv() #Renvoie un objet envoyé depuis l'autre extrémité de la connexion en utilisant send
+                if conn.poll(): 
+                    _points_cp = conn.recv()
                     i = 0 
-                self.move(*_points_cp[i]) # *: permet donner le premier élement de la liste des points | [i] de donner x et y pour move
-                if i < len(_points_cp) - 1: #incrémente i de 1 afin que le robot se déplace à travers chaque point
+                self.move(*_points_cp[i]) 
+                if i < len(_points_cp) - 1: 
                     i += 1
 
-        self.parent, self.child = mp.Pipe() #Création d'un tube où parent reçoit des données et chil envoie des données
-        self.worker = mp.Process(target=follow, args=(self.child, points, )) #Crée un process où target est la fonction qui va run et args donne les données pour le process
-        self.worker.start() #Commence le processus 
+        self.parent, self.child = mp.Pipe() 
+        self.worker = mp.Process(target=follow, args=(self.child, points, ))
+        self.worker.start()
     
-    #Fonction pour arrêter le robot dans sa trajectoire
     def stop_trajectory(self,conn) -> None: 
         """ Prevents agent from continuing the trajectory. Kills
         the worker process to stop giving movement commands. Sends
         a stop command to the agent.
         """
-        self.worker.terminate() #Arrête le processus de worker
-        self.parent.close() #Souvent après terminate et assure que les ressources sont libérés 
+        self.worker.terminate()
+        self.parent.close()
         self.child.close()
         self.stop(conn)
         
-    #Fontion pour obtenir la position du moment du robot 
-    def get_position(self,conn_sensor) -> Tuple[float, float, float]:
+    def get_position(self,micro1_lpastar_pipeLpastar) -> Tuple[float, float, float]:
         """ Gets agent's position.
 
         Returns:
@@ -91,10 +89,12 @@ class GAgent:
             in **[x, y, alpha]** format, where **(x, y)** are the
             coordinates of the agent and **alpha** is its orientation
         """
-        positions = conn_sensor.recv() #renvoie une liste [position actuelle, [obstacles]]
-        return positions[0]
+        
+        micro1_lpastar_pipeLpastar.send("Resquest position")
+        
+        position = micro1_lpastar_pipeLpastar.recv() #[current position, [obstacle]]
+        return position
     
-    #Fonction pour déplacer le robot aux coordonnées (x,y)
     def move(self, x: float, y: float, positions) -> None:
         """ Moves agent to **(x, y)**
 
@@ -108,7 +108,6 @@ class GAgent:
         dx,dy = x0 - x, y0 - y
         return dx, dy
     
-    #Fonction qui arrête net 
     def stop(self,conn) -> None:
         """ Stops all movements of the agent
         """
