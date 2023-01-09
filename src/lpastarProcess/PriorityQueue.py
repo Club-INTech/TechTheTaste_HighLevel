@@ -1,5 +1,5 @@
-from lpastar_pf.extensions import comparable_t
-from lpastar_pf.pf_exceptions import EmptyQueueException
+from extensions import comparable_t
+from pf_exceptions import EmptyQueueException
 import heapq
 
 

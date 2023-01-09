@@ -31,6 +31,33 @@ def scenarioSimple(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     return 1
 
 
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------ debug part -----------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+def debugLidarProc(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    log.logMessage(2,"scenario debug of LPA*")
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    
+    log.logMessage(1, "orderManager created")
+
+    OrderManager.askLPAprocess(0, 0, 1000, 1000)
+
+    log.logMessage(2, "asked for a small moov") 
+
+    OrderManager.askLPAprocess(1000, 1000, 10000, 6000)
+
+    log.logMessage(2, "asked for a big moov") 
+
+    time.sleep(2)
+
+    log.logMessage("simulation finished")
+
+
+
+
+
 
 if __name__ == "__main__":
     def readEsay(pipe1, pipe2):

@@ -54,10 +54,9 @@ class OrderToMicroProcress:
 
     #this function send where the robot has to go (Xgoal, Ygoal) and then what is the next 
     #trajctory the robot has to do to get there
-    def askLPAprocess(self, Xgoal, Ygoal):
-        X,Y = self.getPosition()
+    def askLPAprocess(self, Xnow, Ynow, Xgoal, Ygoal):
         #we send the global trajectory we want to do
-        self.pipeToLPA.send((X,Y))
+        self.pipeToLPA.send((Xnow,Ynow))
         self.pipeToLPA.send((Xgoal,Ygoal))
         #we get the next small steps we have to do
         Xstep,Ystep = self.pipeToLPA.recv()
