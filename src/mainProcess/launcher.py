@@ -43,9 +43,9 @@ class Launcher :
         
     def processCamMat(self, CamMat_Lpastar_pipeCamMat):
         log.logMessage(2, "start the camMat processus")
-        camera = CamBotProcess.CamBot()
-        Positions = camera.get_positions()                          
-        camera.send_to_lpastar(CamMat_Lpastar_pipeCamMat, Positions)       #send obstacles or lpastarProcess
+        #camera = CamBotProcess.CamBot()
+        #Positions = camera.get_positions()                          
+        #camera.send_to_lpastar(CamMat_Lpastar_pipeCamMat, Positions)       #send obstacles or lpastarProcess
         
         
     def processLpastar(self, lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, micro1_lpastar_pipeLpastar):

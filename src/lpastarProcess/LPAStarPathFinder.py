@@ -10,6 +10,17 @@ import time
 from PriorityQueue import PriorityQueue
 import collections
 
+param1={
+            "width": 3000,
+            "height": 2000,
+            "resolution": 50,
+            "free_case_value": 1,
+            "obstacle_case_value": 1000,
+            "heuristics_multiplier": 1,
+            "period" : 2,
+            "timeout" : 10
+            }
+
 
 class LPAStarPathFinder:
 
@@ -75,9 +86,9 @@ class LPAStarPathFinder:
     """
 
     def __init__(self,
-                 agent: Type[GAgent],
-                 sensor: Type[ASensor],
-                 params: Dict[str, int]):
+                 agent = GAgent,
+                 sensor = ASensor,
+                 params = param1): #Dict[str, int]
         """ Uses __param_getter method to extract data from dictionary.
         Initializes agent and sensor.
 
@@ -133,7 +144,7 @@ class LPAStarPathFinder:
         self.rhs[i][j] = 0 
         self.discover_order.insert((self.__calculate_key(i, j)), (i, j))
 
-    #micro1_lpastar_pipeLpastar, CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar
+
     def find_path(self, goal: Tuple[float, float], micro1_lpastar_pipeLpastar, CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar) -> None:
         """ Entry point function which is responsible to rescan map,
             recalculate optimal path if necessary and update agent.
@@ -149,7 +160,7 @@ class LPAStarPathFinder:
         """
 
         # Reset of rhs-values, g-values, start and goal.
-        self.reset(goal, CamMat_Lpastar_pipeLpastar)
+        self.reset(goal, micro1_lpastar_pipeLpastar)
         begin = time.time_ns()
         while True: 
 
@@ -159,7 +170,7 @@ class LPAStarPathFinder:
                                         find_path has been reached")
 
             # Break if the agent has reached the goal.
-            x, y, _ = self.agent.get_position(self, CamMat_Lpastar_pipeLpastar) 
+            x, y, _ = self.agent.get_position(self, micro1_lpastar_pipeLpastar) 
             if (x - goal[0]) ** 2 + (y - goal[1]) \
                <= (self.map.get_resolution() ** 2): 
 
@@ -192,7 +203,7 @@ class LPAStarPathFinder:
 
                 try:
                     # Compute path and shrink it.
-                    model_path = self.compute_shortest_path(CamMat_Lpastar_pipeLpastar)
+                    model_path = self.compute_shortest_path(micro1_lpastar_pipeLpastar)
                     shrunk_path, shrunk_vertex_path = self.__shrink_path(model_path)
                     #real_path = map(
                     #    lambda point: self.map.indexes_to_coors(*point),
