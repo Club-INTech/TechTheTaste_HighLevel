@@ -23,7 +23,7 @@ class Launcher :
 
     def processMain(self, pipeMicro1, pipeMicro2, lidar_main_pipeMain, lpastar_main_pipMain):
         log.logMessage(2, "start the main processus")
-        mainProcss = mainProcess.MainProcess(pipeMicro1, pipeMicro2, lpastar_main_pipMain)
+        mainProcss = mainProcess.mainProcess(pipeMicro1, pipeMicro2, lpastar_main_pipMain)
         mainProcss.run()
 
     #def processLIDAR(self,lidar_main_pipeLidar):
