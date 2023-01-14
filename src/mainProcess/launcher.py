@@ -83,12 +83,12 @@ class Launcher :
         
         while True :
             if lpastar_main_pipeLpastar.poll():
-                print("Exécution")
+                #print("Exécution")
                 goal = lpastar_main_pipeLpastar.recv()
-                print("goal")
-                print(goal)
-                lpastar.find_path(goal, micro1_lpastar_pipeLpastar, CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar) #lpastarProcess needs CamBotProcess and MainProcess
-                print("chemin trouvé")
+                #print("goal")
+                #print(goal)
+                lpastar.find_path(goal[1], micro1_lpastar_pipeLpastar, CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar) #lpastarProcess needs CamBotProcess and MainProcess
+                #print("chemin trouvé")
                 
                 
     def config1(self): 

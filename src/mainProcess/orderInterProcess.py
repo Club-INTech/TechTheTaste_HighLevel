@@ -57,8 +57,9 @@ class OrderToMicroProcress:
     def askLPAprocess(self, Xgoal, Ygoal):
         #we send the global trajectory we want to do
         self.pipeToLPA.send( [1, (Xgoal,Ygoal) ] )
-        Xstep,Ystep = self.pipeToLPA.recv()
-        log.logMessage("robot is going to"+ str(Xstep) + ", " + str(Ystep))
+        data = self.pipeToLPA.recv()
+        Xstep,Ystep = data[0],data[1]
+        log.logMessage(2,"robot is going to"+ str(Xstep) + ", " + str(Ystep))
 
     #all methods have clear name even though we could just need
     # one method instead of all of them. This way, it is easier 
