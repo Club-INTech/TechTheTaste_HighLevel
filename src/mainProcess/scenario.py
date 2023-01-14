@@ -42,11 +42,11 @@ def debugLidarProc(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     
     log.logMessage(1, "orderManager created")
 
-    OrderManager.askLPAprocess(0, 0, 1000, 1000)
+    OrderManager.askLPAprocess(1000, 1000)
 
     log.logMessage(2, "asked for a small moov") 
 
-    OrderManager.askLPAprocess(0, 0, 1999, 2999)
+    OrderManager.askLPAprocess(1999, 2999)
 
     log.logMessage(2, "asked for a big moov") 
 

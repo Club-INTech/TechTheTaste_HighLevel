@@ -16,6 +16,7 @@ sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lpastarProcess'
 #import part
 import log
 from LPAStarPathFinder import LPAStarPathFinder
+from processManager import startProcess
 
 
 from multiprocessing import Process, Pipe, Value
@@ -90,12 +91,10 @@ class Launcher :
         
         while True :
             if lpastar_main_pipeLpastar.poll():
-                #print("Exécution")
                 goal = lpastar_main_pipeLpastar.recv()
-                #print("goal")
-                #print(goal)
-                lpastar.find_path(goal[1], micro1_lpastar_pipeLpastar, CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar) #lpastarProcess needs CamBotProcess and MainProcess
-                #print("chemin trouvé")
+                X = Xrobot.value
+                Y = Yrobot.value
+                lpastar.find_path(goal[1], CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar, X, Y) #lpastarProcess needs CamBotProcess and MainProcess
                 
                 
     def config1(self): 
@@ -119,14 +118,10 @@ class Launcher :
         procMain = Process(target= self.processMain, args = (main_micro1_pipeMain, main_micro2_pipeMain, lidar_main_pipeMain, lpastar_main_pipeMain, Xrobot, Yrobot) )
 
         #processList= [procMain, procCamBot, procCamMat, procLIDAR, procMicro1, procMicro2, procLpastar]
-        processList= [procMain, procCamBot, procCamMat, procMicro1, procMicro2, procLpastar]
-        for iter in range(len(processList)) :
-            try :
-                processList[iter].start()
-            except :
-                msg=  "process number" + str(iter) + " of the version" + str(self.version) + " failed to launch"
-                log.Message(0,msg)
-        
+        processList= [procMain, procCamBot, procMicro1, procMicro2, procLpastar]
+        startProcess(procCamMat, processList, XYinitialised)
+
+
         return processList, (lidar_main_pipeLidar, lidar_main_pipeMain), (CamMat_Lpastar_pipeCamMat, CamMat_Lpastar_pipeLpastar), (micro1_lpastar_pipeMicro1, micro1_lpastar_pipeLpastar), (lpastar_main_pipeLpastar, lpastar_main_pipeMain)
     
     
