@@ -1,11 +1,14 @@
 from controller import get, end
 from base_micro import BaseMicro
+from constants import *
 import serial
+import time
 
 
 class PS4Controll1A(BaseMicro):
     def __init__(self, port, baudrate):
         self.serial = serial.Serial(port, baudrate)
+        self.h_speed, self.v_speed = 0, 0
 
     def nothing(self, event):
         # void function
@@ -30,10 +33,12 @@ class PS4Controll1A(BaseMicro):
 
     def ly(self, event):
         # move
+        self.v_speed = event.value
         print(f"Movement speed {event.value}")
 
     def rx(self, event):
         # rotate
+        self.h_speed = event.value
         print(f"Rotatating speed {event.value}")
 
     def h_arrows(self, event):
@@ -58,9 +63,22 @@ class PS4Controll1A(BaseMicro):
     )
 
     def mainloop(self):
+        step = False
         while True:
+            self.make_message(CAN, 0, 0)
+            date = time.perf_counter_ns()
+            value = (self.h_speed, self.v_speed)[step]
+            self.make_message((ROT, MOV)[step], 0, value + 0x100 * (value < 0))
+            step ^= True
+
             for event in get():
                 self.manage[event.type][event.button](self, event)
+
+            while time.perf_counter_ns() - date < 20_000:
+                continue
+
+    def __repr__(self):
+        return 'PS4 Controller'
 
 
 if __name__ == '__main__':

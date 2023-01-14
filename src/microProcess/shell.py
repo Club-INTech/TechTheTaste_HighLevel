@@ -244,6 +244,7 @@ class Shell(BaseShell):
     def __init__(self, port, baudrate, log_level=NECESSARY):
         BaseShell.__init__(self)
         self.serial = serial.Serial(port, baudrate)
+        self.serial.read(self.serial.in_waiting)
         self.log_level = log_level
 
     def wait(self, order_id):
