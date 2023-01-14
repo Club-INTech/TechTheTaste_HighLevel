@@ -138,7 +138,7 @@ class LPAStarPathFinder:
         self.discover_order = PriorityQueue()
         
         self.goal = self.map.coors_to_indexes(*goal)
-        x, y, _ = self.agent.get_position(self,conn_sensor=conn_sensor) 
+        x, y, _ = self.agent.get_position(self,conn_sensor)
         i, j = self.map.coors_to_indexes(x, y) 
         self.start = (i, j)
         self.rhs[i][j] = 0 
@@ -158,12 +158,10 @@ class LPAStarPathFinder:
             goal (Tuple[float, float]):
                 The goal vertex.
         """
-
         # Reset of rhs-values, g-values, start and goal.
         self.reset(goal, micro1_lpastar_pipeLpastar)
         begin = time.time_ns()
         while True: 
-
             # Break if timeout has occured
             if time.time_ns() - begin > (self.timeout * 1e9):
                 raise TimeoutException("Timeout for \
@@ -172,8 +170,7 @@ class LPAStarPathFinder:
             # Break if the agent has reached the goal.
             x, y, _ = self.agent.get_position(self, micro1_lpastar_pipeLpastar) 
             if (x - goal[0]) ** 2 + (y - goal[1]) \
-               <= (self.map.get_resolution() ** 2): 
-
+               <= (self.map.get_resolution() ** 2):
                 self.agent.stop_trajectory(lpastar_main_pipeLpastar)
                 break
 
@@ -184,8 +181,7 @@ class LPAStarPathFinder:
                 .convert_obstacles_to_graph(
                                 self
                                 .sensor
-                                .scan(self, CamMat_Lpastar_pipeLpastar,origin=self.agent.get_position(self, micro1_lpastar_pipeLpastar)))
-
+                                .scan(self, conn_sensor = CamMat_Lpastar_pipeLpastar,origin=self.agent.get_position(self, micro1_lpastar_pipeLpastar)))
             # If there is difference between previous
             # obstacles and current obstacles.
             if not collections.Counter(current_obstacles) \
@@ -202,6 +198,7 @@ class LPAStarPathFinder:
                         self.__update_vertex(obstacle)
 
                 try:
+                    
                     # Compute path and shrink it.
                     model_path = self.compute_shortest_path(micro1_lpastar_pipeLpastar)
                     shrunk_path, shrunk_vertex_path = self.__shrink_path(model_path)
@@ -213,18 +210,18 @@ class LPAStarPathFinder:
                     
                     #conn.send(model_path[0]) #renvoie chaque position
                     #conn.send(shrunk_path[0]) #renvoie seulement les positions qui changent
-                    
-                    lpastar_main_pipeLpastar.send(shrunk_vertex_path) #renvoie une liste de vecteur
+                    lpastar_main_pipeLpastar.send((3,shrunk_vertex_path)) #renvoie une liste de vecteur
+                    break
                 except PathDoesNotExistException:
                     self.__pause()
 
             # Pause.
-            self.__pause()
+            #self.__pause()
 
         # Clean up.
-        if self.agent.worker.is_alive():
-            self.agent.worker.kill()
-            self.agent.stop(lpastar_main_pipeLpastar)
+        #if self.agent.worker.is_alive():
+        #    self.agent.worker.kill()
+        #    self.agent.stop(lpastar_main_pipeLpastar)
 
     def __shrink_path(self,
                       model_path: List[Tuple[int, int]]) \

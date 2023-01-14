@@ -3,6 +3,8 @@ from email.policy import strict
 import sys, os
 import mainProcess
 from hokuyolx import hokuyo
+import time
+import random
 #from hokuyolx import lidarstop
 #from Process import CamBotProcess
 
@@ -34,6 +36,15 @@ class Launcher :
 
     def processMicro1(self, micro1_lpastar_pipeMicro1):
         log.logMessage(2, "start the micro1 processus")
+        
+        position = (0,0,10)
+        
+        while True :
+            if micro1_lpastar_pipeMicro1.poll():
+                order = micro1_lpastar_pipeMicro1.recv()
+                if order == 2 :
+                    micro1_lpastar_pipeMicro1.send(position)
+    
 
     def processMicro2(self):
         log.logMessage(2, "start the micro2 processus")
@@ -46,16 +57,40 @@ class Launcher :
         #camera = CamBotProcess.CamBot()
         #Positions = camera.get_positions()                          
         #camera.send_to_lpastar(CamMat_Lpastar_pipeCamMat, Positions)       #send obstacles or lpastarProcess
+        def generate_obstacles() :
+            obstacles = [(0.0, 1000.0, 24.0),
+                    (1500.0, 0.0, 24.0),
+                    (3000.0, 1000.0, 24.0),
+                    (0.0, 2000.0, 24.0)]
+            random.seed(time.time())
+            for i in range(100):
+                x = random.uniform(0.0, 3000.0)
+                y = random.uniform(0.0, 2000.0)
+                w = 50.0 * random.random()
+                obstacles.append((x, y, w))
+            return obstacles
+        
+        while True :
+            if CamMat_Lpastar_pipeCamMat.poll():
+                if CamMat_Lpastar_pipeCamMat.recv() == 4 :
+                    obstacles = generate_obstacles()
+                    CamMat_Lpastar_pipeCamMat.send(obstacles)
         
         
     def processLpastar(self, lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, micro1_lpastar_pipeLpastar):
         log.logMessage(2, "start the lpastar processus")
         lpastar = LPAStarPathFinder()
-
-        goal = lpastar_main_pipeLpastar.recv()
-        lpastar.find_path(goal, micro1_lpastar_pipeLpastar, CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar) #lpastarProcess needs CamBotProcess and MainProcess
         
-    
+        while True :
+            if lpastar_main_pipeLpastar.poll():
+                print("Exécution")
+                goal = lpastar_main_pipeLpastar.recv()
+                print("goal")
+                print(goal)
+                lpastar.find_path(goal, micro1_lpastar_pipeLpastar, CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar) #lpastarProcess needs CamBotProcess and MainProcess
+                print("chemin trouvé")
+                
+                
     def config1(self): 
         log.logMessage(2, "start config1")
         lidar_main_pipeLidar, lidar_main_pipeMain = Pipe()                  #to kill process
