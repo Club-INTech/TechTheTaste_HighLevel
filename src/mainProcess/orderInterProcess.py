@@ -83,6 +83,7 @@ class OrderToMicroProcress:
     #to moov the robot to the point Xgoal,Ygoal
     def moovTo(self, Xgoal, Ygoal):
         Xinit, Yinit = self.getPosition()
+        
         angle = findAngle(Xinit, Yinit, Xgoal, Ygoal)
         self.moovTurn(angle)
         #next function is a blocking mode function so wait for the action to be good
@@ -131,7 +132,7 @@ class OrderToMicroProcress:
 
     #order to track the position of the robot
     def getPosition(self):
-        self.pipeToMicro1(11)
+        self.pipeMaintoLPA(11)
         if self.pipeToMicro1.poll(timeout=10):
             #return X,Y coordinate of the robot
             return self.pipeToMicro1.recv()
