@@ -88,13 +88,16 @@ class OrderToMicroProcress:
 
     #to moov the robot to the point Xgoal,Ygoal
     def moovTo(self, Xgoal, Ygoal):
-        Xinit, Yinit = self.getPosition()
-        
-        angle = findAngle(Xinit, Yinit, Xgoal, Ygoal)
-        self.moovTurn(angle)
-        #next function is a blocking mode function so wait for the action to be good
-        self.smallMoovForward(sqrt( (Xgoal - Xinit)**2 + (Ygoal - Yinit)**2 ))
-        
+    #do while (pos != goalpos)
+        while True:
+            Xinit, Yinit = self.getPosition()
+            Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
+            angle = findAngle(Xinit, Yinit, Xstep, Ystep)
+            self.moovTurn(angle)
+            #next function is a blocking mode function so wait for the action to be good
+            self.smallMoovForward(sqrt( (Xstep - Xinit)**2 + (Ystep - Yinit)**2 ))
+            if (Xstep != Xgoal) and (Ystep != Ygoal) :
+                break 
 
     #this function should only be used for small moov 
     # since it is only used without the LPA* process
@@ -138,9 +141,9 @@ class OrderToMicroProcress:
 
     #order to track the position of the robot
     def getPosition(self):
-        self.pipeMaintoLPA(11)
+        self.pipeMaintoLPA.send([0,0,0])
         if self.pipeToMicro1.poll(timeout=10):
-            #return X,Y coordinate of the robot
+        #return X,Y coordinate of the robot
             return self.pipeToMicro1.recv()
         else :
             log.logMessage(0,"position not received!")
