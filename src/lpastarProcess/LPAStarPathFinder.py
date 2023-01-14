@@ -120,7 +120,7 @@ class LPAStarPathFinder:
 
         self.discover_order = PriorityQueue()
 
-    def reset(self, goal: Tuple[float, float], conn_sensor) -> None:
+    def reset(self, goal: Tuple[float, float], Xrobot, Yrobot) -> None:
         """ Resets g-values and rhs-values. Initializes start and goal
             positions for the algorithm.
 
@@ -138,14 +138,14 @@ class LPAStarPathFinder:
         self.discover_order = PriorityQueue()
         
         self.goal = self.map.coors_to_indexes(*goal)
-        x, y, _ = self.agent.get_position(self,conn_sensor)
+        x, y, _ = self.agent.get_position(self, Xrobot, Yrobot)
         i, j = self.map.coors_to_indexes(x, y) 
         self.start = (i, j)
         self.rhs[i][j] = 0 
         self.discover_order.insert((self.__calculate_key(i, j)), (i, j))
 
 
-    def find_path(self, goal: Tuple[float, float], micro1_lpastar_pipeLpastar, CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar) -> None:
+    def find_path(self, goal: Tuple[float, float], CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar, Xrobot, Yrobot) -> None:
         """ Entry point function which is responsible to rescan map,
             recalculate optimal path if necessary and update agent.
             First, it calls reset, after that it calls sensor's scan function,
@@ -159,7 +159,7 @@ class LPAStarPathFinder:
                 The goal vertex.
         """
         # Reset of rhs-values, g-values, start and goal.
-        self.reset(goal, micro1_lpastar_pipeLpastar)
+        self.reset(goal, Xrobot, Yrobot)
         begin = time.time_ns()
         while True: 
             # Break if timeout has occured
@@ -168,7 +168,7 @@ class LPAStarPathFinder:
                                         find_path has been reached")
 
             # Break if the agent has reached the goal.
-            x, y, _ = self.agent.get_position(self, micro1_lpastar_pipeLpastar) 
+            x, y, _ = self.agent.get_position(self, Xrobot, Yrobot) 
             if (x - goal[0]) ** 2 + (y - goal[1]) \
                <= (self.map.get_resolution() ** 2):
                 self.agent.stop_trajectory(lpastar_main_pipeLpastar)
@@ -181,7 +181,7 @@ class LPAStarPathFinder:
                 .convert_obstacles_to_graph(
                                 self
                                 .sensor
-                                .scan(self, conn_sensor = CamMat_Lpastar_pipeLpastar,origin=self.agent.get_position(self, micro1_lpastar_pipeLpastar)))
+                                .scan(self, conn_sensor = CamMat_Lpastar_pipeLpastar,origin=self.agent.get_position(self, Xrobot, Yrobot)))
             # If there is difference between previous
             # obstacles and current obstacles.
             if not collections.Counter(current_obstacles) \
@@ -200,7 +200,7 @@ class LPAStarPathFinder:
                 try:
                     
                     # Compute path and shrink it.
-                    model_path = self.compute_shortest_path(micro1_lpastar_pipeLpastar)
+                    model_path = self.compute_shortest_path(Xrobot, Yrobot)
                     shrunk_path, shrunk_vertex_path = self.__shrink_path(model_path)
                     #real_path = map(
                     #    lambda point: self.map.indexes_to_coors(*point),
@@ -311,7 +311,7 @@ class LPAStarPathFinder:
         if i < len(self.rhs) and j < len(self.rhs[0]) and self.g[i][j] != self.rhs[i][j]:
             self.discover_order.insert(self.__calculate_key(i, j), v)
 
-    def compute_shortest_path(self,conn_sensor) -> List[Tuple[int, int]]:
+    def compute_shortest_path(self, Xrobot, Yrobot) -> List[Tuple[int, int]]:
         """ Computes the shortest path using the advantages of
             LPA* algorithm. While the distance to the goal vertex
             (g-value) is not optimal and can be updated (g-value
@@ -355,8 +355,8 @@ class LPAStarPathFinder:
                                             + str(self.goal))
 
         s = self.goal
-        cur_vertex = self.map.coors_to_indexes(self.agent.get_position(self,conn_sensor)[0],
-                                               self.agent.get_position(self,conn_sensor)[1])
+        cur_vertex = self.map.coors_to_indexes(self.agent.get_position(self, Xrobot, Yrobot)[0],
+                                               self.agent.get_position(self, Xrobot, Yrobot)[1])
         path = [s]
         while s != cur_vertex:
             neighbours = self.map.get_neighbours(s)
