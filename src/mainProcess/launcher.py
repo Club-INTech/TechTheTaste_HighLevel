@@ -17,13 +17,20 @@ sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lpastarProcess'
 import log
 from LPAStarPathFinder import LPAStarPathFinder
 
-from multiprocessing import Process, Pipe
+
+from multiprocessing import Process, Pipe, Value
+
+
+#global variable 
+Xrobot = Value('i', 0) #position X of the robot should not be over 12 000 ticks
+Yrobot = Value('i', 0) #position Y of the robot should not be over 12 000 ticks
+XYinitialised = Value('i', 0) # to know if Xrobot and Yrobothave been initialised by the cam process, 0 = flase, 1 = True
 
 class Launcher :
     def __init__(self, version):
         self.version=version
 
-    def processMain(self, pipeMicro1, pipeMicro2, lidar_main_pipeMain, lpastar_main_pipMain):
+    def processMain(self, pipeMicro1, pipeMicro2, lidar_main_pipeMain, lpastar_main_pipMain, Xrobot, Yrobot):
         log.logMessage(2, "start the main processus")
         mainProcss = mainProcess.mainProcess(pipeMicro1, pipeMicro2, lpastar_main_pipMain)
         mainProcss.run()
@@ -77,7 +84,7 @@ class Launcher :
                     CamMat_Lpastar_pipeCamMat.send(obstacles)
         
         
-    def processLpastar(self, lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, micro1_lpastar_pipeLpastar):
+    def processLpastar(self, lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, micro1_lpastar_pipeLpastar, Xrobot, Yrobot):
         log.logMessage(2, "start the lpastar processus")
         lpastar = LPAStarPathFinder()
         
@@ -108,8 +115,8 @@ class Launcher :
         #procLIDAR = Process(target = self.processLIDAR, args = (lidar_main_pipeLidar,))
         procMicro1 = Process(target = self.processMicro1, args = (micro1_lpastar_pipeMicro1,))
         procMicro2 = Process(target = self.processMicro2)
-        procLpastar = Process(target = self.processLpastar, args = (lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, micro1_lpastar_pipeLpastar,))
-        procMain = Process(target= self.processMain, args = (main_micro1_pipeMain, main_micro2_pipeMain, lidar_main_pipeMain, lpastar_main_pipeMain) )
+        procLpastar = Process(target = self.processLpastar, args = (lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, micro1_lpastar_pipeLpastar,Xrobot, Yrobot))
+        procMain = Process(target= self.processMain, args = (main_micro1_pipeMain, main_micro2_pipeMain, lidar_main_pipeMain, lpastar_main_pipeMain, Xrobot, Yrobot) )
 
         #processList= [procMain, procCamBot, procCamMat, procLIDAR, procMicro1, procMicro2, procLpastar]
         processList= [procMain, procCamBot, procCamMat, procMicro1, procMicro2, procLpastar]
