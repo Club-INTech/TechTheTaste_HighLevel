@@ -34,6 +34,9 @@ class ASensor(ABC):
             the absolute coordinates of the center of an obstacle and **w**
             is its width
         """
+        conn_sensor.send(4)
         
-        positions = conn_sensor.recv() # [current position, [obstacles]]
-        return positions[-1]
+        while True : 
+            if conn_sensor.poll() :
+                obstacles = conn_sensor.recv() # [current position, [obstacles]]
+                return obstacles

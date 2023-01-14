@@ -46,13 +46,15 @@ def debugLidarProc(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
 
     log.logMessage(2, "asked for a small moov") 
 
-    OrderManager.askLPAprocess(1000, 1000, 10000, 6000)
+    OrderManager.askLPAprocess(0, 0, 1999, 2999)
 
     log.logMessage(2, "asked for a big moov") 
 
     time.sleep(2)
 
-    log.logMessage("simulation finished")
+    #log.logMessage("simulation finished")
+    
+    print("simulation terminé")
 
 
 

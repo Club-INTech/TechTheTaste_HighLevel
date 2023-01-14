@@ -89,11 +89,12 @@ class GAgent:
             in **[x, y, alpha]** format, where **(x, y)** are the
             coordinates of the agent and **alpha** is its orientation
         """
+        micro1_lpastar_pipeLpastar.send(2)
         
-        micro1_lpastar_pipeLpastar.send("Resquest position")
-        
-        position = micro1_lpastar_pipeLpastar.recv() #[current position, [obstacle]]
-        return position
+        while True :
+            if micro1_lpastar_pipeLpastar.poll():
+                position = micro1_lpastar_pipeLpastar.recv() #[current position, [obstacle]]
+                return position
     
     def move(self, x: float, y: float, positions) -> None:
         """ Moves agent to **(x, y)**
