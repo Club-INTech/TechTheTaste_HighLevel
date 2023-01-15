@@ -59,7 +59,7 @@ class OrderToMicroProcress:
         self.pipeToLPA.send( [1, (Xgoal,Ygoal) ] )
         data = self.pipeToLPA.recv()
         Xstep,Ystep = data[0],data[1]
-        log.logMessage(2,"robot is going to"+ str(Xstep) + ", " + str(Ystep))
+        log.logMessage(2,"robot is going to ("+ str(Xstep) + "," + str(Ystep) + ")")
 
     #all methods have clear name even though we could just need
     # one method instead of all of them. This way, it is easier 
