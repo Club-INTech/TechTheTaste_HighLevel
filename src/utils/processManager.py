@@ -5,7 +5,7 @@ from multiprocessing import Pipe, Process
 # we wait X and Y initialized to start the other process
 def isXYinitialised(XYinitialised):
     #while (XYinitialised.value == 0):
-    #    log.logMessage(3, "X and Y not initialized")
+    #    log.logMessage(3, "X and Y not initialized", 0)
     #    sleep(1)
     sleep(1)
 
@@ -20,12 +20,12 @@ def startProcess(processCam, listProcess, boolXY):
         try :
             proc.start()
         except :
-            log.logMessage(0, "process failed to execute")
+            log.logMessage(0, "process failed to execute",0)
 
-    log.logMessage(1, "all process started!")
+    log.logMessage(1, "all process started!",0)
 
-def config1(self,processCamBot, processCamMat, processMicro1, processMicro2, processLpastar, processMain, Xrobot, Yrobot, XYinitialised): 
-        log.logMessage(2, "start config1")
+def config1(self, processCamBot, processCamMat, processMicro1, processMicro2, processLpastar, processMain, processLIDAR, Xrobot, Yrobot, XYinitialised): 
+        log.logMessage(2, "start config1",0)
         lidar_main_pipeLidar, lidar_main_pipeMain = Pipe()                  #to kill process
         CamMat_Lpastar_pipeCamMat, CamMat_Lpastar_pipeLpastar = Pipe()      #for obstacles
         lpastar_main_pipeLpastar, lpastar_main_pipeMain = Pipe()            #for goals and path

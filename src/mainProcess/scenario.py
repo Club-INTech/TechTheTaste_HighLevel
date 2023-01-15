@@ -36,25 +36,24 @@ def scenarioSimple(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 def debugLidarProc(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
-    log.logMessage(2,"scenario debug of LPA*")
+    log.logMessage(2,"scenario debug of LPA*", 0)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     
-    log.logMessage(1, "orderManager created")
+    log.logMessage(1, "orderManager created", 0)
 
     OrderManager.askLPAprocess(1000, 1000)
 
-    log.logMessage(2, "asked for a small moov") 
+    log.logMessage(2, "asked for a small moov", 0) 
 
     OrderManager.askLPAprocess(1999, 2999)
 
-    log.logMessage(2, "asked for a big moov") 
+    log.logMessage(2, "asked for a big moov", 0) 
 
     time.sleep(2)
 
-    #log.logMessage("simulation finished")
+    log.logMessage(2,"simulation finished", 0)
     
-    print("simulation terminé")
 
 
 
@@ -66,7 +65,7 @@ if __name__ == "__main__":
         while True :
             print( "micro1: " + str(pipe1.recv()) )
 
-    log.logMessage(1, "Start of debugg")
+    log.logMessage(1, "Start of debugg", 0)
     main_micro1_pipe, micro1_main_pipe = Pipe()
     main_micro2_pipe, micro2_main_pipe = Pipe()
 

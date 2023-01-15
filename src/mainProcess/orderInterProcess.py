@@ -59,7 +59,7 @@ class OrderToMicroProcress:
         self.pipeToLPA.send( [1, (Xgoal,Ygoal) ] )
         data = self.pipeToLPA.recv()
         Xstep,Ystep = data[0],data[1]
-        log.logMessage(2,"robot is going to ("+ str(Xstep) + "," + str(Ystep) + ")")
+        log.logMessage(2,"robot is going to ("+ str(Xstep) + "," + str(Ystep) + ")", 0)
 
     #all methods have clear name even though we could just need
     # one method instead of all of them. This way, it is easier 
@@ -74,7 +74,7 @@ class OrderToMicroProcress:
         jumper = False
         while(jumper):  
             jumper = True #read the state of the jumper and stock this value in the var jumper
-            log.logMessage(3, "jumper on")
+            log.logMessage(3, "jumper on", 0)
         return 1
         
 
@@ -129,7 +129,7 @@ class OrderToMicroProcress:
 
         self.pipeToMicro2(6)
         self.pipeToMicro2(bitCode)
-        log.logMessage(3, "pump actualised")
+        log.logMessage(3, "pump actualised", 0)
 
     #order to track the position of the robot
     def getPosition(self):
@@ -138,7 +138,7 @@ class OrderToMicroProcress:
         #return X,Y coordinate of the robot
             return self.pipeToMicro1.recv()
         else :
-            log.logMessage(0,"position not received!")
+            log.logMessage(0,"position not received!", 0)
             #maybe we should add something to face the error
             return 0
 

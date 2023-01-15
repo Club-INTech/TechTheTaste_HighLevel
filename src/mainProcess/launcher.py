@@ -19,7 +19,7 @@ from processManager import config1
 #from lidarProcess import lidarstop
 
 
-from multiprocessing import Process, Pipe, Value
+from multiprocessing import Process, Pipe, Value, current_process
 
 
 #global variable 
@@ -32,26 +32,26 @@ class Launcher :
         self.version=version
 
     def processMain(self, pipeMicro1, pipeMicro2, lidar_main_pipeMain, lpastar_main_pipMain, Xrobot, Yrobot):
-        log.logMessage(2, "start the main processus")
+        log.logMessage(2, "start the main processus", 0)
         mainProcss = mainProcess.mainProcess(pipeMicro1, pipeMicro2, lpastar_main_pipMain)
         mainProcss.run()
 
     def processLIDAR(self,lidar_main_pipeLidar):
-        log.logMessage(2, "start the lidar processus")
+        log.logMessage(2, "start the lidar processus", 1)
         #lidar = lidarProcess.lidarstop()
         #lidar.lidarstop(lidar_main_pipeLidar)
         
     def processMicro1(self):
-        log.logMessage(2, "start the micro1 processus")
+        log.logMessage(2, "start the micro1 processus", 2)
 
     def processMicro2(self):
-        log.logMessage(2, "start the micro2 processus")
+        log.logMessage(2, "start the micro2 processus", 3)
 
     def processCamBot(self):
-        log.logMessage(2, "start the camBot processus")
+        log.logMessage(2, "start the camBot processus", 4)
         
     def processCamMat(self, CamMat_Lpastar_pipeCamMat):
-        log.logMessage(2, "start the camMat processus")
+        log.logMessage(2, "start the camMat processus", 5)
         
         def generate_obstacles() :
             obstacles = [(0.0, 1000.0, 24.0),
@@ -74,7 +74,7 @@ class Launcher :
         
         
     def processLpastar(self, lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, Xrobot, Yrobot):
-        log.logMessage(2, "start the lpastar processus")
+        log.logMessage(2, "start the lpastar processus", 6)
         lpastar = LPAStarPathFinder()
         
         while True :
@@ -87,9 +87,9 @@ class Launcher :
     
     
     def launch(self):
-        log.logMessage(2, "start launching")
+        log.logMessage(2, "start launching", 7)
         if (self.version == 1):
-            return config1(self, self.processCamBot, self.processCamMat, self.processMicro1, self.processMicro2, self.processLpastar, self.processMain, Xrobot, Yrobot, XYinitialised)
+            return config1(self, self.processCamBot, self.processCamMat, self.processMicro1, self.processMicro2, self.processLpastar, self.processMain, self.processLIDAR, Xrobot, Yrobot, XYinitialised)
         
             
 if __name__ == "__main__" :
