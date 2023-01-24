@@ -14,9 +14,10 @@ class ASensor(ABC):
         absolute coordinates of obstacles.
     """
     
+    #Scan was directly implemented for CamMat
     @abstractmethod
-    def scan(self, origin: Tuple[float, float, float], conn_sensor) -> \
-            Iterable[Tuple[float, float, float]]:
+    def scan(self, origin: Tuple[float, float, float], conn_sensor) -> Iterable[Tuple[float, float, float]]:
+        
         """ Scans the environment according to the sensor
         position and returns a list of obstacles
 
@@ -34,9 +35,9 @@ class ASensor(ABC):
             the absolute coordinates of the center of an obstacle and **w**
             is its width
         """
-        conn_sensor.send(4)
+        conn_sensor.send(0)
         
         while True : 
             if conn_sensor.poll() :
-                obstacles = conn_sensor.recv() # [current position, [obstacles]]
+                obstacles = conn_sensor.recv()
                 return obstacles

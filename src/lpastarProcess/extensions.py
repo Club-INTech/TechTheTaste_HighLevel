@@ -1,6 +1,8 @@
 from abc import abstractmethod
 from typing_extensions import Protocol, TypeVar, Any
 
+#for PriorityQueue.py
+
 class Comparable(Protocol):
 
     @abstractmethod

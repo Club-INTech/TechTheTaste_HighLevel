@@ -1,4 +1,4 @@
-param1={
+paramlpastar={
             "width": 3000,
             "height": 2000,
             "resolution": 50,

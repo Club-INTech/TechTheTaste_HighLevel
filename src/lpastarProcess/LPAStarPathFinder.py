@@ -10,7 +10,7 @@ import time
 from PriorityQueue import PriorityQueue
 import collections
 
-from params import param1 
+from params import paramlpastar 
 
 
 class LPAStarPathFinder:
@@ -79,7 +79,7 @@ class LPAStarPathFinder:
     def __init__(self,
                  agent = GAgent,
                  sensor = ASensor,
-                 params = param1): #Dict[str, int]
+                 params = paramlpastar): #Dict[str, int]
         """ Uses __param_getter method to extract data from dictionary.
         Initializes agent and sensor.
 
@@ -292,8 +292,6 @@ class LPAStarPathFinder:
         #print(v)
         
         if vertex != self.start and i < len(self.rhs) and j < len(self.rhs[0]):
-            #A = self.map.get_neighbours(v)
-            #print(A)
             self.rhs[i][j] = min(list(map(lambda x: self.g[x[0]][x[1]]
                                           + self.map.get_transition_cost(x, v),
                                           self.map.get_neighbours(v)

@@ -68,7 +68,7 @@ class Launcher :
         
         while True :
             if CamMat_Lpastar_pipeCamMat.poll():
-                if CamMat_Lpastar_pipeCamMat.recv() == 4 :
+                if CamMat_Lpastar_pipeCamMat.recv() == 0 :
                     obstacles = generate_obstacles()
                     CamMat_Lpastar_pipeCamMat.send(obstacles)
         

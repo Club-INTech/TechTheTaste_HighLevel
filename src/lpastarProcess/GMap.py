@@ -194,13 +194,6 @@ class GMap():
             which corresponds to the **(x, y)**
         """
         return int(x / self.resolution), int(y / self.resolution)
-    
-    #def listcoors_to_indexes(self, coors: Tuple[float,float]):
-    #    listcoors = []
-    #    for i in range(len(coors)):
-    #        a = self.coors_to_indexes(coors[i][0],coors[i][1])
-    #        listcoors.append(a)
-    #    return listcoors
 
     def indexes_to_coors(self, i: int, j: int) -> Tuple[float, float]:
         """ Converts indices of the graph's vertex to the real life coordinates
@@ -257,6 +250,7 @@ class GMap():
 
     def get_neighbours(self,
                        vertex: Tuple[int, int]) -> Iterable[Tuple[int, int]]:
+        
         """ Gets all neighbours of the **vertex**
 
         Args:
@@ -269,8 +263,6 @@ class GMap():
         
         i,j = vertex
         neighbours = []
-        
-
 
         if i - 1 >= 0: 
             neighbours.append((i-1, j))
