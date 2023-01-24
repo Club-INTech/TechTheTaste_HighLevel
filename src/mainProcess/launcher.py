@@ -3,6 +3,7 @@ from email.policy import strict
 import sys, os
 import mainProcess
 #from hokuyolx import hokuyo
+#from lidarProcess import lidarstop
 import time
 import random
 #from Process import CamBotProcess
@@ -16,7 +17,8 @@ sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lpastarProcess'
 import log
 from LPAStarPathFinder import LPAStarPathFinder
 from processManager import config1
-#from lidarProcess import lidarstop
+from testing import generate_obstacles
+
 
 
 from multiprocessing import Process, Pipe, Value, current_process
@@ -25,7 +27,7 @@ from multiprocessing import Process, Pipe, Value, current_process
 #global variable 
 Xrobot = Value('i', 0) #position X of the robot should not be over 12 000 ticks
 Yrobot = Value('i', 0) #position Y of the robot should not be over 12 000 ticks
-XYinitialised = Value('i', 0) # to know if Xrobot and Yrobothave been initialised by the cam process, 0 = flase, 1 = True
+XYinitialised = Value('i', 0) # to know if Xrobot and Yrobothave been initialised by the cam process, 0 = false, 1 = True
 
 class Launcher :
     def __init__(self, version):
@@ -52,19 +54,6 @@ class Launcher :
         
     def processCamMat(self, CamMat_Lpastar_pipeCamMat):
         log.logMessage(2, "start the camMat processus", 5)
-        
-        def generate_obstacles() :
-            obstacles = [(0.0, 1000.0, 24.0),
-                    (1500.0, 0.0, 24.0),
-                    (3000.0, 1000.0, 24.0),
-                    (0.0, 2000.0, 24.0)]
-            random.seed(time.time())
-            for i in range(100):
-                x = random.uniform(0.0, 3000.0)
-                y = random.uniform(0.0, 2000.0)
-                w = 50.0 * random.random()
-                obstacles.append((x, y, w))
-            return obstacles
         
         while True :
             if CamMat_Lpastar_pipeCamMat.poll():
