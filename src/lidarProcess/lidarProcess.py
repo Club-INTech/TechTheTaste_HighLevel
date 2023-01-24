@@ -1,16 +1,17 @@
-import time 
+import time
 from hokuyolx import hokuyo
+from params import __param_getter, paramlidar
 
 laser=hokuyo.HokuyoLX()
 
 class Lili(object) :
     
     def __init__(self):
-        self.dmin = 400
-        self.group = 5
+        self.dmin = __param_getter("dmin", paramlidar)
+        self.group = __param_getter("group", paramlidar)
         self.state = 0
         
-    def lidarstop(self, conn):
+    def lidarstop(self, conn) -> None:
         '''Send a message to the main process if drobot < dmin'''
         self.state = 0
         while True : 
@@ -26,10 +27,10 @@ class Lili(object) :
                 self.state = 0
             time.sleep(1)
                 
-    def stop(self,conn):
+    def stop(self,conn) -> None:
         '''Send a message to the main process to stop the Agent'''
         conn.send(1)
         
-    def restart(self,conn):
+    def restart(self,conn) -> None:
         '''Send a message to the main process to restart the Agent'''
         conn.send(0)
