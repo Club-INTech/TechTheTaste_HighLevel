@@ -15,14 +15,11 @@ sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lpastarProcess'
 
 #import part
 import log
-from LPAStarPathFinder import LPAStarPathFinder
+from lpastarProcess.LPAStarPathFinder import LPAStarPathFinder
 from processManager import config1
 from testing import generate_obstacles
 
-
-
 from multiprocessing import Process, Pipe, Value, current_process
-
 
 #global variable 
 Xrobot = Value('i', 0) #position X of the robot should not be over 12 000 ticks

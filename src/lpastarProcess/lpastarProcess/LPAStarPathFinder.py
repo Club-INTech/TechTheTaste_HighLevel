@@ -1,13 +1,13 @@
-from GAgent import GAgent
-from ASensor import ASensor
-from GMap import GMap
+from lpastarProcess.GAgent import GAgent
+from lpastarProcess.ASensor import ASensor
+from lpastarProcess.GMap import GMap
 from typing import Type, Tuple, Dict, Iterable, List, Any
-from pf_exceptions import MapInitializationException
-from pf_exceptions import PathDoesNotExistException
-from pf_exceptions import TimeoutException
-from pf_exceptions import EmptyQueueException
+from lpastarProcess.pf_exceptions import MapInitializationException
+from lpastarProcess.pf_exceptions import PathDoesNotExistException
+from lpastarProcess.pf_exceptions import TimeoutException
+from lpastarProcess.pf_exceptions import EmptyQueueException
 import time
-from PriorityQueue import PriorityQueue
+from lpastarProcess.PriorityQueue import PriorityQueue
 import collections
 
 from params import paramlpastar 

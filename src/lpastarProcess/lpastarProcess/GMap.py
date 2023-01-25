@@ -1,6 +1,6 @@
 from typing import Iterable, Dict, Tuple, Any
-from pf_exceptions import MapInitializationException
-from pf_exceptions import ImpossibleTransitionException
+from lpastarProcess.pf_exceptions import MapInitializationException
+from lpastarProcess.pf_exceptions import ImpossibleTransitionException
 from math import sqrt
 
 

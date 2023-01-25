@@ -1,4 +1,4 @@
-from pf_exceptions import MapInitializationException
+from lpastarProcess.pf_exceptions import MapInitializationException
 from typing import Dict, Any
 
 paramlpastar={
