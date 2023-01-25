@@ -45,4 +45,4 @@ LPA* uses 3 functions **g**, **rhs** and **h**.
 
 Here is the UML-diagram of the project that can help you in better understanding of the architecture:
 
-<img src="./doc/assets/Architecture_lpastarProcess.png" style="background-color: white">
+<img src="./doc/assets/architecture_lpastarProcess.png" style="background-color: white">
