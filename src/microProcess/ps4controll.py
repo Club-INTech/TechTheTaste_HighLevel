@@ -71,6 +71,7 @@ class PS4Controll1A(BaseMicro):
         while True:
             self.make_message(CAN, 0, 0)
             date = time.perf_counter_ns()
+            # little movement either rotation or translation
             value = (self.h_speed, self.v_speed)[step]
             self.make_message((ROT, MOV)[step], 0, value + 0x100 * (value < 0))
             step ^= True
@@ -79,7 +80,8 @@ class PS4Controll1A(BaseMicro):
                 # gets the method corresponding to the event, if the event is not managed, it does nothing
                 getattr(self, self.manage.get((event.type, event.button), 'nothing'))(event)
 
-            while time.perf_counter_ns() - date < 20_000:
+            # delays for 20 ms
+            while time.perf_counter_ns() - date < 20_000_00:
                 continue
 
 
