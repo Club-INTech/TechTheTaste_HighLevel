@@ -1,13 +1,11 @@
 
 MessageType = ['error : ', 'success : ', 'information : ' ,  'warning : ' ]
+ERROR, SECCESS, INFO, WARN = range(4)
 
 
 def logMessage(logErrorNumber, message):
     if (logErrorNumber <= 3) :
-        log_msg = "LOG BOT : "
-        log_msg += MessageType[logErrorNumber] 
-        log_msg += message
-        print(log_msg)
+        print(f'LOG BOT : {MessageType[logErrorNumber]}{message}')
         return 1
 
     else :
@@ -16,9 +14,6 @@ def logMessage(logErrorNumber, message):
 
 
 def logMessageOpti(logErrorNumber, message):
-    if (logErrorNumber <= 1) :
-        log_msg = "LOG BOT : "
-        log_msg += MessageType[logErrorNumber] 
-        log_msg += message
-        print(log_msg)
+    if (logErrorNumber <= 1) :        
+        print(f'LOG BOT : {MessageType[logErrorNumber]}{message}')
         return 1
