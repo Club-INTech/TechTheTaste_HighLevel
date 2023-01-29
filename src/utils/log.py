@@ -1,5 +1,5 @@
 
-MessageType = ['error : ', 'sucess : ', 'information : ' ,  'warning : ' ]
+MessageType = ['error : ', 'success : ', 'information : ' ,  'warning : ' ]
 
 
 def logMessage(logErrorNumber, message):
