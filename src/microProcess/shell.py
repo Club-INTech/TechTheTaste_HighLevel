@@ -12,18 +12,20 @@ def float_to_int(num):
 
 
 def bytes_to_float(buffer):
-    # IEEE-754 representation of a float
+    # IEEE-754 representation of a float from bytes
     return struct.unpack('!f', buffer)[0]
 
 
+# prepares cmd.Cmd inheritance
 cmds = {'prompt': '(RaspShell) > ', 'wait': (lambda self, type_: None)}
 
 
+# decorator because I am too lazy to write 'do_' before my function names
 def command(func):
     cmds[f'do_{func.__name__[(func.__name__[0] == "_"):]}'] = func
     return func
 
-
+# Verifies if arguments are in a given range
 def ranged_int(name, value: str, l_=0, h=16):
     b = not (value.isdigit() and l_ <= int(value) < h)
     if b:
@@ -31,6 +33,7 @@ def ranged_int(name, value: str, l_=0, h=16):
     return b
 
 
+# Verifies if the arguement can be converted to float
 def check_float(name, value: str):
     try:
         float(value)
@@ -40,6 +43,7 @@ def check_float(name, value: str):
         return True
 
 
+# decorator to check the number of arguments
 def arg_number(nb):
     def decor(f):
         def fun(self, line):
@@ -53,17 +57,17 @@ def arg_number(nb):
     return decor
 
 
+# Verifies if arguements are given by pair
 def test_pair(lst):
     if len(lst) & 1:
         print('Arguments work by pairs')
         return True
     return False
 
-
+# Divides a list into pairs
 def pair(lst):
     for i in range(0, len(lst), 2):
         yield lst[i], lst[i+1]
-
 
 def no_duplicate(lst):
     if len(set(lst[::2])) != len(lst) // 2:
