@@ -11,8 +11,8 @@ class MicroCOM(BaseMicro):
         self.lidar, self.main = lidar, main
         self.routines = [iter([]), iter([])]
 
-        self.robot_pos = self.main.recv()
-        self.robot_heading = self.main.recv()
+        self.robot_pos = [0., 0.]
+        self.robot_heading = 0.
         self.robot_axle_track = AXLE_TRACK_1A
 
     def next(self, type_):
