@@ -3,6 +3,7 @@ from controller.constants import *
 
 
 class Event:
+    # fixes the attributes
     __slots__ = 'button', 'type', 'value'
 
     def __init__(self, button, type_, value):
@@ -23,6 +24,7 @@ class ControllerButtons:
         try:
             with open(self.file, 'rb') as f:
                 while True:
+                    # read will block, that's why i use processes
                     self.queue.put(Event(*struct.unpack(self.event_format, f.read(self.event_length))[:2:-1]))
         except KeyboardInterrupt:
             print('Terminated Controller Process')
@@ -39,10 +41,12 @@ class ControllerMouse:
         try:
             with open(self.file, 'rb') as f:
                 while True:
+                    # will block, that's why i use processes
                     h, dx, dy = f.read(self.event_length)
                     if (h & 1) ^ self.pad_state:
                         self.pad_state = h & 1
                         self.queue.put(Event(h & 1, 3, None))
+                    # Two's complement on x and y displacements
                     self.queue.put(Event(h & 1, 3, ((dx - 256 if dx > 128 else dx), dy - 256 if dy > 128 else dy)))
         except KeyboardInterrupt:
             print('Terminated Mouse Process')
