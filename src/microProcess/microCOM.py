@@ -4,6 +4,7 @@ import math
 
 
 class MicroCOM(BaseMicro):
+
     def __init__(self, port, baudrate, lidar, main, log=NECESSARY):
         self.serial = serial.Serial(port, baudrate)
         self.log_level = log
@@ -54,7 +55,7 @@ class MicroCOM(BaseMicro):
 
         # circular movement
         radius = .5 * self.robot_axle_track * (left + right) / (right - left)
-        angle = .5 * (right_arc - left_arc) / self.robot_axle_track
+        angle = (right_arc - left_arc) / self.robot_axle_track
         a0, a1 = self.robot_heading - math.pi * .5, self.robot_heading - math.pi * .5 + angle
         self.robot_pos[0] += radius * (math.cos(a1) - math.cos(a0))
         self.robot_pos[1] += radius * (math.sin(a1) - math.sin(a0))
