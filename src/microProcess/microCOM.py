@@ -9,6 +9,7 @@ class MicroCOM(BaseMicro):
         self.log_level = log
 
         self.lidar, self.main = lidar, main
+        # Routines corresponding to order types MOVEMENT and ACTION
         self.routines = [iter([]), iter([])]
 
         self.robot_pos = [0., 0.]
@@ -16,7 +17,7 @@ class MicroCOM(BaseMicro):
         self.robot_axle_track = AXLE_TRACK_1A
 
     def next(self, type_):
-        # goes through the routine of a given type (ACTION or MOVEMENT)
+        # goes through the routine of a given type (MOVEMENT or ACTION)
         try:
             next_order = next(self.routines[type_])
             self.send(self.make_message(*next_order))
