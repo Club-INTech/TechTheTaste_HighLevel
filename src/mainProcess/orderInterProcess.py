@@ -131,16 +131,7 @@ class OrderToMicroProcress:
         self.pipeToMicro2(bitCode)
         log.logMessage(3, "pump actualised", 0)
 
-    #order to track the position of the robot
-    def getPosition(self):
-        self.pipeMaintoLPA.send([0,0,0])
-        if self.pipeToMicro1.poll(timeout=10):
-        #return X,Y coordinate of the robot
-            return self.pipeToMicro1.recv()
-        else :
-            log.logMessage(0,"position not received!", 0)
-            #maybe we should add something to face the error
-            return 0
+
 
         
         
