@@ -17,13 +17,14 @@ def bytes_to_float(buffer):
 
 
 # prepares cmd.Cmd inheritance
-cmds = {'prompt': '(RaspShell) > ', 'wait': (lambda self, type_: None)}
+cmds = {'prompt': '(RaspShell) > '}
 
 
-# decorator because I am too lazy to write 'do_' before my function names
+# decorator because I am too lazy to write 'do_' before my command names
 def command(func):
     cmds[f'do_{func.__name__[(func.__name__[0] == "_"):]}'] = func
     return func
+
 
 # Verifies if arguments are in a given range
 def ranged_int(name, value: str, l_=0, h=16):
@@ -64,10 +65,12 @@ def test_pair(lst):
         return True
     return False
 
+
 # Divides a list into pairs
 def pair(lst):
     for i in range(0, len(lst), 2):
         yield lst[i], lst[i+1]
+
 
 def no_duplicate(lst):
     if len(set(lst[::2])) != len(lst) // 2:
@@ -247,9 +250,9 @@ class Shell(BaseShell):
     waiting = False
     waited_id = None
 
-    def __init__(self, port, baudrate, log_level=NECESSARY):
+    def __init__(self, port, log_level=NECESSARY):
         BaseShell.__init__(self)
-        self.serial = serial.Serial(port, baudrate)
+        self.serial = serial.Serial(port, BAUDRATE)
         self.serial.read(self.serial.in_waiting)
         self.log_level = log_level
         self.tracked_values = []
@@ -285,3 +288,10 @@ class Shell(BaseShell):
         return VAR_NAMES
 
     complete_get_var = complete_set_var
+
+
+if __name__ == '__main__':
+    import sys
+    p = sys.argv[1]
+    level = LOG_MODES.index(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2] in LOG_MODES else NOTHING
+    Shell(p, level).cmdloop()

@@ -3,21 +3,28 @@ from constants import *
 import math
 
 
+def empty():
+    return
+    yield
+
+
 class MicroCOM(BaseMicro):
 
-    def __init__(self, port, baudrate, lidar, main, log=NECESSARY):
-        self.serial = serial.Serial(port, baudrate)
+    def __init__(self, port, lidar, main, log=NECESSARY):
+        self.serial = serial.Serial(port, BAUDRATE)
         self.log_level = log
 
         self.lidar, self.main = lidar, main
         # Routines corresponding to order types MOVEMENT and ACTION
-        self.routines = [iter([]), iter([])]
+        self.routines = [empty(), empty()]
 
         self.robot_pos = [0., 0.]
         self.robot_heading = 0.
         self.robot_axle_track = AXLE_TRACK_1A
 
     def next(self, type_):
+        if self.log_level > N_NEC:
+            print(f'{type(self).__name__} : info : Next step of routine {self.routines[type_]}({CATEGORIES[type_]})')
         # goes through the routine of a given type (MOVEMENT or ACTION)
         try:
             next_order = next(self.routines[type_])
@@ -62,6 +69,8 @@ class MicroCOM(BaseMicro):
         self.robot_heading += angle
 
     def pull(self, type_):
+        if self.log_level > N_NEC:
+            print(f'{type(self).__name__} : info : Asking next routine ({CATEGORIES[type_]})')
         # asks for a new routine of a given type
         self.main.send(type_)
 
