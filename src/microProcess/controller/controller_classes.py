@@ -1,5 +1,5 @@
 import struct
-from controller.constants import *
+from constants import *
 
 
 class Event:

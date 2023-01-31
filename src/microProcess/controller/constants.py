@@ -9,13 +9,13 @@ CROSS, CIRCLE, TRIANGLE, SQUARE, L1, R1, L2_D, R2_D, SHARE, OPTIONS, PS, L3, R3 
 ANALOG_BUTTONS = (
     'Lx', 'Ly', 'L2', 'Rx', 'Ry', 'R2', 'H_arrows', 'V_arrows'
 )
-LX, LY, L2_A, RX, RY, R2_A, ARROWS_H, ARROWS_V = range(8)
+LX, LY, L2_A, RX, RY, R2_A, H_ARROWS, V_ARROWS = range(8)
 
 
 PAD_STATES = (
-    'FREE', 'CLICKED'
+    'UP', 'DOWN'
 )
-FREE_PAD, CLICKED_PAD = range(2)
+PAD_UP, PAD_DOWN = range(2)
 
 BUTTON_NAMES = DIGITAL_BUTTONS, ANALOG_BUTTONS, PAD_STATES
 

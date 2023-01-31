@@ -7,14 +7,13 @@ import time
 
 
 class PS4Controll1A(BaseMicro):
-    def __init__(self, port, baudrate):
+    def __init__(self, port):
         self.controller = Controller()
         self.controller.start()
-        self.serial = serial.Serial(port, baudrate)
+        self.serial = serial.Serial(port, BAUDRATE)
         self.h_speed, self.v_speed = 0, 0
 
     def nothing(self, event):
-        # void function
         pass
 
     def cross(self, event):
@@ -56,14 +55,14 @@ class PS4Controll1A(BaseMicro):
         elif event.value > 0:
             print("Moving kart to the bottom")
 
-    manage = {
+    manage_event = {
         (DIGITAL, CROSS): 'cross',
         (DIGITAL, CIRCLE): 'circle',
         (DIGITAL, TRIANGLE): 'triangle',
         (ANALOG, LY): 'ly',
         (ANALOG, RX): 'rx',
-        (ANALOG, ARROWS_H): 'h_arrows',
-        (ANALOG, ARROWS_V): 'v_arrows'
+        (ANALOG, H_ARROWS): 'h_arrows',
+        (ANALOG, V_ARROWS): 'v_arrows'
     }
 
     def mainloop(self):
@@ -73,12 +72,12 @@ class PS4Controll1A(BaseMicro):
             date = time.perf_counter_ns()
             # little movement either rotation or translation
             value = (self.h_speed, self.v_speed)[step]
-            self.make_message((ROT, MOV)[step], 0, value + 0x100 * (value < 0))
+            self.make_message((ROT, MOV)[step], 0, value + 0x10000 * (value < 0))
             step ^= True
 
             for event in self.controller.get_events():
                 # gets the method corresponding to the event, if the event is not managed, it does nothing
-                getattr(self, self.manage.get((event.type, event.button), 'nothing'))(event)
+                getattr(self, self.manage_event.get((event.type, event.button), 'nothing'))(event)
 
             # delays for 20 ms
             while time.perf_counter_ns() - date < 20_000_00:
@@ -86,7 +85,7 @@ class PS4Controll1A(BaseMicro):
 
 
 if __name__ == '__main__':
-    p = PS4Controll1A('/dev/ttyACM0', 115200)
+    p = PS4Controll1A('/dev/ttyACM0')
     try:
         p.mainloop()
     except KeyboardInterrupt:
