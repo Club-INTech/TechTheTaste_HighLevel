@@ -1,0 +1,24 @@
+import matplotlib.pyplot as plt
+import matplotlib.animation as ani
+import time
+import multiprocessing as mp
+
+# variables for the plot
+y1 = 70
+fig = plt.figure()
+plt.xlabel('Elapsed time')
+plt.ylabel('Y value')
+X = [y1]
+Y = []
+t0 = time.time()
+Y.append(t0)
+
+def animate(i):
+    """perform animation step"""
+    global X,Y,y1
+    print(" Y1 :", y1)
+    X.append(y1)
+    Y.append(Y[-1]+time.time() - t0)
+    plt.plot(Y,X)
+
+animation = ani.FuncAnimation(fig, animate)
