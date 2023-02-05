@@ -188,7 +188,11 @@ Expects at least one pair.
 @command
 @arg_number(2)
 def set_var(self, args):
-    if args[0] not in VAR_NAMES or check_float('value', args[1]):
+    if args[0] not in VAR_NAMES:
+        print(f'Unknown variable {args[0]}')
+        return
+    if check_float('value', args[1]):
+        print(f'Invalid float argument {args[1]}')
         return
     self.send(self.make_message(VAR_SET, VAR_DICT[args[0]], float_to_int(float(args[1]))))
     self.wait(VAR_SET)
@@ -207,15 +211,16 @@ Available variables:
 @arg_number(1)
 def get_var(self, args):
     if args[0] not in VAR_NAMES:
+        print(f'Unknown variable {args[0]}')
         return
     self.send(self.make_message(VAR_GET, VAR_DICT[args[0]], 0))
     self.wait(VAR_GET)
 
 
 get_var.__doc__ = """
-Command: set_var
-set_var [var_name] [value]
-sets the variable <var_name> to <value> in the raspberry Pico chip
+Command: get_var
+get_var [var_name]
+gets the variable <var_name> from the raspberry Pico chip
 Available variables: 
 {}
 """.format(' - ' + '\n - '.join(VAR_DICT.keys()))
