@@ -24,14 +24,14 @@ class RoutineSender:
     def __init__(self, robot_x, robot_y, robot_heading, micro_pipe, axle_track):
         self.robotX, self.robotY, self.robotHeading = robot_x, robot_y, robot_heading
         self.microPipe = micro_pipe
-        self.axle_track = axle_track
+        self.axleTrack = axle_track
 
     def goto(self, x, y):
         dx, dy = x - self.robotX.value, y - self.robotY.value
         magnitude = (dx * dx + dy * dy) ** .5
         d_theta = math.acos(dx / magnitude) * (-1, 1)[dy >= 0] - self.robotHeading.value
         self.microPipe.send((MOVEMENT, goto, (
-            int(TICKS_PER_REVOLUTION * d_theta * self.axle_track / (math.pi * WHEEL_RADIUS)),
+            int(TICKS_PER_REVOLUTION * d_theta * self.axleTrack / (math.pi * WHEEL_RADIUS)),
             int(TICKS_PER_REVOLUTION * magnitude / (2 * math.pi * WHEEL_RADIUS)))
         ))
 
