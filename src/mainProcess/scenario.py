@@ -54,6 +54,14 @@ def debugLidarProc(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
 
     log.logMessage(2,"simulation finished", 0)
     
+def debugLidar(pipeMainToMicro1, pipeMainToMicro2, pipeMainToLPA, pipeLidarToMain):
+    log.logMessage(2,"scenario debug of LIDAR", 0)
+    while True :
+        if pipeLidarToMain.poll():
+            status = pipeLidarToMain.poll()
+            print(status)
+        
+    
 
 
 

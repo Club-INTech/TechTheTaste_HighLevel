@@ -2,22 +2,24 @@
 from email.policy import strict
 import sys, os
 import mainProcess
-#from hokuyolx import hokuyo
-#from lidarProcess import lidarstop
+from hokuyolx import hokuyo
 import time
 import random
-#from Process import CamBotProcess
 
 
 #path managing
 sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'utils'))
 sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lpastarProcess'))
+sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'CamProcess'))
+sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lidarProcess'))
 
 #import part
 import log
 from lpastarProcess.LPAStarPathFinder import LPAStarPathFinder
 from processManager import config1
+from com import RxPipe
 from testing import generate_obstacles
+from lidarProcess import lidarstop
 
 from multiprocessing import Process, Pipe, Value, current_process
 
@@ -32,13 +34,12 @@ class Launcher :
 
     def processMain(self, pipeMicro1, pipeMicro2, lidar_main_pipeMain, lpastar_main_pipMain, Xrobot, Yrobot):
         log.logMessage(2, "start the main processus", 0)
-        mainProcss = mainProcess.mainProcess(pipeMicro1, pipeMicro2, lpastar_main_pipMain)
+        mainProcss = mainProcess.mainProcess(pipeMicro1, pipeMicro2, lpastar_main_pipMain, lidar_main_pipeMain)
         mainProcss.run()
 
     def processLIDAR(self,lidar_main_pipeLidar):
         log.logMessage(2, "start the lidar processus", 1)
-        #lidar = lidarProcess.lidarstop()
-        #lidar.lidarstop(lidar_main_pipeLidar)
+        lidarstop(lidar_main_pipeLidar)
         
     def processMicro1(self):
         log.logMessage(2, "start the micro1 processus", 2)
@@ -57,6 +58,7 @@ class Launcher :
                 if CamMat_Lpastar_pipeCamMat.recv() == 0 :
                     obstacles = generate_obstacles()
                     CamMat_Lpastar_pipeCamMat.send(obstacles)
+                    #RxPipe(CamMat_Lpastar_pipeCamMat)
         
         
     def processLpastar(self, lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, Xrobot, Yrobot):
