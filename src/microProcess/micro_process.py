@@ -10,7 +10,7 @@ def empty():
 
 class MicroProcess(BaseMicro):
 
-    def __init__(self, port, lidar, main, log=NECESSARY):
+    def __init__(self, port, lidar, main, robot_x, robot_y, robot_heading, log=NECESSARY):
         self.serial = serial.Serial(port, BAUDRATE)
         self.log_level = log
 
@@ -19,13 +19,14 @@ class MicroProcess(BaseMicro):
         self.routines = [empty(), empty()]
 
         self.robot_pos = [0., 0.]
-        self.robot_heading = 0.
+        self.robot_x, self.robot_y = robot_x, robot_y
+        self.robot_heading = robot_heading
         self.robot_axle_track = AXLE_TRACK_1A
 
     def next(self, type_):
         if self.log_level > N_NEC:
             print(f'{type(self).__name__} : info : Next step of routine {self.routines[type_]}({CATEGORIES[type_]})')
-        # goes through the routine of a given type (MOVEMENT or ACTION)
+        # goes through the routine of the given type (MOVEMENT or ACTION)
         try:
             next_order = next(self.routines[type_])
             self.send(self.make_message(*next_order))
@@ -33,13 +34,14 @@ class MicroProcess(BaseMicro):
                 for _ in range(next_order[1]):
                     next_order = next(self.routines[type_])
                     self.send(self.make_message(*next_order))
+        # routine is finished
         except StopIteration:
             self.pull(type_)
 
     def terminaison(self, message):
-        t_ = TYPES[message[0] & 0xf]
-        if t_ != OTHER:
-            self.next(t_)
+        t = TYPES[message[0] & 0xf]
+        if t != OTHER:
+            self.next(t)
 
     def wheel_update(self, message):
         # tick offset for each wheel
@@ -64,9 +66,9 @@ class MicroProcess(BaseMicro):
         radius = .5 * self.robot_axle_track * (left + right) / (right - left)
         angle = (right_arc - left_arc) / self.robot_axle_track
         a0, a1 = self.robot_heading - math.pi * .5, self.robot_heading - math.pi * .5 + angle
-        self.robot_pos[0] += radius * (math.cos(a1) - math.cos(a0))
-        self.robot_pos[1] += radius * (math.sin(a1) - math.sin(a0))
-        self.robot_heading += angle
+        self.robot_x.value += radius * (math.cos(a1) - math.cos(a0))
+        self.robot_y.value += radius * (math.sin(a1) - math.sin(a0))
+        self.robot_heading.value += angle
 
     def pull(self, type_):
         if self.log_level > N_NEC:
