@@ -1,3 +1,5 @@
+import math
+
 ORDER_LENGTH = 5
 FEEDBACK_LENGTH = 5
 BAUDRATE = 115200
@@ -52,3 +54,5 @@ VAR_DICT = {n: i for i, n in enumerate(VAR_NAMES)}
 # Limits of arguments
 MIN_TICKS, MAX_TICKS = -32768, 32768  # valid range of tick arguments
 MIN_T_MS, MAX_T_MS = 0, 65536  # valid range of time arguments in ms
+
+MAX_DISTANCE = 2 * math.pi * WHEEL_RADIUS * MAX_TICKS / TICKS_PER_REVOLUTION  # maximum distance covered by goto

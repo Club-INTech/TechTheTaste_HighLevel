@@ -10,7 +10,7 @@ def empty():
 
 class MicroProcess(BaseMicro):
 
-    def __init__(self, port, lidar, main, robot_x, robot_y, robot_heading, log=NECESSARY):
+    def __init__(self, port, lidar, main, robot_x, robot_y, robot_heading, axle_track, log=NECESSARY):
         self.serial = serial.Serial(port, BAUDRATE)
         self.log_level = log
 
@@ -18,10 +18,9 @@ class MicroProcess(BaseMicro):
         # Routines corresponding to order types MOVEMENT and ACTION
         self.routines = [empty(), empty()]
 
-        self.robot_pos = [0., 0.]
         self.robot_x, self.robot_y = robot_x, robot_y
         self.robot_heading = robot_heading
-        self.robot_axle_track = AXLE_TRACK_1A
+        self.robot_axle_track = axle_track
 
     def next(self, type_):
         if self.log_level > N_NEC:
@@ -86,7 +85,7 @@ class MicroProcess(BaseMicro):
         if self.serial.in_waiting:
             self.feedback(self.receive())
 
-    def mainloop(self):
+    def run(self):
         try:
             self.pull(ACTION)
             self.pull(MOVEMENT)
