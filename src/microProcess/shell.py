@@ -301,22 +301,8 @@ class Shell(BaseShell):
         # waits for the terminaison of the given order_id
         self.waited_id = order_id
         self.waiting = True
-        lidar_stops, lidar_restarts = zip(*((t, t + dt) for t, dt in self.lidar_stops))
-        date = time.perf_counter()
         while self.waiting:
-            if order_id in (MOV, ROT):
-                # lidar simulation
-                dt = time.perf_counter() - date
-                for o, lid in enumerate(lidar_stops, lidar_restarts):
-                    pops = []
-                    for i, delay in enumerate(lid):
-                        if dt > delay:
-                            pops.append(i)
-                            self.send(self.make_message(LID, o, 0))
-                    for i in pops[::-1]:
-                        lid.pop(i)
-            if self.serial.in_waiting:
-                self.feedback(self.receive())
+            self.feedback(self.receive())
 
     def complete_set_var(self, text, line, begidx, endidx):
         if text:
