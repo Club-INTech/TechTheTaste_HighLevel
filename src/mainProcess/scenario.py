@@ -58,7 +58,7 @@ def debugLidar(pipeMainToMicro1, pipeMainToMicro2, pipeMainToLPA, pipeLidarToMai
     log.logMessage(2,"scenario debug of LIDAR", 0)
     while True :
         if pipeLidarToMain.poll():
-            status = pipeLidarToMain.poll()
+            status = pipeLidarToMain.recv()
             print(status)
         
     

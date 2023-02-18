@@ -19,7 +19,7 @@ from lpastarProcess.LPAStarPathFinder import LPAStarPathFinder
 from processManager import config1
 from com import RxPipe
 from testing import generate_obstacles
-from lidarProcess import lidarstop
+import lidarProcess 
 
 from multiprocessing import Process, Pipe, Value, current_process
 
@@ -39,7 +39,8 @@ class Launcher :
 
     def processLIDAR(self,lidar_main_pipeLidar):
         log.logMessage(2, "start the lidar processus", 1)
-        lidarstop(lidar_main_pipeLidar)
+        lidar=lidarProcess.Lili()
+        lidar.lidarstop(lidar_main_pipeLidar)
         
     def processMicro1(self):
         log.logMessage(2, "start the micro1 processus", 2)

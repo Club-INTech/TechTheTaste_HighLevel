@@ -37,15 +37,15 @@ def config1(self, processCamBot, processCamMat, processMicro1, processMicro2, pr
 
         procCamBot = Process(target = processCamBot)
         procCamMat = Process(target = processCamMat, args = (CamMat_Lpastar_pipeCamMat,))
-        #procLIDAR = Process(target = self.processLIDAR, args = (lidar_main_pipeLidar,))
+        procLIDAR = Process(target = processLIDAR, args = (lidar_main_pipeLidar,))
         procMicro1 = Process(target = processMicro1, args = ())
         procMicro2 = Process(target = processMicro2)
         procLpastar = Process(target = processLpastar, args = (lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, Xrobot, Yrobot))
         procMain = Process(target= processMain, args = (main_micro1_pipeMain, main_micro2_pipeMain, lidar_main_pipeMain, lpastar_main_pipeMain, Xrobot, Yrobot) )
 
         #processList= [procMain, procCamBot, procCamMat, procLIDAR, procMicro1, procMicro2, procLpastar]
-        processList= [procMain, procCamBot, procMicro1, procMicro2, procLpastar]
+        processList= [procMain, procCamBot, procMicro1, procMicro2, procLpastar, procLIDAR]
         startProcess(procCamMat, processList, XYinitialised)
 
 
-        return processList, (lidar_main_pipeLidar, lidar_main_pipeMain), (CamMat_Lpastar_pipeCamMat, CamMat_Lpastar_pipeLpastar), (lpastar_main_pipeLpastar, lpastar_main_pipeMain)
+        return processList, (lidar_main_pipeLidar, lidar_main_pipeMain), (CamMat_Lpastar_pipeCamMat, CamMat_Lpastar_pipeLpastar), (lpastar_main_pipeLpastar, lpastar_main_pipeMain), (lidar_main_pipeLidar, lidar_main_pipeMain)

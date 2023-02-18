@@ -37,6 +37,7 @@ def __param_getter(self, param_name: str, params: Dict[str, Any]) -> Any:
             Any: A value extracted from **params**
             associated to the key **param_name**
         """
+    print(param_name, params)
     if param_name in params.keys():
         return params[param_name]
     raise MapInitializationException("Parameter required, \
