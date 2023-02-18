@@ -223,7 +223,7 @@ get_var [var_name]
 gets the variable <var_name> from the raspberry Pico chip
 Available variables: 
 {}
-""".format(' - ' + '\n - '.join(VAR_DICT.keys()))
+""".format(' - ' + '\n - '.join(VAR_NAMES))
 
 
 @command
@@ -305,6 +305,7 @@ class Shell(BaseShell):
         date = time.perf_counter()
         while self.waiting:
             if order_id in (MOV, ROT):
+                # lidar simulation
                 dt = time.perf_counter() - date
                 for o, lid in enumerate(lidar_stops, lidar_restarts):
                     pops = []
