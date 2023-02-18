@@ -3,6 +3,7 @@ from base_micro import BaseMicro
 import serial
 import cmd
 import struct
+import time
 import matplotlib.pyplot as plt
 
 
@@ -192,7 +193,6 @@ def set_var(self, args):
         print(f'Unknown variable {args[0]}')
         return
     if check_float('value', args[1]):
-        print(f'Invalid float argument {args[1]}')
         return
     self.send(self.make_message(VAR_SET, VAR_DICT[args[0]], float_to_int(float(args[1]))))
     self.wait(VAR_SET)
@@ -247,6 +247,22 @@ def _exit(self, line):
     return 1
 
 
+@command
+@arg_number(2)
+def lidar(self, args):
+    delay, duration = args
+    if check_float('delay', delay) or check_float('duration', duration):
+        return
+    self.lidar_stops.append((delay, duration))
+
+
+lidar.__doc__ = """
+Command: lidar
+lidar [delay] [duration]
+Next movement order will be interrupted by a lidar stop after <delay> s for <duration> s
+Can be used multiple times
+"""
+
 BaseShell = type('BaseShell', (cmd.Cmd, BaseMicro), cmds)
 
 
@@ -261,6 +277,7 @@ class Shell(BaseShell):
         self.serial.read(self.serial.in_waiting)
         self.log_level = log_level
         self.tracked_values = []
+        self.lidar_stops = []
 
     def var_get(self, message):
         print(f'Variable {VAR_NAMES[message[0] & 0xf]} = {bytes_to_float(message[1:])}')
@@ -284,8 +301,21 @@ class Shell(BaseShell):
         # waits for the terminaison of the given order_id
         self.waited_id = order_id
         self.waiting = True
+        lidar_stops, lidar_restarts = zip(*((t, t + dt) for t, dt in self.lidar_stops))
+        date = time.perf_counter()
         while self.waiting:
-            self.feedback(self.receive())
+            if order_id in (MOV, ROT):
+                dt = time.perf_counter() - date
+                for o, lid in enumerate(lidar_stops, lidar_restarts):
+                    pops = []
+                    for i, delay in enumerate(lid):
+                        if dt > delay:
+                            pops.append(i)
+                            self.send(self.make_message(LID, o, 0))
+                    for i in pops[::-1]:
+                        lid.pop(i)
+            if self.serial.in_waiting:
+                self.feedback(self.receive())
 
     def complete_set_var(self, text, line, begidx, endidx):
         if text:

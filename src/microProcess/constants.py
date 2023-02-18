@@ -37,9 +37,9 @@ TYPES = (
 # --------------------------------------------------------- Physics ----------------------------------------------------
 
 # arbitrary values to compute robot movement
-AXLE_TRACK_1A, AXLE_TRACK_2A = .2, .2
+AXLE_TRACK_1A, AXLE_TRACK_2A = .213, .274  # en m, +- 1mm, mesures 18/02/2023 ~17h
 TICKS_PER_REVOLUTION = 1024
-WHEEL_RADIUS = .1
+WHEEL_RADIUS = .034  # en m, +- 0.1mm, mesures 18/02/2023 ~17h croisées sur les 4 roues des 2 robots
 
 
 # --------------------------------------------------------- Shell.py ---------------------------------------------------
