@@ -43,9 +43,11 @@ WHEEL_RADIUS = .034  # in m, +- 0.1mm, measurements 18/02/2023 ~17h coupling bot
 
 # --------------------------------------------------------- Shell.py ---------------------------------------------------
 
+# pdi right left trans rot
 # PID variables
 VAR_NAMES = (
-    'motorKi', 'motorKp', 'motorKd', 'wheelKi', 'wheelKp', 'wheelKd'
+    'Kp_right', 'Kd_right', 'Ki_right', 'Kp_left', 'Kd_left', 'Ki_left', 'Kp_trans', 'Kd_trans', 'Ki_trans',
+    'Kp_rot', 'Kd_rot', 'Ki_rot'
 )
 VAR_DICT = {n: i for i, n in enumerate(VAR_NAMES)}
 
