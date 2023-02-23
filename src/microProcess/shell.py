@@ -305,7 +305,7 @@ class Shell(BaseShell):
 
         date, stops, restarts = 0., (), ()
         if self.lidar_stops and order_id in (MOV, ROT):
-            stops, restarts = zip(*((t, t + dt) for t, dt in self.lidar_stops))
+            stops, restarts = map(list, zip(*((t, t + dt) for t, dt in self.lidar_stops)))
             date = time.perf_counter()
 
         while self.waiting:
