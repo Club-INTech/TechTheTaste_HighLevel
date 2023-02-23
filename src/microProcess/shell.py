@@ -29,7 +29,6 @@ def command(func):
 
 # Verifies if arguments are in a given range
 def ranged_int(name, value: str, l_=0, h=16):
-    print(value, int(value))
     b = not ((value.isdigit() or (value[1:].isdigit() and value[0] == '-')) and l_ <= int(value) < h)
     if b:
         print(f'{name} must be an integer between {l_} and {h-1}')

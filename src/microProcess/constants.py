@@ -13,7 +13,7 @@ NEC, N_NEC = range(2)  # Necessary, Not Necessary
 
 # Feedbacks
 ACK, TER, VAR, TRA, ERR, WHE = range(6)
-FEEDBACKS = 'ACKNOWLEDGEMENT', 'TERMINAISON', 'VAR_GET', 'TRACKED', 'ERROR', 'WHEEL_UPDATE'
+FEEDBACKS = 'ACKNOWLEDGEMENT', 'TERMINAISON', 'VAR_GET', 'TRACKED', 'ERROR', 'WHEEL_UPDATE', 'DEBUG'
 
 # orders
 # c.f. https://docs.google.com/spreadsheets/d/1NDprMKYs9L7S2TkqgACDOh6OKDJRHhz_LrTCKmEuD-k/edit#gid=0
