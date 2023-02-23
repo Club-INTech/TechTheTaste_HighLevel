@@ -29,6 +29,9 @@ class _Base:
     manage_feedback = tuple(n.lower() for n in FEEDBACKS)
 
     def feedback(self, message):
+        nb = message[0] >> 4
+        if nb >= len(self.manage_feedback):
+            return print(f'{type(self).__name__} : ERROR : Invalid feedback received {nb}')
         attr = self.manage_feedback[message[0] >> 4]
         if self.log_level > N_NEC:
             print(f'{type(self).__name__} : info : Processing feedback {attr.upper()}')
