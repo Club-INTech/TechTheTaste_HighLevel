@@ -254,7 +254,7 @@ def lidar(self, args):
     delay, duration = args
     if check_float('delay', delay) or check_float('duration', duration):
         return
-    self.lidar_stops.append((delay, duration))
+    self.lidar_stops.append((float(delay), float(duration)))
 
 
 lidar.__doc__ = """
