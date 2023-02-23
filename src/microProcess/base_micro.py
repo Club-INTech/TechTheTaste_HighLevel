@@ -1,28 +1,39 @@
 import serial
-from logger import Logger
+from constants import *
 
 
-class BaseMicro:
-    ORDER_LENGTH = 5
-    FEEDBACK_LENGTH = 5
-
+class _Base:
     serial: serial.Serial
     log_level: int
 
-    @Logger.log_make_message
-    def make_message(self, id_: int, comp: int, arg: int):
+    def make_message(self, id_: int, comp: int, arg: int) -> bytes:
+        if self.log_level > N_NEC:
+            print(f'{type(self).__name__} : info : Building order with arguments {id_}({ORDERS[id_]}), {comp}, {arg}')
+
         # current message scheme:
         #  | 4 bits | 4 bits |            32 bits             |
         #  |  id_   |  comp  |              arg               |
-        return int.to_bytes((((id_ << 4) | comp) << 32) | arg, self.ORDER_LENGTH, 'big')
+        return int.to_bytes((((id_ << 4) | comp) << 32) | arg, ORDER_LENGTH, 'big')
 
-    @Logger.log_send
-    def send(self, mess):
+    def send(self, mess: bytes):
+        if self.log_level > NEC:
+            print(f'{type(self).__name__} : info : Sending 0x{mess.hex()}')
         self.serial.write(mess)
 
-    @Logger.log_receive
-    def receive(self):
-        return self.serial.read(self.FEEDBACK_LENGTH)
+    def receive(self) -> bytes:
+        res = self.serial.read(FEEDBACK_LENGTH)
+        if self.log_level > NEC:
+            print(f'{type(self).__name__} : info : Received 0x{res.hex()}')
+        return res
 
-    def __repr__(self):
-        return 'BaseMicro'
+    manage_feedback = tuple(n.lower() for n in FEEDBACKS)
+
+    def feedback(self, message):
+        attr = self.manage_feedback[message[0] >> 4]
+        if self.log_level > N_NEC:
+            print(f'{type(self).__name__} : info : Processing feedback {attr.upper()}')
+        getattr(self, attr)(message)
+
+
+#  default feedback methods do nothing
+BaseMicro = type('BaseMicro', (_Base,), {name: (lambda self, message: None) for name in _Base.manage_feedback})

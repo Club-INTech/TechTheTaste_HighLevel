@@ -3,33 +3,40 @@ from base_micro import BaseMicro
 import serial
 import cmd
 import struct
+import time
 import matplotlib.pyplot as plt
 
 
-def binary(num):
-    return int(''.join('{:0>8b}'.format(c) for c in struct.pack('!f', num)), 2)
+def float_to_int(num):
+    # integer from the IEEE-754 representation of a float
+    return sum(b << (8 * i) for i, b in enumerate(struct.pack('f', num)))
 
 
-def float_(var):
-    num = f'{(32 - len(bin(int(var[1:].hex(), 16))[2:])) * "0"}{bin(int(var[1:].hex(), 16))[2:]}'
-    return struct.unpack('!f', struct.pack('!I', int(num, 2)))[0]
+def bytes_to_float(buffer):
+    # IEEE-754 representation of a float from bytes
+    return struct.unpack('!f', buffer)[0]
 
 
-cmds = {'prompt': '(RaspShell) > ', 'wait': (lambda self, type_: None)}
+# prepares cmd.Cmd inheritance
+cmds = {'prompt': '(RaspShell) > '}
 
 
+# decorator because I am too lazy to write 'do_' before my command names
 def command(func):
     cmds[f'do_{func.__name__[(func.__name__[0] == "_"):]}'] = func
     return func
 
 
+# Verifies if arguments are in a given range
 def ranged_int(name, value: str, l_=0, h=16):
-    b = not (value.isdigit() and l_ <= int(value) < h)
+    print(value, int(value))
+    b = not ((value.isdigit() or (value[1:].isdigit() and value[0] == '-')) and l_ <= int(value) < h)
     if b:
         print(f'{name} must be an integer between {l_} and {h-1}')
     return b
 
 
+# Verifies if the arguement can be converted to float
 def check_float(name, value: str):
     try:
         float(value)
@@ -39,6 +46,7 @@ def check_float(name, value: str):
         return True
 
 
+# decorator to check the number of arguments
 def arg_number(nb):
     def decor(f):
         def fun(self, line):
@@ -52,6 +60,7 @@ def arg_number(nb):
     return decor
 
 
+# Verifies if arguements are given by pair
 def test_pair(lst):
     if len(lst) & 1:
         print('Arguments work by pairs')
@@ -59,6 +68,7 @@ def test_pair(lst):
     return False
 
 
+# Divides a list into pairs
 def pair(lst):
     for i in range(0, len(lst), 2):
         yield lst[i], lst[i+1]
@@ -180,9 +190,12 @@ Expects at least one pair.
 @command
 @arg_number(2)
 def set_var(self, args):
-    if args[0] not in VAR_NAMES or check_float('value', args[1]):
+    if args[0] not in VAR_NAMES:
+        print(f'Unknown variable {args[0]}')
         return
-    self.send(self.make_message(VAR_SET, VAR_DICT[args[0]], binary(float(args[1]))))
+    if check_float('value', args[1]):
+        return
+    self.send(self.make_message(VAR_SET, VAR_DICT[args[0]], float_to_int(float(args[1]))))
     self.wait(VAR_SET)
 
 
@@ -199,18 +212,19 @@ Available variables:
 @arg_number(1)
 def get_var(self, args):
     if args[0] not in VAR_NAMES:
+        print(f'Unknown variable {args[0]}')
         return
     self.send(self.make_message(VAR_GET, VAR_DICT[args[0]], 0))
     self.wait(VAR_GET)
 
 
 get_var.__doc__ = """
-Command: set_var
-set_var [var_name] [value]
-sets the variable <var_name> to <value> in the raspberry Pico chip
+Command: get_var
+get_var [var_name]
+gets the variable <var_name> from the raspberry Pico chip
 Available variables: 
 {}
-""".format(' - ' + '\n - '.join(VAR_DICT.keys()))
+""".format(' - ' + '\n - '.join(VAR_NAMES))
 
 
 @command
@@ -234,49 +248,90 @@ def _exit(self, line):
     return 1
 
 
+@command
+@arg_number(2)
+def lidar(self, args):
+    delay, duration = args
+    if check_float('delay', delay) or check_float('duration', duration):
+        return
+    self.lidar_stops.append((delay, duration))
+
+
+lidar.__doc__ = """
+Command: lidar
+lidar [delay] [duration]
+Next movement order will be interrupted by a lidar stop after <delay> s for <duration> s
+Can be used multiple times
+"""
+
 BaseShell = type('BaseShell', (cmd.Cmd, BaseMicro), cmds)
 
 
 class Shell(BaseShell):
     track = False
-    receive = BaseMicro.receive
+    waiting = False
+    waited_id = None
 
-    def __init__(self, port, baudrate, log_level=NECESSARY):
+    def __init__(self, port, log_level=NECESSARY):
         BaseShell.__init__(self)
-        self.serial = serial.Serial(port, baudrate)
+        self.serial = serial.Serial(port, BAUDRATE)
+        self.serial.read(self.serial.in_waiting)
         self.log_level = log_level
+        self.tracked_values = []
+        self.lidar_stops = []
+
+    def var_get(self, message):
+        print(f'Variable {VAR_NAMES[message[0] & 0xf]} = {bytes_to_float(message[1:])}')
+
+    def terminaison(self, message):
+        #  the waited order is finished
+        if message[0] & 0xf == self.waited_id:
+            self.waiting = False
+            if self.tracked_values:
+                if self.track:
+                    plt.plot(self.tracked_values)
+                    plt.show()
+                else:
+                    self.send(self.make_massage(TRACK, self.track, 0))
+                self.tracked_values = []
+
+    def tracked(self, message):
+        self.tracked_values.append(bytes_to_float(message[1:]))
 
     def wait(self, order_id):
-        tracked_values = []
-        waiting = True
+        # waits for the terminaison of the given order_id
+        self.waited_id = order_id
+        self.waiting = True
 
-        while waiting:
-            v = self.receive()
-            if order_id == VAR_GET and v[0] >> 4 == VAR:
-                print(f'Variable {VAR_NAMES[v[0] & 0xf]} = {float_(v)}')
-            elif v[0] >> 4 == TER and v[0] & 0xf == order_id:
-                waiting = False
-                if tracked_values:
-                    if not self.track:
-                        self.send(self.make_message(TRACK, self.track, 0))
-                    else:
-                        plt.plot(tracked_values)
-                        plt.show()
-            elif v[0] >> 4 == TRA:
-                tracked_values.append(float_(v))
+        date, stops, restarts = 0., (), ()
+        if self.lidar_stops and order_id in (MOV, ROT):
+            stops, restarts = zip(*((t, t + dt) for t, dt in self.lidar_stops))
+            date = time.perf_counter()
+
+        while self.waiting:
+            if self.lidar_stops and order_id in (MOV, ROT):
+                dt = time.perf_counter() - date
+                for o, lid in enumerate((stops, restarts)):
+                    pop = []
+                    for i, delay in enumerate(lid):
+                        if delay < dt:
+                            pop.insert(0, i)
+                            self.send(self.make_message(LID, o, 0))
+                    for i in pop:
+                        lid.pop(i)
+            if self.serial.in_waiting:
+                self.feedback(self.receive())
 
     def complete_set_var(self, text, line, begidx, endidx):
         if text:
             return [x for x in VAR_NAMES if x.startswith(text)]
         return VAR_NAMES
 
-    def complete_get_var(self, text, line, begidx, endidx):
-        if text:
-            return [x for x in VAR_NAMES if x.startswith(text)]
-        return VAR_NAMES
+    complete_get_var = complete_set_var
 
 
 if __name__ == '__main__':
     import sys
-    log = NECESSARY if len(sys.argv) < 3 else LOG_MODES.index(sys.argv[2])
-    Shell(sys.argv[1], 115200, log).cmdloop()
+    p = sys.argv[1]
+    level = LOG_MODES.index(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2] in LOG_MODES else NOTHING
+    Shell(p, level).cmdloop()

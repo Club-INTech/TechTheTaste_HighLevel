@@ -1,17 +1,20 @@
-from controller import get, end
+from controller import Controller
+from controller.constants import *
 from base_micro import BaseMicro
+from constants import *
 import serial
+import time
 
 
 class PS4Controll1A(BaseMicro):
-    def __init__(self, port, baudrate):
-        self.serial = serial.Serial(port, baudrate)
+    def __init__(self, port):
+        self.controller = Controller()
+        self.controller.start()
+        self.serial = serial.Serial(port, BAUDRATE)
+        self.h_speed, self.v_speed = 0, 0
 
     def nothing(self, event):
-        # void function
         pass
-
-    n = nothing
 
     def cross(self, event):
         # catch cake
@@ -30,10 +33,12 @@ class PS4Controll1A(BaseMicro):
 
     def ly(self, event):
         # move
+        self.v_speed = event.value
         print(f"Movement speed {event.value}")
 
     def rx(self, event):
         # rotate
+        self.h_speed = event.value
         print(f"Rotatating speed {event.value}")
 
     def h_arrows(self, event):
@@ -50,22 +55,39 @@ class PS4Controll1A(BaseMicro):
         elif event.value > 0:
             print("Moving kart to the bottom")
 
-    manage = (
-        type('', (), {'__getitem__': lambda self, it: PS4Controll1A.nothing})(),
-        (cross, circle, triangle) + (n,) * 10,
-        (n, ly, n, rx, n, n, h_arrows, v_arrows),
-        (n,) * 2
-    )
+    manage_event = {
+        (DIGITAL, CROSS): 'cross',
+        (DIGITAL, CIRCLE): 'circle',
+        (DIGITAL, TRIANGLE): 'triangle',
+        (ANALOG, LY): 'ly',
+        (ANALOG, RX): 'rx',
+        (ANALOG, H_ARROWS): 'h_arrows',
+        (ANALOG, V_ARROWS): 'v_arrows'
+    }
 
     def mainloop(self):
+        step = False
         while True:
-            for event in get():
-                self.manage[event.type][event.button](self, event)
+            self.make_message(CAN, 0, 0)
+            date = time.perf_counter_ns()
+            # little movement either rotation or translation
+            value = (self.h_speed, self.v_speed)[step]
+            self.make_message((ROT, MOV)[step], 0, value + 0x10000 * (value < 0))
+            step ^= True
+
+            for event in self.controller.get_events():
+                # gets the method corresponding to the event, if the event is not managed, it does nothing
+                getattr(self, self.manage_event.get((event.type, event.button), 'nothing'))(event)
+
+            # delays for 20 ms
+            while time.perf_counter_ns() - date < 20_000_00:
+                continue
 
 
 if __name__ == '__main__':
+    p = PS4Controll1A('/dev/ttyACM0')
     try:
-        PS4Controll1A('/dev/ttyACM0', 115200).mainloop()
+        p.mainloop()
     except KeyboardInterrupt:
-        end()
+        p.controller.terminate()
         print()

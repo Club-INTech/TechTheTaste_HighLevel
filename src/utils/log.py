@@ -10,7 +10,6 @@ process = ['mainProcess    :', #0
            'launcher       :'] #7
 
 
-
 def logMessage(logErrorNumber, message, processNumber):
     if (logErrorNumber <= 3) :
         log_msg = "LOG BOT : "
@@ -18,6 +17,7 @@ def logMessage(logErrorNumber, message, processNumber):
         log_msg += MessageType[logErrorNumber] 
         log_msg += message
         print(log_msg)
+
         return 1
 
     else :
@@ -26,9 +26,6 @@ def logMessage(logErrorNumber, message, processNumber):
 
 
 def logMessageOpti(logErrorNumber, message):
-    if (logErrorNumber <= 1) :
-        log_msg = "LOG BOT : "
-        log_msg += MessageType[logErrorNumber] 
-        log_msg += message
-        print(log_msg)
+    if (logErrorNumber <= 1) :        
+        print(f'LOG BOT : {MessageType[logErrorNumber]}{message}')
         return 1
