@@ -308,18 +308,26 @@ class Shell(BaseShell):
             date = time.perf_counter()
 
         while self.waiting:
-            if self.lidar_stops and order_id in (MOV, ROT):
-                dt = time.perf_counter() - date
-                for o, lid in enumerate((stops, restarts)):
-                    pop = []
-                    for i, delay in enumerate(lid):
-                        if delay < dt:
-                            pop.insert(0, i)
-                            self.send(self.make_message(LID, o, 0))
-                    for i in pop:
-                        lid.pop(i)
-            if self.serial.in_waiting:
-                self.feedback(self.receive())
+            try:
+                if self.lidar_stops and self.waited_id in (MOV, ROT):
+                    dt = time.perf_counter() - date
+                    for o, lid in enumerate((stops, restarts)):
+                        pop = []
+                        for i, delay in enumerate(lid):
+                            if delay < dt:
+                                pop.insert(0, i)
+                                self.send(self.make_message(LID, o, 0))
+                        for i in pop:
+                            lid.pop(i)
+                if self.serial.in_waiting:
+                    self.feedback(self.receive())
+            except KeyboardInterrupt:
+                if self.waited_id in (MOV, ROT):
+                    self.send(self.make_message(CAN, 0, 0))
+                    self.waited_id = CAN
+                    print(f'{type(self).__name__} : info : Now waiting for CANCEL terminaison')
+                else:
+                    self.waiting = False
 
     def complete_set_var(self, text, line, begidx, endidx):
         if text:
