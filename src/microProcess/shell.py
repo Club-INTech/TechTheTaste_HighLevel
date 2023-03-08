@@ -87,6 +87,8 @@ def rotate(self, args):
         return
     ticks = int(args[0])
     self.command[:] = -ticks, ticks
+    self.right_wheel = []
+    self.left_wheel = []
     if self.track:
         self.send(self.make_message(TRACK, 1, 0))
     self.send(self.make_message(ROT, 0, ticks + 0x10000 * (ticks < 0)))
@@ -107,6 +109,8 @@ def move(self, args):
         return
     ticks = int(args[0])
     self.command[0] = self.command[1] = ticks
+    self.right_wheel = []
+    self.left_wheel = []
     if self.track:
         self.send(self.make_message(TRACK, 1, 0))
     self.send(self.make_message(MOV, 0, ticks + 0x10000 * (ticks < 0)))
