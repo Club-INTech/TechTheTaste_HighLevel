@@ -88,7 +88,7 @@ def rotate(self, args):
     ticks = int(args[0])
     self.command[:] = -ticks, ticks
     if self.track:
-        self.send(self.make_message(TRA, 1, 0))
+        self.send(self.make_message(TRACK, 1, 0))
     self.send(self.make_message(ROT, 0, ticks + 0x10000 * (ticks < 0)))
     self.wait(ROT)
 
@@ -108,7 +108,7 @@ def move(self, args):
     ticks = int(args[0])
     self.command[0] = self.command[1] = ticks
     if self.track:
-        self.send(self.make_message(TRA, 1, 0))
+        self.send(self.make_message(TRACK, 1, 0))
     self.send(self.make_message(MOV, 0, ticks + 0x10000 * (ticks < 0)))
     self.wait(MOV)
 
@@ -296,7 +296,7 @@ class Shell(BaseShell):
                 if self.track:
                     plt.plot(self.tracked_values)
                     plt.show()
-                self.send(self.make_massage(TRACK, self.track, 0))
+                self.send(self.make_message(TRACK, self.track, 0))
                 self.tracked_values = []
             if self.right_wheel:
                 if self.track:
