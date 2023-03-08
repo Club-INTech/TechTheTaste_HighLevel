@@ -345,9 +345,12 @@ class Shell(BaseShell):
                     self.feedback(self.receive())
             except KeyboardInterrupt:
                 if self.waited_id in (MOV, ROT):
+                    if self.track:
+                        self.send(self.make_message(TRACK, 0, 0))
                     self.send(self.make_message(CAN, 0, 0))
                     self.waited_id = CAN
                     print(f'{type(self).__name__} : info : Now waiting for CANCEL terminaison')
+
                 else:
                     self.waiting = False
 
