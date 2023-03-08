@@ -267,6 +267,14 @@ Next movement order will be interrupted by a lidar stop after <delay> s for <dur
 Can be used multiple times
 """
 
+@command
+@arg_number(0)
+def show_vars(self, args):
+    for i in range(len(VAR_NAMES)):
+        self.send(self.make_message(VAR_GET, i, 0))
+        self.wait(VAR_GET)
+
+
 BaseShell = type('BaseShell', (cmd.Cmd, BaseMicro), cmds)
 
 
@@ -300,6 +308,7 @@ class Shell(BaseShell):
                 self.tracked_values = []
             if self.right_wheel:
                 self.send(self.make_message(TRACK, 0, 0))
+                self.serial.read(self.serial.in_waiting)
                 if self.track:
                     plt.plot(self.right_wheel, label='Right Wheel')
                     plt.plot(self.left_wheel, label='Left Wheel')
