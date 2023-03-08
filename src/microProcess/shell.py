@@ -86,7 +86,7 @@ def rotate(self, args):
     if ranged_int('ticks', args[0], MIN_TICKS, MAX_TICKS):
         return
     ticks = int(args[0])
-    self.command[:] = -ticks, ticks
+    self.command = ticks
     self.right_wheel = []
     self.left_wheel = []
     if self.track:
@@ -108,7 +108,7 @@ def move(self, args):
     if ranged_int('ticks', args[0], MIN_TICKS, MAX_TICKS):
         return
     ticks = int(args[0])
-    self.command[0] = self.command[1] = ticks
+    self.command = ticks
     self.right_wheel = []
     self.left_wheel = []
     if self.track:
@@ -295,7 +295,7 @@ class Shell(BaseShell):
         self.tracked_values = []
         self.lidar_stops = []
         self.left_wheel, self.right_wheel = [], []
-        self.command = [0, 0]
+        self.command = 0
 
     def var_get(self, message):
         print(f'Variable {VAR_NAMES[message[0] & 0xf]} = {bytes_to_float(message[1:])}')
@@ -315,9 +315,9 @@ class Shell(BaseShell):
                 if self.track and message[0] & 0xf in (MOV, ROT, CAN):
                     self.send(self.make_message(TRACK, 0, 0))
                     plt.plot(self.right_wheel, label='Right Wheel')
-                    plt.plot(self.left_wheel, label='Left Wheel')
-                    plt.plot((0, len(self.left_wheel)), (self.command[0],) * 2, label='Left target')
-                    plt.plot((0, len(self.left_wheel)), (self.command[1],) * 2, label='Right target')
+                    plt.plot([-x for x in self.left_wheel], label='Left Wheel')
+                    plt.plot((0, len(self.left_wheel)), (self.command,) * 2, label='Left target')
+                    plt.plot((0, len(self.left_wheel)), (self.command,) * 2, label='Right target')
                     plt.legend()
                     plt.show()
                 self.right_wheel = []
