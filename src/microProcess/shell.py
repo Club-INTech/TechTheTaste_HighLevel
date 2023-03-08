@@ -293,12 +293,13 @@ class Shell(BaseShell):
         if message[0] & 0xf == self.waited_id:
             self.waiting = False
             if self.tracked_values:
+                self.send(self.make_message(TRACK, self.track, 0))
                 if self.track:
                     plt.plot(self.tracked_values)
                     plt.show()
-                self.send(self.make_message(TRACK, self.track, 0))
                 self.tracked_values = []
             if self.right_wheel:
+                self.send(self.make_message(TRACK, self.track, 0))
                 if self.track:
                     plt.plot(self.right_wheel, label='Right Wheel')
                     plt.plot(self.left_wheel, label='Left Wheel')
@@ -306,7 +307,6 @@ class Shell(BaseShell):
                     plt.plot((0, len(self.left_wheel)), (self.command[1],) * 2, label='Right target')
                     plt.legend()
                     plt.show()
-                self.send(self.make_message(TRACK, self.track, 0))
                 self.right_wheel = []
                 self.left_wheel = []
 
