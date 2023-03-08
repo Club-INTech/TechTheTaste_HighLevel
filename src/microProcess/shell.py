@@ -86,6 +86,7 @@ def rotate(self, args):
     if ranged_int('ticks', args[0], MIN_TICKS, MAX_TICKS):
         return
     ticks = int(args[0])
+    self.command[:] = -ticks, ticks
     self.send(self.make_message(ROT, 0, ticks + 0x10000 * (ticks < 0)))
     self.wait(ROT)
 
@@ -103,6 +104,7 @@ def move(self, args):
     if ranged_int('ticks', args[0], MIN_TICKS, MAX_TICKS):
         return
     ticks = int(args[0])
+    self.command[0] = self.command[1] = ticks
     self.send(self.make_message(MOV, 0, ticks + 0x10000 * (ticks < 0)))
     self.wait(MOV)
 
@@ -278,6 +280,8 @@ class Shell(BaseShell):
         self.log_level = log_level
         self.tracked_values = []
         self.lidar_stops = []
+        self.left_wheel, self.right_wheel = [], []
+        self.command = [0, 0]
 
     def var_get(self, message):
         print(f'Variable {VAR_NAMES[message[0] & 0xf]} = {bytes_to_float(message[1:])}')
@@ -293,6 +297,25 @@ class Shell(BaseShell):
                 else:
                     self.send(self.make_massage(TRACK, self.track, 0))
                 self.tracked_values = []
+            if self.right_wheel:
+                if self.track:
+                    plt.plot(self.right_wheel, label='Right Wheel')
+                    plt.plot(self.left_wheel, label='Left Wheel')
+                    plt.plot((0, len(self.left_wheel)), (self.command[0],) * 2, label='Left target')
+                    plt.plot((0, len(self.left_wheel)), (self.command[1],) * 2, label='Right target')
+                    plt.legend()
+                    plt.show()
+                else:
+                    self.send(self.make_massage(TRACK, self.track, 0))
+                self.right_wheel = []
+                self.left_wheel = []
+
+
+    def wheel_update(self, message):
+        left = (message[1] << 8) + message[2]
+        right = (message[3] << 8) + message[4]
+        self.right_wheel.append(right - 0x10000 * (right >= 0x1000))
+        self.left_wheel.append(left - 0x10000 * (left >= 0x1000))
 
     def tracked(self, message):
         self.tracked_values.append(bytes_to_float(message[1:]))
