@@ -293,13 +293,13 @@ class Shell(BaseShell):
         if message[0] & 0xf == self.waited_id:
             self.waiting = False
             if self.tracked_values:
-                self.send(self.make_message(TRACK, self.track, 0))
+                self.send(self.make_message(TRACK, 0, 0))
                 if self.track:
                     plt.plot(self.tracked_values)
                     plt.show()
                 self.tracked_values = []
             if self.right_wheel:
-                self.send(self.make_message(TRACK, self.track, 0))
+                self.send(self.make_message(TRACK, 0, 0))
                 if self.track:
                     plt.plot(self.right_wheel, label='Right Wheel')
                     plt.plot(self.left_wheel, label='Left Wheel')
@@ -345,8 +345,6 @@ class Shell(BaseShell):
                     self.feedback(self.receive())
             except KeyboardInterrupt:
                 if self.waited_id in (MOV, ROT):
-                    if self.track:
-                        self.send(self.make_message(TRACK, 0, 0))
                     self.send(self.make_message(CAN, 0, 0))
                     self.waited_id = CAN
                     print(f'{type(self).__name__} : info : Now waiting for CANCEL terminaison')
