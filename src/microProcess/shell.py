@@ -301,15 +301,15 @@ class Shell(BaseShell):
         if message[0] & 0xf == self.waited_id:
             self.waiting = False
             if self.tracked_values:
-                self.send(self.make_message(TRACK, 0, 0))
-                if self.track:
+                if self.track and message[0] & 0xf in (MOV, ROT):
+                    self.send(self.make_message(TRACK, 0, 0))
                     plt.plot(self.tracked_values)
                     plt.show()
                 self.tracked_values = []
             if self.right_wheel:
-                self.send(self.make_message(TRACK, 0, 0))
                 self.serial.read(self.serial.in_waiting)
-                if self.track:
+                if self.track and message[0] & 0xf in (MOV, ROT):
+                    self.send(self.make_message(TRACK, 0, 0))
                     plt.plot(self.right_wheel, label='Right Wheel')
                     plt.plot(self.left_wheel, label='Left Wheel')
                     plt.plot((0, len(self.left_wheel)), (self.command[0],) * 2, label='Left target')
