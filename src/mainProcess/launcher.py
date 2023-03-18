@@ -5,6 +5,7 @@ import mainProcess
 from hokuyolx import hokuyo
 import time
 import random
+import logging
 
 
 #path managing
@@ -19,7 +20,7 @@ from lpastarProcess.LPAStarPathFinder import LPAStarPathFinder
 from processManager import config1
 from com import RxPipe
 from testing import generate_obstacles
-import lidarProcess 
+# TODO change lidar on lidarProcess import lidarProcess 
 
 from multiprocessing import Process, Pipe, Value, current_process
 
@@ -28,19 +29,43 @@ Xrobot = Value('i', 0) #position X of the robot should not be over 12 000 ticks
 Yrobot = Value('i', 0) #position Y of the robot should not be over 12 000 ticks
 XYinitialised = Value('i', 0) # to know if Xrobot and Yrobothave been initialised by the cam process, 0 = false, 1 = True
 
+def createLog(name, filepath, loggingLevel):
+    logger = logging.getLogger(name)
+    logger.setLevel(loggingLevel)
+    handler = logging.FileHandler(filepath)
+    handler.setFormatter( logging.Formatter('%(message)s') )
+    logger.addHandler(handler)
+    logger.addHandler(logging.StreamHandler())
+    logger.info('')
+    logger.info('')
+    logger.info('')
+    logger.info('---------------------------------------------------------------------------------')
+    logger.info('init logging for ' + name + ' done')
+    logger.info('---------------------------------------------------------------------------------')
+    handler.setFormatter( logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') )
+    logger.info("just test :)")
+    return logger
+
 class Launcher :
     def __init__(self, version):
         self.version=version
+        #initLogin
+        self.loggerMain = createLog('Main', 'log/main.txt', logging.INFO)
+        self.loggerLpa = createLog('Lpa', 'log/lpa.txt', logging.INFO)
+        self.loggerLidar = createLog('Lidar', 'log/lidar.txt', logging.INFO)
+        self.loggerCom2 = createLog('Com2', 'log/com2.txt', logging.INFO)
+        self.loggerCom1 = createLog('Com1', 'log/com1.txt', logging.INFO)
 
     def processMain(self, pipeMicro1, pipeMicro2, lidar_main_pipeMain, lpastar_main_pipMain, Xrobot, Yrobot):
         log.logMessage(2, "start the main processus", 0)
         mainProcss = mainProcess.mainProcess(pipeMicro1, pipeMicro2, lpastar_main_pipMain, lidar_main_pipeMain)
         mainProcss.run()
 
-    def processLIDAR(self,lidar_main_pipeLidar):
-        log.logMessage(2, "start the lidar processus", 1)
-        lidar=lidarProcess.Lili()
-        lidar.lidarstop(lidar_main_pipeLidar)
+    # TODO, removre the comment
+    #def processLIDAR(self,lidar_main_pipeLidar):
+    #    log.logMessage(2, "start the lidar processus", 1)
+    #    lidar=lidarProcess.Lili()
+    #    lidar.lidarstop(lidar_main_pipeLidar)
         
     def processMicro1(self):
         log.logMessage(2, "start the micro1 processus", 2)
@@ -80,10 +105,13 @@ class Launcher :
         if (self.version == 1):
             return config1(self, self.processCamBot, self.processCamMat, self.processMicro1, self.processMicro2, self.processLpastar, self.processMain, self.processLIDAR, Xrobot, Yrobot, XYinitialised)
         
-            
+
+
+
 if __name__ == "__main__" :
     starter = Launcher(1)
-    list = starter.launch()
+    # TODO, repair LiDAR process
+    # list = starter.launch()
 
     
     
