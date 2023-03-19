@@ -17,9 +17,9 @@ FEEDBACKS = 'ACKNOWLEDGEMENT', 'TERMINAISON', 'VAR_GET', 'TRACKED', 'ERROR', 'WH
 
 # orders
 # c.f. https://docs.google.com/spreadsheets/d/1NDprMKYs9L7S2TkqgACDOh6OKDJRHhz_LrTCKmEuD-k/edit#gid=0
-LID, MOV, ROT, CAN, MOT_VALUE, MOT_TIME, PUM, MOTS, MOTS_A, VAR_SET, VAR_GET, TRACK, _, _, _, _ = range(16)
+LID, MOV, ROT, CAN, ARM, _, PUM, _, _, VAR_SET, VAR_GET, TRACK, _, _, _, _ = range(16)
 ORDERS = (
-    'LIDAR', 'MOVE', 'ROT', 'CANCEL', 'MOT_VALUE', 'MOT_TIME', 'PUMPS', 'MOTS', 'MOTS_A', 'VAR_SET', 'VAR_GET', 'TRACK',
+    'LIDAR', 'MOVE', 'ROT', 'CANCEL', 'ARM', '', 'PUMPS', '', '', 'VAR_SET', 'VAR_GET', 'TRACK',
     '', '', '', ''
 )
 
@@ -30,15 +30,25 @@ CATEGORIES = 'MOVEMENT', 'ACTION', 'OTHER'
 
 # correspondance of an order type to each order
 TYPES = (
-    OTHER, MOVEMENT, MOVEMENT, MOVEMENT, ACTION, ACTION, ACTION, ACTION, ACTION, OTHER, OTHER, OTHER, None, None, None,
+    OTHER, MOVEMENT, MOVEMENT, MOVEMENT, ACTION, None, ACTION, None, None, OTHER, OTHER, OTHER, None, None, None,
     None
 )
+
+
+# controllers
+PICO1, PICO2, ARDUINO, WHO_CARES = range(4)
+# correspondance of a controller to each order
+DESTINATION = (
+    PICO1, PICO1, PICO1, PICO1, PICO2, WHO_CARES, PICO2, WHO_CARES, WHO_CARES, PICO1, PICO1, PICO1, WHO_CARES,
+    WHO_CARES, WHO_CARES, WHO_CARES
+)
+
 
 # --------------------------------------------------------- Physics ----------------------------------------------------
 
 AXLE_TRACK_1A, AXLE_TRACK_2A = .213, .274  # in m, +- 1mm, measurements 18/02/2023 ~17h
 TICKS_PER_REVOLUTION = 1024  # arbitrary
-WHEEL_RADIUS = .034  # in m, +- 0.1mm, measurements 18/02/2023 ~17h coupling both wheels of both robots
+WHEEL_RADIUS = .0340  # in m, +- 0.1mm, measurements 18/02/2023 ~17h coupling both wheels of both robots
 
 
 # --------------------------------------------------------- Shell.py ---------------------------------------------------
