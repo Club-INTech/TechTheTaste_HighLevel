@@ -80,6 +80,15 @@ def debugRaspy(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
 
     log.logMessage(2,"simulation finished", 0)
     
+def debugSimpleOrder(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    log.logMessage(2,"scenario test simple order", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    
+    OrderManager.moovTo(30,20)
+    
+    log.logMessage(2,"simulation finished", 0)
+    
 
 
 
