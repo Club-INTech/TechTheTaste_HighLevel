@@ -2,7 +2,8 @@
 from email.policy import strict
 import sys, os
 import mainProcess
-from hokuyolx import hokuyo
+# TODO, remove the comment
+#from hokuyolx import hokuyo
 import time
 import random
 import logging
