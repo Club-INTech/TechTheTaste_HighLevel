@@ -55,15 +55,18 @@ class Launcher :
         self.loggerLidar = createLog('Lidar', 'log/lidar.txt', logging.INFO)
         self.loggerCom2 = createLog('Com2', 'log/com2.txt', logging.INFO)
         self.loggerCom1 = createLog('Com1', 'log/com1.txt', logging.INFO)
+        
+        self.launch()
 
     def processMain(self, pipeMicro1, pipeMicro2, lidar_main_pipeMain, lpastar_main_pipMain, Xrobot, Yrobot):
         log.logMessage(2, "start the main processus", 0)
         mainProcss = mainProcess.mainProcess(pipeMicro1, pipeMicro2, lpastar_main_pipMain, lidar_main_pipeMain)
         mainProcss.run()
 
-    # TODO, removre the comment
-    #def processLIDAR(self,lidar_main_pipeLidar):
-    #    log.logMessage(2, "start the lidar processus", 1)
+    def processLIDAR(self,lidar_main_pipeLidar):
+        log.logMessage(2, "start the lidar processus", 1)
+    
+    # TODO, remove the comment
     #    lidar=lidarProcess.Lili()
     #    lidar.lidarstop(lidar_main_pipeLidar)
         
@@ -103,7 +106,17 @@ class Launcher :
     def launch(self):
         log.logMessage(2, "start launching", 7)
         if (self.version == 1):
-            return config1(self, self.processCamBot, self.processCamMat, self.processMicro1, self.processMicro2, self.processLpastar, self.processMain, self.processLIDAR, Xrobot, Yrobot, XYinitialised)
+            return config1(self, 
+                           self.processCamBot, 
+                           self.processCamMat, 
+                           self.processMicro1, 
+                           self.processMicro2, 
+                           self.processLpastar, 
+                           self.processMain, 
+                           self.processLIDAR, 
+                           Xrobot, 
+                           Yrobot, 
+                           XYinitialised)
         
 
 
