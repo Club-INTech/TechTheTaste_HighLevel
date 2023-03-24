@@ -59,7 +59,7 @@ class OrderToMicroProcress:
         #we send the global trajectory we want to do
         self.pipeToLPA.send( [1, (Xgoal,Ygoal) ] )
         data = self.pipeToLPA.recv()
-        print(data)
+        print('data = ' + data)
         Xstep,Ystep = data[0],data[1]
         log.logMessage(2,"robot is going to ("+ str(Xstep) + "," + str(Ystep) + ")", 0)
 
