@@ -84,7 +84,7 @@ class OrderToMicroProcress:
     def moovTo(self, Xgoal, Ygoal):
     #do while (pos != goalpos)
         while True:
-            Xinit, Yinit = self.getPosition()
+            Xinit, Yinit = Xrobot, Yrobot
             Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
             angle = findAngle(Xinit, Yinit, Xstep, Ystep)
             self.moovTurn(angle)
