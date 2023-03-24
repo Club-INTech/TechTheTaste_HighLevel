@@ -162,7 +162,7 @@ class LPAStarPathFinder:
             x, y, _ = self.agent.get_position(self, Xrobot, Yrobot) 
             if (x - goal[0]) ** 2 + (y - goal[1]) \
                <= (self.map.get_resolution() ** 2):
-                self.agent.stop_trajectory(lpastar_main_pipeLpastar)
+                self.agent.stop_trajectory(self,lpastar_main_pipeLpastar)
                 break
 
             # Sensor scan.
