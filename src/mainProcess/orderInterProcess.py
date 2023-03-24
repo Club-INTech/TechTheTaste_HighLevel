@@ -58,11 +58,11 @@ class OrderToMicroProcress:
     def askLPAprocess(self, Xgoal, Ygoal):
         #we send the global trajectory we want to do
         self.pipeToLPA.send( [1, (Xgoal,Ygoal) ] )
-        print('test')
         data = self.pipeToLPA.recv()
         print(data)
         Xstep,Ystep = data[0],data[1]
         log.logMessage(2,"robot is going to ("+ str(Xstep) + "," + str(Ystep) + ")", 0)
+        return Xstep, Ystep
 
 
     # all methods have clear name even though we could just need
@@ -89,14 +89,10 @@ class OrderToMicroProcress:
         while True:
             print('début')
             Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
-            print(1)
             angle = findAngle(Xinit, Yinit, Xstep, Ystep)
-            print(2)
             self.moovTurn(angle)
-            print(3)
             #next function is a blocking mode function so wait for the action to be good
             self.smallMoovForward(sqrt( (Xstep - Xinit)**2 + (Ystep - Yinit)**2 ))
-            print(4)
             if (Xstep != Xgoal) and (Ystep != Ygoal) :
                 print('dans le if')
                 break
