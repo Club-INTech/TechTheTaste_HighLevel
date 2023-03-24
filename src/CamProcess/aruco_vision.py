@@ -24,7 +24,7 @@ def detect(frame):
 
 class Camera:
     middle = np.zeros((2,), np.int32)
-    alpha, beta, x, y, z, cos_a, cos_b, sin_a, sin_b = 0., 1.5, 40., -20., 110., 0., 0., 0., 0.
+    alpha, beta, x, y, z, cos_a, cos_b, sin_a, sin_b = 0.1, .6, 60., -50., 100., 0., 0., 0., 0.
     vec, xp, yp = np.zeros((3, 3), float)
     kfp: float
     old_dist = None
@@ -103,8 +103,12 @@ class Camera:
             tuple(self.render(real_positions[id_]) for id_ in IDS),
             tuple(screen_positions[id_] for id_ in IDS)
         )
-        if self.old_dist is None or self.old_dist > 5. or tmp_dist > 10.:
+        print(f' {tmp_dist = }', end='')
+        if self.old_dist is None or self.old_dist > 5. or tmp_dist > 15.:
+            if tmp_dist > 15.:
+                self.old_dist = tmp_dist
             new, new_vec = self.find_physics(screen_positions)
+            print(f' {new = }', end='')
             if self.old_dist is None or self.old_dist > new:
                 self.old_dist = new
                 self.alpha, self.beta, self.x, self.y, self.z = new_vec

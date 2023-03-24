@@ -32,9 +32,10 @@ while running and cv2.getWindowProperty(win_name, cv2.WND_PROP_VISIBLE) > 0:
 
 
         if all(x in screen_positions for x in (20, 21, 22, 23)):
+            if cam.old_dist is not None:
+                print(f'\r{cam.old_dist = :.2f}, {cam.x = :.3f}, {cam.y = :.3f}, {cam.z = :.3f}, {cam.alpha = :.3f}, {cam.beta = :.3f}', end='')
             cam.update_physics(screen_positions)
             anchor_tag_render = {id_: cam.render(point) for id_, point in real_positions.items()}
-            print(f'\r{cam.old_dist = :.2f}, {cam.x = :.3f}, {cam.y = :.3f}, {cam.z = :.3f}, {cam.alpha = :.3f}, {cam.beta = :.3f}', end='')
 
         cv2.imshow(win_name, frame)
     while running and (key := cv2.pollKey()) >= 0:
