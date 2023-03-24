@@ -161,9 +161,8 @@ class LPAStarPathFinder:
             # Break if the agent has reached the goal.
             x, y, _ = self.agent.get_position(self, Xrobot, Yrobot) 
             if (x - goal[0]) ** 2 + (y - goal[1]) ** 2 \
-                <=10:
-            #   <= (self.map.get_resolution() ** 2):
-                #lpastar_main_pipeLpastar.send(shrunk_vertex_path[1])
+                <= (self.map.get_resolution() ** 2):
+    
                 self.agent.stop_trajectory(self,lpastar_main_pipeLpastar)
                 break
 
