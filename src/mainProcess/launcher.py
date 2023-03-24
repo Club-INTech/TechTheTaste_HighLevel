@@ -82,11 +82,10 @@ class Launcher :
         
     def processCamMat(self, CamMat_Lpastar_pipeCamMat):
         log.logMessage(2, "start the camMat processus", 5)
-        
+        obstacles = generate_obstacles()
         while True :
             if CamMat_Lpastar_pipeCamMat.poll():
                 if CamMat_Lpastar_pipeCamMat.recv() == 0 :
-                    obstacles = generate_obstacles()
                     CamMat_Lpastar_pipeCamMat.send(obstacles)
                     #RxPipe(CamMat_Lpastar_pipeCamMat)
         
