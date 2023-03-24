@@ -60,7 +60,7 @@ class OrderToMicroProcress:
         self.pipeToLPA.send( [1, (Xgoal,Ygoal) ] )
         print('test')
         data = self.pipeToLPA.recv()
-        print('data = ' + data)
+        print(data)
         Xstep,Ystep = data[0],data[1]
         log.logMessage(2,"robot is going to ("+ str(Xstep) + "," + str(Ystep) + ")", 0)
 
