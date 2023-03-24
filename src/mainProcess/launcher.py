@@ -101,6 +101,7 @@ class Launcher :
                 goal = lpastar_main_pipeLpastar.recv()
                 X = Xrobot.value
                 Y = Yrobot.value
+                print((X,Y), goal)
                 lpastar.find_path(goal[1], CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar, X, Y) #lpastarProcess needs CamBotProcess and MainProcess
                 
     
