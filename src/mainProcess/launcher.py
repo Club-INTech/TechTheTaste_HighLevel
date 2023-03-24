@@ -93,14 +93,16 @@ class Launcher :
         
     def processLpastar(self, lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, Xrobot, Yrobot):
         log.logMessage(2, "start the lpastar processus", 6)
-        lpastar = LPAStarPathFinder()
-        
-        while True :
-            if lpastar_main_pipeLpastar.poll():
-                goal = lpastar_main_pipeLpastar.recv()
-                X = Xrobot.value
-                Y = Yrobot.value
-                lpastar.find_path(goal[1], CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar, X, Y) #lpastarProcess needs CamBotProcess and MainProcess
+        # TODO, remove the comment
+        #
+        #lpastar = LPAStarPathFinder()
+        #
+        #while True :
+        #    if lpastar_main_pipeLpastar.poll():
+        #        goal = lpastar_main_pipeLpastar.recv()
+        #        X = Xrobot.value
+        #        Y = Yrobot.value
+        #        lpastar.find_path(goal[1], CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar, X, Y) #lpastarProcess needs CamBotProcess and MainProcess
                 
     
     
