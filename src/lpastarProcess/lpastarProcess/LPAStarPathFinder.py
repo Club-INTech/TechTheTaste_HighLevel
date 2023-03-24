@@ -175,7 +175,7 @@ class LPAStarPathFinder:
                                 self
                                 .sensor
                                 .scan(self, conn_sensor = CamMat_Lpastar_pipeLpastar,origin=self.agent.get_position(self, Xrobot, Yrobot)))
-            print(current_obstacles)
+            print(new_obstacles)
             # If there is difference between previous
             # obstacles and current obstacles.
             if not collections.Counter(current_obstacles) \
