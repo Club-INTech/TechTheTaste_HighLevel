@@ -58,6 +58,7 @@ class OrderToMicroProcress:
     def askLPAprocess(self, Xgoal, Ygoal):
         #we send the global trajectory we want to do
         self.pipeToLPA.send( [1, (Xgoal,Ygoal) ] )
+        print('test')
         data = self.pipeToLPA.recv()
         print('data = ' + data)
         Xstep,Ystep = data[0],data[1]
