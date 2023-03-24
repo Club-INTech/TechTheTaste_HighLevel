@@ -2,6 +2,8 @@ import numpy as np
 import cv2
 import scipy
 from frechetdist import frdist
+import pyrealsense2 as rs
+
 
 dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
 parameters = cv2.aruco.DetectorParameters()
@@ -28,7 +30,9 @@ class Camera:
     vec, xp, yp = np.zeros((3, 3), float)
     kfp: float
     old_dist = None
-
+    anchor_tag_render: dict
+    error_sensivity: float
+    movement_sensivity: float
     # scipy.minimize bounds:
     #         |        alpha        |  |   beta    |  |    x   |  |    y     |  |    z    |
     bounds = ((-np.pi / 4, np.pi / 4), (0., np.pi/2), (0., 100.), (-90., -10.), (70., 130.))
@@ -103,12 +107,9 @@ class Camera:
             tuple(self.render(real_positions[id_]) for id_ in IDS),
             tuple(screen_positions[id_] for id_ in IDS)
         )
-        print(f' {tmp_dist = }', end='')
-        if self.old_dist is None or self.old_dist > 5. or tmp_dist > 15.:
-            if tmp_dist > 15.:
-                self.old_dist = tmp_dist
+        if self.old_dist is None or self.old_dist > self.error_sensivity or tmp_dist > self.movement_sensivity:
             new, new_vec = self.find_physics(screen_positions)
-            print(f' {new = }', end='')
+            self.old_dist = tmp_dist
             if self.old_dist is None or self.old_dist > new:
                 self.old_dist = new
                 self.alpha, self.beta, self.x, self.y, self.z = new_vec
@@ -121,6 +122,9 @@ class LogitechCamera(Camera):
     resolution = 1920, 1080
     middle = np.int32(np.array(.5) * resolution)
 
+    error_sensivity = 5.
+    movement_sensivity = 15.
+
     # gain de transformation cm -> pixel
     kfp = 1152.0  # 1152.
 
@@ -129,9 +133,32 @@ class LogitechCamera(Camera):
         self.vid.set(cv2.CAP_PROP_FRAME_WIDTH, self.resolution[0])
         self.vid.set(cv2.CAP_PROP_FRAME_HEIGHT, self.resolution[1])
         self.compute_vars()
+        self.anchor_tag_render = {}
 
     def next_frame(self):
         ret, frame = self.vid.read()
         if ret:
             return frame[::-1, ::-1, :]
         return None
+
+
+class RealSense(Camera):
+    resolution = 640, 480
+    middle = np.int32(np.array(.5) * resolution)
+    alpha, beta, x, y, z = -0.0412, 0.700, 35., -63.25, 105
+    kfp = 589.  # test_value
+
+    error_sensivity = 8.
+    movement_sensivity = 12.
+
+    def __init__(self):
+        self.pipeline = rs.pipeline()
+        config = rs.config()
+        config.enable_stream(rs.stream.color, 640, 480, rs.format.bgr8, 30)
+        self.pipeline.start(config)
+        self.anchor_tag_render = {}
+        self.compute_vars()
+
+    def next_frame(self):
+        frame = self.pipeline.wait_for_frames().get_color_frame()
+        return np.asanyarray(frame.get_data()) if frame else None
