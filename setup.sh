@@ -1,4 +1,4 @@
-#!/bin/bash
+#! /bin/bash
 
 mkdir log
 touch log/com1.txt

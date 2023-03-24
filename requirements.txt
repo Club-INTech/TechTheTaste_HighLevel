@@ -3,3 +3,8 @@ pyserial~=3.5
 numpy~=1.24.1
 matplotlib~=3.6.3
 typing_extensions
+
+opencv-python~=4.7.0.72
+scipy~=1.10.1
+frechetdist~=0.6
+pyrealsense2~=2.53.1.4623
