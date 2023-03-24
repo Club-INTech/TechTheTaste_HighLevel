@@ -85,16 +85,14 @@ class OrderToMicroProcress:
     # to moov the robot to the point Xgoal,Ygoal
     def moovTo(self, Xgoal, Ygoal):
     #do while (pos != goalpos)
-        Xinit, Yinit = Xrobot, Yrobot
+        Xinit, Yinit = Xrobot.value, Yrobot.value
         while True:
-            print('début')
             Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
             angle = findAngle(Xinit, Yinit, Xstep, Ystep)
             self.moovTurn(angle)
             #next function is a blocking mode function so wait for the action to be good
             self.smallMoovForward(sqrt( (Xstep - Xinit)**2 + (Ystep - Yinit)**2 ))
             if (Xstep != Xgoal) and (Ystep != Ygoal) :
-                print('dans le if')
                 break
 
     # this function should only be used for small moov
