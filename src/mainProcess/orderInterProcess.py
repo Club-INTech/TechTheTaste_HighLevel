@@ -84,15 +84,20 @@ class OrderToMicroProcress:
     # to moov the robot to the point Xgoal,Ygoal
     def moovTo(self, Xgoal, Ygoal):
     #do while (pos != goalpos)
+        Xinit, Yinit = Xrobot, Yrobot
         while True:
-            Xinit, Yinit = Xrobot, Yrobot
             Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
+            print(1)
             angle = findAngle(Xinit, Yinit, Xstep, Ystep)
+            print(2)
             self.moovTurn(angle)
+            print(3)
             #next function is a blocking mode function so wait for the action to be good
             self.smallMoovForward(sqrt( (Xstep - Xinit)**2 + (Ystep - Yinit)**2 ))
+            print(4)
             if (Xstep != Xgoal) and (Ystep != Ygoal) :
-                break 
+                print('dans le if')
+                break
 
     # this function should only be used for small moov
     # since it is only used without the LPA* process
@@ -129,7 +134,6 @@ class OrderToMicroProcress:
         self.pipeToMicro2(6)
         self.pipeToMicro2(bitCode)
         log.logMessage(3, "pump actualised", 0)
-
 
 
 
