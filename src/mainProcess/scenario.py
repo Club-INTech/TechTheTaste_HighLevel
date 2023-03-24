@@ -87,6 +87,7 @@ def debugSimpleOrder(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     print('order manager was launched')
     OrderManager.moovTo(30,20)
     
+    print('order manager was done')
     log.logMessage(2,"simulation finished", 0)
     
 
