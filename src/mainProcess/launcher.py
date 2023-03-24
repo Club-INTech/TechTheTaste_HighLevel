@@ -87,6 +87,7 @@ class Launcher :
             if CamMat_Lpastar_pipeCamMat.poll():
                 if CamMat_Lpastar_pipeCamMat.recv() == 0 :
                     obstacles = generate_obstacles()
+                    print(obstacles)
                     CamMat_Lpastar_pipeCamMat.send(obstacles)
                     #RxPipe(CamMat_Lpastar_pipeCamMat)
         
