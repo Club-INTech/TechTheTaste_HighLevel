@@ -203,6 +203,7 @@ class LPAStarPathFinder:
                     
                     #conn.send(model_path[0]) #renvoie chaque position
                     #conn.send(shrunk_path[0]) #renvoie seulement les positions qui changent
+                    print(shrunk_vertex_path)
                     lpastar_main_pipeLpastar.send(shrunk_vertex_path[1]) #le prochain step
                     break
                 except PathDoesNotExistException:
