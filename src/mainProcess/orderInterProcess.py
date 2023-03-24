@@ -93,6 +93,7 @@ class OrderToMicroProcress:
             #next function is a blocking mode function so wait for the action to be good
             self.smallMoovForward(sqrt( (Xstep - Xinit)**2 + (Ystep - Yinit)**2 ))
             if (Xstep != Xgoal) and (Ystep != Ygoal) :
+                print('dans le if')
                 break
 
     # this function should only be used for small moov
