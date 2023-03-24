@@ -85,7 +85,7 @@ def debugSimpleOrder(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
    
-    OrderManager.moovTo(30,20)
+    OrderManager.moovTo(1999, 2999)
     
     log.logMessage(2,"simulation finished", 0)
 
