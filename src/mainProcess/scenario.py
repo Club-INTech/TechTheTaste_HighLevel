@@ -60,11 +60,34 @@ def debugLidar(pipeMainToMicro1, pipeMainToMicro2, pipeMainToLPA, pipeLidarToMai
         if pipeLidarToMain.poll():
             status = pipeLidarToMain.recv()
             print(status)
-        
+            
+def debugRaspy(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    log.logMessage(2,"scenario debug of LPA*", 0)
     
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    
+    log.logMessage(1, "orderManager created", 0)
 
+    OrderManager.askLPAprocess(1000, 1000)
 
+    log.logMessage(2, "asked for a small moov", 0) 
 
+    OrderManager.askLPAprocess(1999, 2999)
+
+    log.logMessage(2, "asked for a big moov", 0) 
+
+    time.sleep(2)
+
+    log.logMessage(2,"simulation finished", 0)
+    
+def debugSimpleOrder(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    log.logMessage(2,"scenario test simple order", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+   
+    OrderManager.moovTo(1000, 2000)
+    
+    log.logMessage(2,"simulation finished", 0)
 
 
 

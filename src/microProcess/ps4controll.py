@@ -19,6 +19,7 @@ class PS4Controll1A(BaseMicro):
         self.controller.start()
         self.serial = serial.Serial(port, BAUDRATE)
         self.h_speed, self.v_speed = 0, 0
+        self.left_target, self.right_target = 0, 0
 
     def nothing(self, event):
         pass
@@ -40,27 +41,22 @@ class PS4Controll1A(BaseMicro):
 
     def ly(self, event):
         # move
-        self.v_speed = -event.value // 2
+        self.v_speed = -event.value
         # print(f"Movement speed {event.value}")
 
     def rx(self, event):
         # rotate
-        self.h_speed = event.value // 2
+        self.h_speed = -event.value
         # print(f"Rotatating speed {event.value}")
 
     def h_arrows(self, event):
         # horizontal deplacement of the kart
-        if event.value < 0:
-            print("Moving kart to the left")
-        elif event.value > 0:
-            print("Moving kart to the right")
+        self.left_target = self.right_target = -8000 if event.value < 0 else 8000 if event.value > 0 else 0
 
     def v_arrows(self, event):
         # vertical displacement of the kart
-        if event.value < 0:
-            print("Moving kart to the top")
-        elif event.value > 0:
-            print("Moving kart to the bottom")
+        self.right_target = -8000 if event.value < 0 else 8000 if event.value > 0 else 0
+        self.left_target = -self.right_target
 
     manage_event = {
         (DIGITAL, CROSS): 'cross',
@@ -78,12 +74,14 @@ class PS4Controll1A(BaseMicro):
             self.send(self.make_message(CAN, 0, 0))
             date = time.perf_counter()
             # little movement either rotation or translation
-            value = (self.h_speed, self.v_speed)[step]
-            self.send(self.make_message((ROT, MOV)[step], 0, value + 0x10000 * (value < 0)))
+            value = (self.h_speed, self.v_speed)[step] // 8
+            if value:
+                self.send(self.make_message((ROT, MOV)[step], 0, value + 0x10000 * (value < 0)))
             step ^= True
-
+            left, right = self.left_target + 0x10000 * (self.left_target < 0), self.right_target + 0x10000 * (self.right_target < 0)
+            self.send(self.make_message(ARM, 0, (left << 16) | right))
             # delays for 20 ms
-            while time.perf_counter() - date < .01:
+            while time.perf_counter() - date < .02:
                 for event in self.controller.get_events():
                     # gets the method corresponding to the event, if the event is not managed, it does nothing
                     getattr(self, self.manage_event.get((event.type, event.button), 'nothing'))(event)

@@ -43,10 +43,7 @@ class GAgent:
         the worker process to stop giving movement commands. Sends
         a stop command to the agent.
         """
-        self.worker.terminate()
-        self.parent.close()
-        self.child.close()
-        self.stop(conn)
+        GAgent.stop(self,conn)
         
     def get_position(self, Xrobot, Yrobot) -> Tuple[float, float, float]:
         """ Gets agent's position.

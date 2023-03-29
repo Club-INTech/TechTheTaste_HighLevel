@@ -21,7 +21,7 @@ def bytes_to_float(buffer):
 cmds = {'prompt': '(RaspShell) > '}
 
 
-# decorator because I am too lazy to write 'do_' before my command names
+# decorator because I hate to write 'do_' before my command names
 def command(func):
     cmds[f'do_{func.__name__[(func.__name__[0] == "_"):]}'] = func
     return func
@@ -126,37 +126,56 @@ Robot will move algebraicly <ticks> ticks forward
 
 @command
 @arg_number(2)
-def motor_value(self, args):
-    if ranged_int('motor_id', args[0]) or ranged_int('t', args[1], MIN_T_MS, MAX_T_MS):
+def arm(self, args):
+    left, right = args
+    if ranged_int('left', left, MIN_TICKS, MAX_TICKS) or ranged_int('right', right, MIN_TICKS, MAX_TICKS):
         return
-    m_id, t = map(int, args)
-    self.send(self.make_message(MOT_VALUE, m_id, t))
-    self.wait(MOT_VALUE)
+    left, right = int(left), int(right)
+    left, right = left + 0x10000 * (left < 0), right + 0x10000 * (right < 0)
+    self.send(self.make_message(ARM, 0, (left << 16) | right))
+    self.wait(ARM)
 
 
-motor_value.__doc__ = f"""
-Command: motor_value
-motor_value [0 <= motor_id < 16] [{MIN_T_MS} <= t < {MAX_T_MS}]
-sets motor <motor_id> on position m + t * (M - n) / 65536 (linear interpolation)
-m, M being minimal and maximal positions of the motor
+arm.__doc__ = f"""
+Command: arm
+arm [{MIN_TICKS} <= left < {MAX_TICKS}]  [{MIN_TICKS} <= right < {MAX_TICKS}]
+Move 1A's robot arm left motor moves by <left> ticks, right motor moves by <right> ticks 
 """
 
 
-@command
-@arg_number(2)
-def motor_time(self, args):
-    if ranged_int('motor_id', args[0]) or ranged_int('ms', args[1], MIN_T_MS, MAX_T_MS):
-        return
-    m_id, ms = map(int, args)
-    self.send(self.make_message(MOT_TIME, m_id, ms))
-    self.wait(MOT_TIME)
+# @command
+# @arg_number(2)
+# def motor_value(self, args):
+#     if ranged_int('motor_id', args[0]) or ranged_int('t', args[1], MIN_T_MS, MAX_T_MS):
+#         return
+#     m_id, t = map(int, args)
+#     self.send(self.make_message(MOT_VALUE, m_id, t))
+#     self.wait(MOT_VALUE)
+#
+#
+# motor_value.__doc__ = f"""
+# Command: motor_value
+# motor_value [0 <= motor_id < 16] [{MIN_T_MS} <= t < {MAX_T_MS}]
+# sets motor <motor_id> on position m + t * (M - n) / 65536 (linear interpolation)
+# m, M being minimal and maximal positions of the motor
+# """
 
 
-motor_time.__doc__ = f"""
-Command: motor_time
-motor_time [0 <= motor_id < 16] [{MIN_T_MS} <= ms < {MAX_T_MS}]
-Rotates motor <motor_id> during <ms> ms at its velocity
-"""
+# @command
+# @arg_number(2)
+# def motor_time(self, args):
+#     if ranged_int('motor_id', args[0]) or ranged_int('ms', args[1], MIN_T_MS, MAX_T_MS):
+#         return
+#     m_id, ms = map(int, args)
+#     self.send(self.make_message(MOT_TIME, m_id, ms))
+#     self.wait(MOT_TIME)
+#
+#
+# motor_time.__doc__ = f"""
+# Command: motor_time
+# motor_time [0 <= motor_id < 16] [{MIN_T_MS} <= ms < {MAX_T_MS}]
+# Rotates motor <motor_id> during <ms> ms at its velocity
+# """
 
 
 @command
@@ -175,25 +194,25 @@ sets every pump in pump_ids on other will be off
 """
 
 
-@command
-def motors(self, line):
-    args = line.split()
-    if not len(args):
-        return print("At least one pair of arguments is expected")
-    if test_pair(args) or no_duplicate(args) or any(ranged_int('motor_id', x) or ranged_int('t', y, h=0x10000) for x, y in pair(args)):
-        return
-    self.send(self.make_message(MOTS, len(args) // 2, sum(1 << int(x) for x in args[::2])))
-    for x, y in pair(args):
-        self.send(self.make_message(MOTS_A, int(x), int(y)))
-    self.wait(MOTS)
-
-
-motors.__doc__ = f"""
-Command: motors
-motors *([0 <= motor_id < 16] [{MIN_T_MS} <= t < {MAX_T_MS}])
-identical to motor_value, but for mulitple motors at once (no duplicates allowed).
-Expects at least one pair.
-"""
+# @command
+# def motors(self, line):
+#     args = line.split()
+#     if not len(args):
+#         return print("At least one pair of arguments is expected")
+#     if test_pair(args) or no_duplicate(args) or any(ranged_int('motor_id', x) or ranged_int('t', y, h=0x10000) for x, y in pair(args)):
+#         return
+#     self.send(self.make_message(MOTS, len(args) // 2, sum(1 << int(x) for x in args[::2])))
+#     for x, y in pair(args):
+#         self.send(self.make_message(MOTS_A, int(x), int(y)))
+#     self.wait(MOTS)
+#
+#
+# motors.__doc__ = f"""
+# Command: motors
+# motors *([0 <= motor_id < 16] [{MIN_T_MS} <= t < {MAX_T_MS}])
+# identical to motor_value, but for mulitple motors at once (no duplicates allowed).
+# Expects at least one pair.
+# """
 
 
 @command
@@ -270,6 +289,7 @@ lidar [delay] [duration]
 Next movement order will be interrupted by a lidar stop after <delay> s for <duration> s
 Can be used multiple times
 """
+
 
 @command
 @arg_number(0)

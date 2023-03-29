@@ -8,7 +8,7 @@ from math import sqrt, asin
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 # import part
 import log
-
+from launcher import Xrobot,Yrobot
 
 # simple function to find the right angle
 
@@ -59,8 +59,10 @@ class OrderToMicroProcress:
         #we send the global trajectory we want to do
         self.pipeToLPA.send( [1, (Xgoal,Ygoal) ] )
         data = self.pipeToLPA.recv()
+        print(data)
         Xstep,Ystep = data[0],data[1]
         log.logMessage(2,"robot is going to ("+ str(Xstep) + "," + str(Ystep) + ")", 0)
+        return Xstep, Ystep
 
 
     # all methods have clear name even though we could just need
@@ -83,15 +85,16 @@ class OrderToMicroProcress:
     # to moov the robot to the point Xgoal,Ygoal
     def moovTo(self, Xgoal, Ygoal):
     #do while (pos != goalpos)
+        Xinit, Yinit = Xrobot.value, Yrobot.value
         while True:
-            Xinit, Yinit = self.getPosition()
             Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
             angle = findAngle(Xinit, Yinit, Xstep, Ystep)
             self.moovTurn(angle)
             #next function is a blocking mode function so wait for the action to be good
             self.smallMoovForward(sqrt( (Xstep - Xinit)**2 + (Ystep - Yinit)**2 ))
-            if (Xstep != Xgoal) and (Ystep != Ygoal) :
-                break 
+            if (Xstep == Xgoal) and (Ystep == Ygoal) :
+                break
+            Xrobot.value,Yrobot.value = Xstep, Ystep
 
     # this function should only be used for small moov
     # since it is only used without the LPA* process
@@ -128,7 +131,6 @@ class OrderToMicroProcress:
         self.pipeToMicro2(6)
         self.pipeToMicro2(bitCode)
         log.logMessage(3, "pump actualised", 0)
-
 
 
 
