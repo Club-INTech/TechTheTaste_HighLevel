@@ -2,7 +2,7 @@ import log
 from time import sleep
 from multiprocessing import Pipe, Process
 
-port = "/dev/ttyACM0"
+port = "/dev/serial"
 
 
 # we wait X and Y initialized to start the other process
