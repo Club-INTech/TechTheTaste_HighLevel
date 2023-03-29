@@ -17,6 +17,7 @@ source ./venv/bin/activate
 echo -n 'check path:'
 which python
 
+pip install --upgrade pip
 pip install -r requirements.txt
 echo 'all module installed'
 

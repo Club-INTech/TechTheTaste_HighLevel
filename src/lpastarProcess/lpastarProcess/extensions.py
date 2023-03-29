@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import typing_extensions
 from typing_extensions import Protocol, TypeVar, Any
 
 #for PriorityQueue.py

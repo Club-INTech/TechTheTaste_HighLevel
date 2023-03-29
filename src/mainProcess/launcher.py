@@ -69,13 +69,14 @@ class Launcher :
     # TODO, remove the comment
     def processLIDAR(self,lidar_main_pipeLidar):
         log.logMessage(2, "start the lidar processus", 1)
-        lidar=lidarProcess.Lili()
-        lidar.lidarstop(lidar_main_pipeLidar)
+        #TODO 
+        #lidar=lidarProcess.Lili()
+        #lidar.lidarstop(lidar_main_pipeLidar)
 
         
-    def processMicro1(self, port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track, log ):
+    def processMicro1(self, port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track, logg):
         log.logMessage(2, "start the micro1 processus", 2)
-        microProcss = MicroProcess()
+        microProcss = MicroProcess(port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track,logg)
 
     def processCamMat(self, CamMat_Lpastar_pipeCamMat):
         log.logMessage(2, "start the camMat processus", 5)
@@ -104,21 +105,7 @@ class Launcher :
     def launch(self):
         self.loggerMain.info("Start processus")
         if (self.version == 1):
-<<<<<<< HEAD
             return config1(self, self.processCamMat, self.processMicro1, self.processLpastar, self.processMain, self.processLIDAR, Xrobot, Yrobot, XYinitialised)
-=======
-            return config1(self, 
-                           self.processCamBot, 
-                           self.processCamMat, 
-                           self.processMicro1, 
-                           self.processMicro2, 
-                           self.processLpastar, 
-                           self.processMain, 
-                           self.processLIDAR, 
-                           Xrobot, 
-                           Yrobot, 
-                           XYinitialised)
->>>>>>> 631145f90e8164fb830c132c698cce8479a57d73
         
 
 
