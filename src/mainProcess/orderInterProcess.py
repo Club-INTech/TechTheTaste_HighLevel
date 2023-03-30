@@ -105,7 +105,7 @@ class OrderToMicroProcress(RoutineSender):
         Xinit, Yinit = Xrobot.value, Yrobot.value
         while True:
             Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
-            self.goto(self,Xstep,Ystep)
+            self.goto(Xstep,Ystep)
             time.sleep(5)
             if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
                 break
