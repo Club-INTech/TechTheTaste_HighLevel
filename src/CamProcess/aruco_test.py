@@ -5,11 +5,11 @@ from aruco_vision import *
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 
-camera = RealSense()
+camera = LogitechCamera(0)
 
 win_name = 'Test camera vision'
-cv2.namedWindow(win_name)  # , cv2.WINDOW_NORMAL
-# cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+cv2.namedWindow(win_name, cv2.WINDOW_NORMAL)  #
+cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
 
 def debug_position_loop(cam: Camera):
@@ -39,6 +39,14 @@ def debug_position_loop(cam: Camera):
         cam.anchor_tag_render = {id_: cam.render(point) for id_, point in real_positions.items()}
     return frame
 
+def test_manual_detection(cam: Camera):
+    frame = cam.next_frame()
+    if frame is None:
+        return False
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # frame = np.uint8(255 * (frame > 150))
+    frame = cv2.adaptiveThreshold(frame, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 23, 12)
+    return frame
 
 def find_kfp_loop(cam: Camera):
     frame = cam.next_frame()

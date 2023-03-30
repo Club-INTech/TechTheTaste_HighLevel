@@ -7,6 +7,44 @@ import pyrealsense2 as rs
 
 dictionary = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_4X4_50)
 parameters = cv2.aruco.DetectorParameters()
+
+parameters_attributes = (
+    'adaptiveThreshConstant',
+    'adaptiveThreshWinSizeMax',
+    'adaptiveThreshWinSizeMin',
+    'adaptiveThreshWinSizeStep',
+    'aprilTagCriticalRad',
+    'aprilTagDeglitch',
+    'aprilTagMaxLineFitMse',
+    'aprilTagMaxNmaxima',
+    'aprilTagMinClusterPixels',
+    'aprilTagMinWhiteBlackDiff',
+    'aprilTagQuadDecimate',
+    'aprilTagQuadSigma',
+    'cornerRefinementMaxIterations',
+    'cornerRefinementMethod',
+    'cornerRefinementMinAccuracy',
+    'cornerRefinementWinSize',
+    'detectInvertedMarker',
+    'errorCorrectionRate',
+    'markerBorderBits',
+    'maxErroneousBitsInBorderRate',
+    'maxMarkerPerimeterRate',
+    'minCornerDistanceRate',
+    'minDistanceToBorder',
+    'minMarkerDistanceRate',
+    'minMarkerLengthRatioOriginalImg',
+    'minMarkerPerimeterRate',
+    'minOtsuStdDev',
+    'minSideLengthCanonicalImg',
+    'perspectiveRemoveIgnoredMarginPerCell',
+    'perspectiveRemovePixelPerCell',
+    'polygonalApproxAccuracyRate',
+    'readDetectorParameters',
+    'useAruco3Detection',
+    'writeDetectorParameters'
+)
+
 detector = cv2.aruco.ArucoDetector(dictionary, parameters)
 
 
