@@ -64,7 +64,6 @@ class OrderToMicroProcress(RoutineSender):
         #we send the global trajectory we want to do
         self.pipeToLPA.send( [1, (Xgoal,Ygoal) ] )
         data = self.pipeToLPA.recv()
-        print(data)
         Xstep,Ystep = data[0],data[1]
         log.logMessage(2,"robot is going to ("+ str(Xstep) + "," + str(Ystep) + ")", 0)
         return Xstep, Ystep
@@ -106,9 +105,9 @@ class OrderToMicroProcress(RoutineSender):
         while True:
             Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
             self.goto(Xstep,Ystep)
-            time.sleep(5)
             if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
                 break
+            Xinit, Yinit += Xstep, Ystep
     
     # this function should only be used for small moov
     # since it is only used without the LPA* process
