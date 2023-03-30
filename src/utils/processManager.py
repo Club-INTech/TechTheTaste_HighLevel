@@ -38,7 +38,7 @@ def config1(self, processCamMat, processMicro1, processLpastar, processMain, pro
 
         procCamMat = Process(target = processCamMat, args = (CamMat_Lpastar_pipeCamMat,))
         procLIDAR = Process(target = processLIDAR, args = (lidar_main_pipeLidar,))
-        procMicro1 = Process(target = processMicro1, args = (port, lidar_main_pipeMain, main_micro1_pipeMicro1, Xrobot, Yrobot, 0, 1, 2,))
+        procMicro1 = Process(target = processMicro1, args = (port, lidar_main_pipeMain, main_micro1_pipeMicro1, Xrobot, Yrobot, 1, 1, 2,))
         procLpastar = Process(target = processLpastar, args = (lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, Xrobot, Yrobot))
         procMain = Process(target= processMain, args = (main_micro1_pipeMain, main_micro2_pipeMain, lidar_main_pipeMain, lpastar_main_pipeMain, Xrobot, Yrobot) )
 
