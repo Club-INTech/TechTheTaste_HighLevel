@@ -8,8 +8,10 @@ from math import sqrt, asin
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'microProcess'))
 # import part
+import time
 import log
-from launcher import Xrobot,Yrobot
+from launcher import Xrobot, Yrobot, Hrobot
+from routine_sender import RoutineSender
 from constants import *
 
 # simple function to find the right angle
@@ -35,8 +37,9 @@ def angleToTicks(angle):
     return angle * alpha
 
 
-class OrderToMicroProcress:
+class OrderToMicroProcress(RoutineSender):
     def __init__(self, pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+        super().__init__(self, Xrobot, Yrobot, Hrobot, pipeMainToMicro1, AXLE_TRACK_1A)
         self.pipeToMicro1 = pipeMainToMicro1
         self.pipeToMicro2 = pipeMainToMicro2
         self.pipeToLPA = pipeMaintoLPA
@@ -85,15 +88,25 @@ class OrderToMicroProcress:
         return 1
 
     # to moov the robot to the point Xgoal,Ygoal
+    #def moovTo(self, Xgoal, Ygoal):
+    #do while (pos != goalpos)
+    #    Xinit, Yinit = Xrobot.value, Yrobot.value
+    #    while True:
+    #        Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
+    #        angle = findAngle(Xinit, Yinit, Xstep, Ystep)
+    #        self.moovTurn(angle)
+    #        #next function is a blocking mode function so wait for the action to be good
+    #        self.smallMoovForward(sqrt( (Xstep - Xinit)**2 + (Ystep - Yinit)**2 ))
+    #       if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
+    #            break
+            
     def moovTo(self, Xgoal, Ygoal):
     #do while (pos != goalpos)
         Xinit, Yinit = Xrobot.value, Yrobot.value
         while True:
             Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
-            angle = findAngle(Xinit, Yinit, Xstep, Ystep)
-            self.moovTurn(angle)
-            #next function is a blocking mode function so wait for the action to be good
-            self.smallMoovForward(sqrt( (Xstep - Xinit)**2 + (Ystep - Yinit)**2 ))
+            self.goto(self,Xstep,Ystep)
+            time.sleep(5)
             if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
                 break
     
@@ -132,11 +145,6 @@ class OrderToMicroProcress:
         self.pipeToMicro2(6)
         self.pipeToMicro2(bitCode)
         log.logMessage(3, "pump actualised", 0)
-
-    def goto(self, angle, magnitude):
-        yield CAN, 0, 0
-        yield ROT, 0, angle + 0x10000 * (angle < 0)
-        yield MOV, 0, magnitude + 0x10000 * (magnitude < 0)
 
         
         
