@@ -8,6 +8,7 @@ def empty():
     yield
 
 
+
 class MicroProcess(BaseMicro):
 
     def __init__(self, port, lidar, main, robot_x, robot_y, robot_heading, axle_track, log=NECESSARY):
@@ -81,7 +82,7 @@ class MicroProcess(BaseMicro):
         if self.main.poll():
             print(self.main.recv())
             type_, gen = self.main.recv()
-            self.routines[type_] = gen
+            self.routines[type_] = gen()
             self.next(type_)
         if self.serial.in_waiting:
             self.feedback(self.receive())

@@ -6,9 +6,11 @@ from multiprocessing import Pipe, Process
 from math import sqrt, asin
 # path managing
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'utils'))
+sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'microProcess'))
 # import part
 import log
 from launcher import Xrobot,Yrobot
+from constants import *
 
 # simple function to find the right angle
 
@@ -98,14 +100,14 @@ class OrderToMicroProcress:
     # this function should only be used for small moov
     # since it is only used without the LPA* process
     def smallMoovForward(self, ticks):
-        self.sendDataToMicro1((1,ticks))
+        self.sendDataToMicro1((MOVEMENT, goto(0,ticks)))
         # we wait until the moov is well done
 
     def moovTurn(self, angle):
         #TODO delete ?
         #self.sendDataToMicro1(2)
         ticks = angleToTicks(angle)
-        self.sendDataToMicro1((2,ticks)) #2
+        self.sendDataToMicro1((MOVEMENT,goto(ticks,0))) #2
         # we wait until the moov is well done
 
     def moovDeleted(self):
@@ -131,7 +133,10 @@ class OrderToMicroProcress:
         self.pipeToMicro2(bitCode)
         log.logMessage(3, "pump actualised", 0)
 
-
+    def goto(angle, magnitude):
+        yield CAN, 0, 0
+        yield ROT, 0, angle + 0x10000 * (angle < 0)
+        yield MOV, 0, magnitude + 0x10000 * (magnitude < 0)
 
         
         
