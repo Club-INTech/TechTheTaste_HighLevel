@@ -13,6 +13,7 @@ import log
 from launcher import Xrobot, Yrobot, Hrobot
 from routine_sender import RoutineSender
 from constants import *
+from params import *
 
 # simple function to find the right angle
 
@@ -64,7 +65,7 @@ class OrderToMicroProcress(RoutineSender):
         #we send the global trajectory we want to do
         self.pipeToLPA.send( [1, (Xgoal,Ygoal) ] )
         data = self.pipeToLPA.recv()
-        Xstep,Ystep = data[0],data[1]
+        Xstep,Ystep = data[0][0],data[0][1]
         log.logMessage(2,"robot is going to ("+ str(Xstep) + "," + str(Ystep) + ")", 0)
         return Xstep, Ystep
 
@@ -104,8 +105,9 @@ class OrderToMicroProcress(RoutineSender):
         Xinit, Yinit = Xrobot.value, Yrobot.value
         while True:
             Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
+            indexes_to_coors(Xstep,Ystep)
             self.goto(Xstep,Ystep)
-            time.sleep(2)
+            time.sleep(4)
             if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
                 break
 
@@ -144,6 +146,20 @@ class OrderToMicroProcress(RoutineSender):
         self.pipeToMicro2(6)
         self.pipeToMicro2(bitCode)
         log.logMessage(3, "pump actualised", 0)
+        
+    def indexes_to_coors(self, i: int, j: int):
+        """ Converts indices of the graph's vertex to the real life coordinates
+
+        Args:
+            i (int):
+                First index of the vertex
+            j (int):
+                Second index of the vertex
+
+        Returns:
+            Tuple[float, float]: Real life coordinates
+        """
+        return float(i * paramslpastar("resolution")), float(j * paramslpastar("resolution"))
 
         
         
