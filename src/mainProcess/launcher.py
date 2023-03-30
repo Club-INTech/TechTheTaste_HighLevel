@@ -58,7 +58,6 @@ class Launcher :
         self.loggerLidar = createLog('Lidar', 'log/lidar.txt', logging.INFO)
         self.loggerCom1 = createLog('Com1', 'log/com1.txt', logging.INFO)
         
-        self.launch()
 
     def processMain(self, pipeMicro1, pipeMicro2, lidar_main_pipeMain, lpastar_main_pipMain, Xrobot, Yrobot):
         log.logMessage(2, "start the main processus", 0)
