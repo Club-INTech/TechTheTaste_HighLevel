@@ -160,13 +160,14 @@ class LPAStarPathFinder:
 
             # Break if the agent has reached the goal.
             x, y, _ = self.agent.get_position(self, Xrobot, Yrobot) 
-            if (x - goal[0]) ** 2 + (y - goal[1]) \
-               <= (self.map.get_resolution() ** 2):
-                self.agent.stop_trajectory(lpastar_main_pipeLpastar)
+            if (x - goal[0]) ** 2 + (y - goal[1]) ** 2 \
+                <= 1:
+                #<= (self.map.get_resolution() ** 2):
+                self.agent.stop_trajectory(self,lpastar_main_pipeLpastar)
                 break
 
             # Sensor scan.
-            current_obstacles = self.map.get_obstacles() 
+            current_obstacles = self.map.get_obstacles()
             new_obstacles = self \
                 .map \
                 .convert_obstacles_to_graph(

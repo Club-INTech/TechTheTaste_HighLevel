@@ -1,4 +1,3 @@
-
 from email.policy import strict
 import sys, os
 import mainProcess
@@ -14,6 +13,7 @@ sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'utils'))
 sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lpastarProcess'))
 sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'CamProcess'))
 sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lidarProcess'))
+sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'microProcess'))
 
 #import part
 import log
@@ -21,6 +21,7 @@ from lpastarProcess.LPAStarPathFinder import LPAStarPathFinder
 from processManager import config1
 from com import RxPipe
 from testing import generate_obstacles
+from micro_process import MicroProcess
 # TODO change lidar on lidarProcess import lidarProcess 
 
 from multiprocessing import Process, Pipe, Value, current_process
@@ -29,6 +30,8 @@ from multiprocessing import Process, Pipe, Value, current_process
 Xrobot = Value('i', 0) #position X of the robot should not be over 12 000 ticks
 Yrobot = Value('i', 0) #position Y of the robot should not be over 12 000 ticks
 XYinitialised = Value('i', 0) # to know if Xrobot and Yrobothave been initialised by the cam process, 0 = false, 1 = True
+
+
 
 def createLog(name, filepath, loggingLevel):
     logger = logging.getLogger(name)
@@ -44,7 +47,6 @@ def createLog(name, filepath, loggingLevel):
     logger.info('init logging for ' + name + ' done')
     logger.info('---------------------------------------------------------------------------------')
     handler.setFormatter( logging.Formatter('%(asctime)s - %(levelname)s - %(message)s') )
-    logger.info("just test :)")
     return logger
 
 class Launcher :
@@ -54,45 +56,41 @@ class Launcher :
         self.loggerMain = createLog('Main', 'log/main.txt', logging.INFO)
         self.loggerLpa = createLog('Lpa', 'log/lpa.txt', logging.INFO)
         self.loggerLidar = createLog('Lidar', 'log/lidar.txt', logging.INFO)
-        self.loggerCom2 = createLog('Com2', 'log/com2.txt', logging.INFO)
         self.loggerCom1 = createLog('Com1', 'log/com1.txt', logging.INFO)
         
-        self.launch()
 
     def processMain(self, pipeMicro1, pipeMicro2, lidar_main_pipeMain, lpastar_main_pipMain, Xrobot, Yrobot):
         log.logMessage(2, "start the main processus", 0)
         mainProcss = mainProcess.mainProcess(pipeMicro1, pipeMicro2, lpastar_main_pipMain, lidar_main_pipeMain)
         mainProcss.run()
 
+
+    # TODO, remove the comment
     def processLIDAR(self,lidar_main_pipeLidar):
         log.logMessage(2, "start the lidar processus", 1)
-    
-    # TODO, remove the comment
-    #    lidar=lidarProcess.Lili()
-    #    lidar.lidarstop(lidar_main_pipeLidar)
+        #TODO 
+        #lidar=lidarProcess.Lili()
+        #lidar.lidarstop(lidar_main_pipeLidar)
+
         
-    def processMicro1(self):
+    def processMicro1(self, port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track, logg):
         log.logMessage(2, "start the micro1 processus", 2)
+        microProcss = MicroProcess(port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track,logg)
+        microProcss.run()
 
-    def processMicro2(self):
-        log.logMessage(2, "start the micro2 processus", 3)
-
-    def processCamBot(self):
-        log.logMessage(2, "start the camBot processus", 4)
-        
     def processCamMat(self, CamMat_Lpastar_pipeCamMat):
         log.logMessage(2, "start the camMat processus", 5)
-        
+        obstacles = generate_obstacles()
         while True :
             if CamMat_Lpastar_pipeCamMat.poll():
                 if CamMat_Lpastar_pipeCamMat.recv() == 0 :
-                    obstacles = generate_obstacles()
                     CamMat_Lpastar_pipeCamMat.send(obstacles)
                     #RxPipe(CamMat_Lpastar_pipeCamMat)
         
         
     def processLpastar(self, lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, Xrobot, Yrobot):
         log.logMessage(2, "start the lpastar processus", 6)
+        
         lpastar = LPAStarPathFinder()
         
         while True :
@@ -105,19 +103,9 @@ class Launcher :
     
     
     def launch(self):
-        log.logMessage(2, "start launching", 7)
+        self.loggerMain.info("Start processus")
         if (self.version == 1):
-            return config1(self, 
-                           self.processCamBot, 
-                           self.processCamMat, 
-                           self.processMicro1, 
-                           self.processMicro2, 
-                           self.processLpastar, 
-                           self.processMain, 
-                           self.processLIDAR, 
-                           Xrobot, 
-                           Yrobot, 
-                           XYinitialised)
+            return config1(self, self.processCamMat, self.processMicro1, self.processLpastar, self.processMain, self.processLIDAR, Xrobot, Yrobot, XYinitialised)
         
 
 
@@ -125,7 +113,7 @@ class Launcher :
 if __name__ == "__main__" :
     starter = Launcher(1)
     # TODO, repair LiDAR process
-    # list = starter.launch()
+    list = starter.launch()
 
     
     

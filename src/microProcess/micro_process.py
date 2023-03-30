@@ -29,10 +29,10 @@ class MicroProcess(BaseMicro):
         try:
             next_order = next(self.routines[type_])
             self.send(self.make_message(*next_order))
-            # if next_order[0] == MOTS:
-            #     for _ in range(next_order[1]):
-            #         next_order = next(self.routines[type_])
-            #         self.send(self.make_message(*next_order))
+            if next_order[0] == MOTS:
+                for _ in range(next_order[1]):
+                    next_order = next(self.routines[type_])
+                    self.send(self.make_message(*next_order))
         # routine is finished
         except StopIteration:
             self.pull(type_)
@@ -79,8 +79,8 @@ class MicroProcess(BaseMicro):
         if self.lidar.poll():
             self.send(self.make_message(LID, self.lidar.recv(), 0))
         if self.main.poll():
-            type_, gen, args = self.main.recv()
-            self.routines[type_] = gen(*args)
+            type_, gen = self.main.recv()
+            self.routines[type_] = gen()
             self.next(type_)
         if self.serial.in_waiting:
             self.feedback(self.receive())
