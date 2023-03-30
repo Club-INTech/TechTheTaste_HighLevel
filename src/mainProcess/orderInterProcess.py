@@ -98,14 +98,14 @@ class OrderToMicroProcress:
     # this function should only be used for small moov
     # since it is only used without the LPA* process
     def smallMoovForward(self, ticks):
-        self.sendDataToMicro1(1)
-        self.sendDataToMicro1(ticks)
+        self.sendDataToMicro1((1,ticks))
         # we wait until the moov is well done
 
     def moovTurn(self, angle):
-        self.sendDataToMicro1(2)
+        #TODO delete ?
+        #self.sendDataToMicro1(2)
         ticks = angleToTicks(angle)
-        self.sendDataToMicro1(ticks)
+        self.sendDataToMicro1((2,ticks))
         # we wait until the moov is well done
 
     def moovDeleted(self):
