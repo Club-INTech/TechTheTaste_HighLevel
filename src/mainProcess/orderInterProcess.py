@@ -133,7 +133,7 @@ class OrderToMicroProcress:
         self.pipeToMicro2(bitCode)
         log.logMessage(3, "pump actualised", 0)
 
-    def goto(angle, magnitude):
+    def goto(self, angle, magnitude):
         yield CAN, 0, 0
         yield ROT, 0, angle + 0x10000 * (angle < 0)
         yield MOV, 0, magnitude + 0x10000 * (magnitude < 0)
