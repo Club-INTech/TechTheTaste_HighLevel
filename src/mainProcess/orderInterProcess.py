@@ -159,7 +159,7 @@ class OrderToMicroProcress(RoutineSender):
         Returns:
             Tuple[float, float]: Real life coordinates
         """
-        return float(i * paramslpastar("resolution")), float(j * paramslpastar("resolution"))
+        return float(i * RESOLUTION), float(j * RESOLUTION)
 
         
         

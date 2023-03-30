@@ -1,10 +1,12 @@
 from lpastarProcess.pf_exceptions import MapInitializationException
 from typing import Dict, Any
 
+RESOLUTION = 50
+
 paramlpastar={
             "width": 3000,
             "height": 2000,
-            "resolution": 50,
+            "resolution": RESOLUTION,
             "free_case_value": 1,
             "obstacle_case_value": 1000,
             "heuristics_multiplier": 1,
