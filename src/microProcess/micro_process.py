@@ -79,9 +79,8 @@ class MicroProcess(BaseMicro):
         if self.lidar.poll():
             self.send(self.make_message(LID, self.lidar.recv(), 0))
         if self.main.poll():
+            print(self.main.recv())
             type_, gen = self.main.recv()
-            print('type_, gen') #TODO
-            print(type_,gen) #TODO
             self.routines[type_] = gen()
             self.next(type_)
         if self.serial.in_waiting:
