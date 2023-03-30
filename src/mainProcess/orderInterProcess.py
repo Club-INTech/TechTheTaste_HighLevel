@@ -105,7 +105,7 @@ class OrderToMicroProcress:
         #TODO delete ?
         #self.sendDataToMicro1(2)
         ticks = angleToTicks(angle)
-        self.sendDataToMicro1((2,ticks))
+        self.sendDataToMicro1((2,ticks)) #2
         # we wait until the moov is well done
 
     def moovDeleted(self):
