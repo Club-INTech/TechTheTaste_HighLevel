@@ -107,7 +107,8 @@ class OrderToMicroProcress(RoutineSender):
             self.goto(Xstep,Ystep)
             if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
                 break
-            Xinit, Yinit += Xstep, Ystep
+            Xrobot.value += Xstep
+            Yrobot.value += Ystep
     
     # this function should only be used for small moov
     # since it is only used without the LPA* process
