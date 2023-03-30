@@ -109,7 +109,6 @@ class OrderToMicroProcress(RoutineSender):
             Xstep, Ystep = self.indexes_to_coors(Xstep,Ystep)
             print(Xstep,Ystep)
             self.goto(Xstep,Ystep)
-            time.sleep(4)
             if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
                 break
 
