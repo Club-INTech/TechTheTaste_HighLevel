@@ -306,6 +306,7 @@ class Shell(BaseShell):
     track = False
     waiting = False
     waited_id = None
+    last_movement = None
 
     def __init__(self, port, log_level=NECESSARY):
         BaseShell.__init__(self)
@@ -335,7 +336,7 @@ class Shell(BaseShell):
                 if self.track and message[0] & 0xf in (MOV, ROT, CAN):
                     self.send(self.make_message(TRACK, 0, 0))
                     plt.plot(self.right_wheel, label='Right Wheel')
-                    plt.plot([-x for x in self.left_wheel], label='Left Wheel')
+                    plt.plot([(-x if self.last_movement == ROT else x) for x in self.left_wheel], label='Left Wheel')
                     plt.plot((0, len(self.left_wheel)), (self.command,) * 2, label='Left target')
                     plt.plot((0, len(self.left_wheel)), (self.command,) * 2, label='Right target')
                     plt.legend()
@@ -380,6 +381,7 @@ class Shell(BaseShell):
                 if self.waited_id in (MOV, ROT):
                     self.send(self.make_message(CAN, 0, 0))
                     self.waited_id = CAN
+                    self.last_movement = self.waited_id
                     print(f'{type(self).__name__} : info : Now waiting for CANCEL terminaison')
 
                 else:

@@ -12,6 +12,7 @@ class MicroProcess(BaseMicro):
 
     def __init__(self, port, lidar, main, robot_x, robot_y, robot_heading, axle_track, log=NECESSARY):
         self.serial = serial.Serial(port, BAUDRATE)
+        print('hey')
         self.log_level = log
 
         self.lidar, self.main = lidar, main
@@ -21,6 +22,7 @@ class MicroProcess(BaseMicro):
         self.robot_x, self.robot_y = robot_x, robot_y
         self.robot_heading = robot_heading
         self.robot_axle_track = axle_track
+        self.run()
 
     def next(self, type_):
         if self.log_level > N_NEC:
