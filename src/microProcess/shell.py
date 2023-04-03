@@ -5,6 +5,8 @@ import cmd
 import struct
 import time
 import matplotlib.pyplot as plt
+import os
+import json
 
 
 def float_to_int(num):
@@ -299,6 +301,28 @@ def show_vars(self, args):
         self.wait(VAR_GET)
 
 
+@command
+@arg_number(1)
+def save_vars(self, args):
+    vars_ = []
+    for i in range(len(VAR_NAMES)):
+        self.send(self.make_message(VAR_GET, i, 0))
+        self.wait(VAR_GET)
+        vars_.append(self.last_received_var)
+    with open(f'./saved_sessions/{args[0]}.json', 'w') as f:
+        json.dump(vars_, f)
+
+
+@command
+@arg_number(1)
+def load_vars(self, args):
+    with open(f'./saved_sessions/{args[0]}.json', 'r') as f:
+        vars_ = json.load(f)
+    for i, var in enumerate(vars_):
+        print(f'Variable {VAR_NAMES[i]} = {var}')
+        self.send(self.make_message(VAR_SET, i, float_to_int(var)))
+
+
 BaseShell = type('BaseShell', (cmd.Cmd, BaseMicro), cmds)
 
 
@@ -307,6 +331,7 @@ class Shell(BaseShell):
     waiting = False
     waited_id = None
     last_movement = None
+    last_received_var = 0.
 
     def __init__(self, port, log_level=NECESSARY):
         BaseShell.__init__(self)
@@ -319,6 +344,7 @@ class Shell(BaseShell):
         self.command = 0
 
     def var_get(self, message):
+        self.last_received_var = bytes_to_float(message[1:])
         print(f'Variable {VAR_NAMES[message[0] & 0xf]} = {bytes_to_float(message[1:])}')
 
     def terminaison(self, message):
@@ -394,9 +420,18 @@ class Shell(BaseShell):
 
     complete_get_var = complete_set_var
 
+    def complete_save_vars(self, text, line, begidx, endidx):
+        if text:
+            return [x for x in os.listdir('./saved_sessions') if x.startswith(text)]
+        return os.listdir('./saved_sessions')
+
+    complete_load_vars = complete_save_vars
+
 
 if __name__ == '__main__':
     import sys
     p = sys.argv[1]
+    if not os.path.exists('./saved_sessions'):
+        os.mkdir('./saved_sessions')
     level = LOG_MODES.index(sys.argv[2]) if len(sys.argv) > 2 and sys.argv[2] in LOG_MODES else NOTHING
     Shell(p, level).cmdloop()
