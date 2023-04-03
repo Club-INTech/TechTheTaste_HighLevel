@@ -103,14 +103,17 @@ class OrderToMicroProcress(RoutineSender):
             
     def moovTo(self, Xgoal, Ygoal):
     #do while (pos != goalpos)
-        Xinit, Yinit = Xrobot.value, Yrobot.value
-        while True:
-            Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
-            Xstep, Ystep = self.indexes_to_coors(Xstep,Ystep)
-            print(Xstep,Ystep)
-            self.goto(Xstep,Ystep)
-            if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
-                break
+        #Xinit, Yinit = Xrobot.value, Yrobot.value
+        #while True:
+            #Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
+            #Xstep, Ystep = self.indexes_to_coors(Xstep,Ystep)
+        Xstep = 1
+        Ystep = 1
+        self.goto(Xstep,Ystep)
+        #time.sleep(1)
+        if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
+            return 1
+        return 0
 
     # this function should only be used for small moov
     # since it is only used without the LPA* process
