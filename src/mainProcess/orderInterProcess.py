@@ -101,8 +101,11 @@ class OrderToMicroProcress(RoutineSender):
     #       if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
     #            break
             
-    def moovTo(self, Xgoal, Ygoal):
-    #do while (pos != goalpos)
+    def moovTo(self, X, Y):
+        self.goto(X,Y)
+        print(f'New position : {X,Y}')
+    
+    def moovToLpa(self, Xgoal, Ygoal):
         #Xinit, Yinit = Xrobot.value, Yrobot.value
         #while True:
             #Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
