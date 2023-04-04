@@ -346,10 +346,10 @@ class Shell(BaseShell):
     last_received_var = 0.
 
     def __init__(self: _Base, port, log_level=NECESSARY):
+        self.log_level = log_level
         BaseShell.__init__(self)
         self.serial = serial.Serial(port, BAUDRATE)
         self.synchronise()
-        self.log_level = log_level
         self.tracked_values = []
         self.lidar_stops = []
         self.left_wheel, self.right_wheel = [], []
