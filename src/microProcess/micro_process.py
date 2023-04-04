@@ -11,9 +11,9 @@ def empty():
 class MicroProcess(BaseMicro):
 
     def __init__(self, port, lidar, main, robot_x, robot_y, robot_heading, axle_track, log=NECESSARY):
+        self.log_level = log
         self.serial = serial.Serial(port, BAUDRATE)
         self.synchronise()
-        self.log_level = log
 
         self.lidar, self.main = lidar, main
         # Routines corresponding to order types MOVEMENT and ACTION
