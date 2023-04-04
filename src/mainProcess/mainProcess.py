@@ -16,5 +16,8 @@ class mainProcess:
         #scenario.debugLidar(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA, self.pipeLidarToMain)
         #scenario.debugLidar(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA, self.pipeLidarToMain)
         #scenario.debugRaspy(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
-        scenario.debugSimpleOrder(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
+        
+        scenario.debugSimpleOrderStraight1(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
+        #scenario.debugSimpleOrderStraight2(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
+        #scenario.debugSimpleOrderDiagonal(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
 
