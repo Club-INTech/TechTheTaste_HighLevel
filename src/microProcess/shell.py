@@ -1,5 +1,5 @@
 from constants import *
-from base_micro import BaseMicro
+from base_micro import BaseMicro, _Base
 import serial
 import cmd
 import struct
@@ -323,6 +323,18 @@ def load_vars(self, args):
         self.send(self.make_message(VAR_SET, i, float_to_int(var)))
 
 
+@command
+@arg_number(0)
+def synchronise(self: _Base, args):
+    self.synchronise()
+
+
+@command
+@arg_number(0)
+def waiting_bytes(self: _Base, args):
+    print(f"Number of waiting bytes: {self.serial.in_waiting}")
+
+
 BaseShell = type('BaseShell', (cmd.Cmd, BaseMicro), cmds)
 
 
@@ -333,10 +345,10 @@ class Shell(BaseShell):
     last_movement = None
     last_received_var = 0.
 
-    def __init__(self, port, log_level=NECESSARY):
+    def __init__(self: _Base, port, log_level=NECESSARY):
         BaseShell.__init__(self)
         self.serial = serial.Serial(port, BAUDRATE)
-        self.serial.read(self.serial.in_waiting)
+        self.synchronise()
         self.log_level = log_level
         self.tracked_values = []
         self.lidar_stops = []

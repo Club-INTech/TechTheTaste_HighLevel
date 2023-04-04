@@ -12,8 +12,7 @@ class MicroProcess(BaseMicro):
 
     def __init__(self, port, lidar, main, robot_x, robot_y, robot_heading, axle_track, log=NECESSARY):
         self.serial = serial.Serial(port, BAUDRATE)
-        self.serial.read(self.serial.in_waiting)
-        print('hey')
+        self.synchronise()
         self.log_level = log
 
         self.lidar, self.main = lidar, main

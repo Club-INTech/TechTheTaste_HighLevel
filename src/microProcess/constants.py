@@ -4,6 +4,8 @@ ORDER_LENGTH = 5
 FEEDBACK_LENGTH = 5
 BAUDRATE = 115200
 
+SYNC_BYTES = b'\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9'
+
 # log modes
 NOTHING, NECESSARY, EVERYTHING = range(3)
 LOG_MODES = 'nothing', 'necessary', 'everything'

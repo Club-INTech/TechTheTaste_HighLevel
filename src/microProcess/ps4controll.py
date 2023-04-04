@@ -1,11 +1,7 @@
-
 import sys
-import os
-sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-
 from controller import Controller
 from controller.constants import *
-from base_micro import BaseMicro
+from base_micro import BaseMicro, _Base
 from constants import *
 import serial
 import time
@@ -18,6 +14,8 @@ class PS4Controll1A(BaseMicro):
         self.controller = Controller()
         self.controller.start()
         self.serial = serial.Serial(port, BAUDRATE)
+        self.synchronise()
+        self.serial.read(self.serial.in_waiting)
         self.h_speed, self.v_speed = 0, 0
         self.left_target, self.right_target = 0, 0
 

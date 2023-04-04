@@ -1,10 +1,18 @@
 import serial
+import time
 from constants import *
 
 
 class _Base:
     serial: serial.Serial
     log_level: int
+
+    def synchronise(self):
+        if self.log_level > NEC:
+            print(f'{type(self).__name__}: info : Trying to sync with pico')
+        self.serial.write(SYNC_BYTES)
+        time.sleep(1.)
+        self.serial.read(self.serial.in_waiting)
 
     def make_message(self, id_: int, comp: int, arg: int) -> bytes:
         if self.log_level > N_NEC:
@@ -31,7 +39,8 @@ class _Base:
     def feedback(self, message):
         nb = message[0] >> 4
         if nb >= len(self.manage_feedback):
-            return print(f'{type(self).__name__} : ERROR : Invalid feedback received {nb}')
+            print(f'{type(self).__name__} : ERROR : Invalid feedback received {nb}')
+            return self.synchronise()
         attr = self.manage_feedback[message[0] >> 4]
         if self.log_level > N_NEC:
             print(f'{type(self).__name__} : info : Processing feedback {attr.upper()}')
