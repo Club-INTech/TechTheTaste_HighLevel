@@ -95,3 +95,4 @@ class MicroProcess(BaseMicro):
                 self._loop()
         except KeyboardInterrupt:
             self.send(self.make_message(CAN, 0, 0))
+            self.serial.close()
