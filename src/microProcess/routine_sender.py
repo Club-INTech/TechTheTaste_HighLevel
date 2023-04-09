@@ -31,7 +31,7 @@ class RoutineSender:
 
     def goto(self, x, y, reverse=False):
 
-        dx, dy = x - float(self.robot_x.value), y - float(self.robot_y.value)
+        dx, dy = x - self.robot_x.value, y - self.robot_y.value
         magnitude = (dx * dx + dy * dy) ** .5
         d_theta = math.acos((1, -1)[reverse] * dx / magnitude) * (-1, 1)[dy >= 0] - self.robot_heading.value
         self.micro_pipe.send((MOVEMENT, goto, (
