@@ -85,7 +85,7 @@ def debugSimpleOrderDiagonal(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
    
-    OrderManager.moovTo(1,1)
+    OrderManager.moovToSimple(1,1)
     
     log.logMessage(2,"simulation finished", 0)
     
@@ -94,7 +94,7 @@ def debugSimpleOrderStraight1(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
    
-    OrderManager.moovTo(1,0)
+    OrderManager.moovToSimple(1,0)
     
     log.logMessage(2,"simulation finished", 0)
     
@@ -103,7 +103,7 @@ def debugSimpleOrderStraight2(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
    
-    OrderManager.moovTo(0,1)
+    OrderManager.moovToSimple(0,1)
     
     log.logMessage(2,"simulation finished", 0)
 
