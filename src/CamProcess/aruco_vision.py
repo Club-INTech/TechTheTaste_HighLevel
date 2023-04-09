@@ -44,33 +44,54 @@ parameters_attributes = (
     'useAruco3Detection',
     'writeDetectorParameters'
 )
-
+# parameters.minMarkerPerimeterRate = 0.003
 detector = cv2.aruco.ArucoDetector(dictionary, parameters)
 
 
 IDS = 20, 21, 23, 22
+SE, SW, NW, NE = IDS
+DX, DY = 86., 185.
 real_positions = {
     21: np.array([0., 0., 0.]),
-    20: np.array([86., 0., 0.]),
-    23: np.array([0., 185., 0.]),
-    22: np.array([86., 185., 0.])
+    20: np.array([DX, 0., 0.]),
+    23: np.array([0., DY, 0.]),
+    22: np.array([DX, DY, 0.])
 }
+
+
+def cross_ratio(a, b, c, d):
+    vec = b - a
+    return np.dot(a - c, vec) * np.dot(b - d, vec) / (np.dot(b - c, vec) * np.dot(a - d, vec))
+
+
+def find_coordinate(point, zero, zero_real, tag_screen, tag_real, infinity):
+    return cross_ratio(point, tag_screen, zero, infinity) * np.sum((tag_real - zero_real) ** 2) ** .5
+
+
+def line_intersection(line1_p1, line1_p2, line2_p1, line2_p2):
+    vec1, vec2 = np.float_(line1_p2 - line1_p1), np.float_(line2_p2 - line2_p1)
+    return line2_p1 + vec2 * np.cross(vec1, np.float_(line2_p1 - line1_p1)) / np.cross(vec2, vec1)
+
+
+def get_center(corners):
+    return line_intersection(corners[0], corners[2], corners[1], corners[3])
 
 
 def detect(frame):
     corners, ids, _ = detector.detectMarkers(frame)
-    return zip((i for i, in ids), (rect for rect, in corners)) if ids is not None else ()
+    return zip((i for i, in ids), (np.int32(rect) for rect, in corners)) if ids is not None else ()
 
 
 class Camera:
+    resolution = (0, 0)
     middle = np.zeros((2,), np.int32)
     alpha, beta, x, y, z, cos_a, cos_b, sin_a, sin_b = 0.1, .6, 60., -50., 100., 0., 0., 0., 0.
     vec, xp, yp = np.zeros((3, 3), float)
     kfp: float
     old_dist = None
     anchor_tag_render: dict
-    error_sensivity: float
-    movement_sensivity: float
+    error_sensitivity: float
+    movement_sensitivity: float
     # scipy.minimize bounds:
     #         |        alpha        |  |   beta    |  |    x   |  |    y     |  |    z    |
     bounds = ((-np.pi / 4, np.pi / 4), (0., np.pi/2), (0., 100.), (-90., -10.), (70., 130.))
@@ -119,7 +140,7 @@ class Camera:
 
         return scipy.optimize.fsolve(function, np.array((50., 50.)), fprime=self.jacobian(height))
 
-    def find_physics(self, screen_positions):
+    def find_physics_brute_force(self, screen_positions):
         screen_curve = tuple(screen_positions[id_] for id_ in IDS)
 
         def dist(values):
@@ -140,13 +161,64 @@ class Camera:
         ).x
         return dist(vec), vec
 
+    def find_physics_cross_ratio(self, screen_positions):
+        west_line = screen_positions[SW], screen_positions[NW]
+        east_line = screen_positions[SE], screen_positions[NE]
+        north_line = screen_positions[NW], screen_positions[NE]
+        south_line = screen_positions[SW], screen_positions[SE]
+
+        y_infinity = line_intersection(*west_line, *east_line)
+        infinity_line = y_infinity, y_infinity + (500., 0.)
+
+        x_infinity = line_intersection(*south_line, *infinity_line)
+
+        middle_line = self.middle, self.middle * (1., 0.)
+        north_intersection = line_intersection(*north_line, *middle_line)
+        south_intersection = line_intersection(*south_line, *middle_line)
+        x1 = find_coordinate(north_intersection, screen_positions[NW], real_positions[NW], screen_positions[NE], real_positions[NE], x_infinity)
+        x0 = find_coordinate(south_intersection, screen_positions[SW], real_positions[SW], screen_positions[SE], real_positions[SE], x_infinity)
+        tan_alpha = (x1 - x0) / DY
+
+        self.alpha = np.arctan(tan_alpha)
+
+        # allows to avoid alpha = 0 problems
+        diagonal_infinity = (line_intersection(*infinity_line, screen_positions[SW], screen_positions[NE]) - self.middle) * (1, -1)
+        k = DY / DX
+
+        # print(f'\r{diagonal_infinity = } {tan_alpha = } {(diagonal_infinity[1] / diagonal_infinity[0]) = } {(k + tan_alpha) / (1 - k * tan_alpha) =}', end='')
+        # sin_beta = (diagonal_infinity[1] / diagonal_infinity[0]) * (1 - k * tan_alpha) / (k + tan_alpha)
+        # self.beta = np.arcsin(sin_beta)
+        tan_beta = (self.middle[1] - y_infinity[1]) / self.kfp
+        self.beta = np.arctan(tan_beta)
+
+        # self.kfp = (1 - sin_beta ** 2) ** .5 * (self.middle[1] - y_infinity[1])
+        self.compute_vars()
+
+        west_intersection_oc = line_intersection(*west_line, self.middle, x_infinity)
+        south_intersection_oc = line_intersection(*south_line, self.middle, y_infinity)
+        self.optic_center = (
+            find_coordinate(south_intersection_oc, screen_positions[SW], real_positions[SW], screen_positions[SE], real_positions[SE], x_infinity),
+            find_coordinate(west_intersection_oc, screen_positions[SW], real_positions[SW], screen_positions[NW], real_positions[NW], y_infinity),
+            0.
+        )
+
+        def render_dist(t):
+            res = 0.
+            for id_ in IDS:
+                vec = real_positions[id_] - self.optic_center + t[0] * self.vec
+                res += np.sum((np.dot((self.xp, self.yp), vec) * self.kfp / np.dot(self.vec, vec) * (1, -1) + self.middle - screen_positions[id_]) ** 2)
+            return res
+
+        t = scipy.optimize.minimize(render_dist, np.array((100.,))).x
+        self.x, self.y, self.z = np.array(self.optic_center) - t[0] * self.vec
+
     def update_physics(self, screen_positions):
         tmp_dist = frdist(
             tuple(self.render(real_positions[id_]) for id_ in IDS),
             tuple(screen_positions[id_] for id_ in IDS)
         )
-        if self.old_dist is None or self.old_dist > self.error_sensivity or tmp_dist > self.movement_sensivity:
-            new, new_vec = self.find_physics(screen_positions)
+        if self.old_dist is None or self.old_dist > self.error_sensitivity or tmp_dist > self.movement_sensitivity:
+            new, new_vec = self.find_physics_brute_force(screen_positions)
             self.old_dist = tmp_dist
             if self.old_dist is None or self.old_dist > new:
                 self.old_dist = new
@@ -160,8 +232,8 @@ class LogitechCamera(Camera):
     resolution = 1920, 1080
     middle = np.int32(np.array(.5) * resolution)
 
-    error_sensivity = 5.
-    movement_sensivity = 15.
+    error_sensitivity = 5.
+    movement_sensitivity = 15.
 
     # gain de transformation cm -> pixel
     kfp = 1152.0  # 1152.
@@ -186,8 +258,8 @@ class RealSense(Camera):
     alpha, beta, x, y, z = -0.0412, 0.700, 35., -63.25, 105
     kfp = 589.  # test_value
 
-    error_sensivity = 8.
-    movement_sensivity = 12.
+    error_sensitivity = 8.
+    movement_sensitivity = 12.
 
     def __init__(self):
         self.pipeline = rs.pipeline()
