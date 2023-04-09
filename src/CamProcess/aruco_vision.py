@@ -186,17 +186,17 @@ class Camera:
         k = DY / DX
 
         # print(f'\r{diagonal_infinity = } {tan_alpha = } {(diagonal_infinity[1] / diagonal_infinity[0]) = } {(k + tan_alpha) / (1 - k * tan_alpha) =}', end='')
-        # sin_beta = (diagonal_infinity[1] / diagonal_infinity[0]) * (1 - k * tan_alpha) / (k + tan_alpha)
-        # self.beta = np.arcsin(sin_beta)
-        tan_beta = (self.middle[1] - y_infinity[1]) / self.kfp
-        self.beta = np.arctan(tan_beta)
+        sin_beta = (diagonal_infinity[1] / diagonal_infinity[0]) * (1 - k * tan_alpha) / (k + tan_alpha)
+        self.beta = np.arcsin(sin_beta)
+        # tan_beta = (self.middle[1] - y_infinity[1]) / self.kfp
+        # self.beta = np.arctan(tan_beta)
 
-        # self.kfp = (1 - sin_beta ** 2) ** .5 * (self.middle[1] - y_infinity[1])
+        # self.kfp = (1 - sin_beta ** 2) ** .5 * (self.middle[1] - y_infinity[1]) # pas top
         self.compute_vars()
 
         west_intersection_oc = line_intersection(*west_line, self.middle, x_infinity)
         south_intersection_oc = line_intersection(*south_line, self.middle, y_infinity)
-        self.optic_center = (
+        optic_center = (
             find_coordinate(south_intersection_oc, screen_positions[SW], real_positions[SW], screen_positions[SE], real_positions[SE], x_infinity),
             find_coordinate(west_intersection_oc, screen_positions[SW], real_positions[SW], screen_positions[NW], real_positions[NW], y_infinity),
             0.
@@ -205,12 +205,16 @@ class Camera:
         def render_dist(t):
             res = 0.
             for id_ in IDS:
-                vec = real_positions[id_] - self.optic_center + t[0] * self.vec
+                vec = real_positions[id_] - optic_center + t[0] * self.vec
                 res += np.sum((np.dot((self.xp, self.yp), vec) * self.kfp / np.dot(self.vec, vec) * (1, -1) + self.middle - screen_positions[id_]) ** 2)
             return res
 
         t = scipy.optimize.minimize(render_dist, np.array((100.,))).x
-        self.x, self.y, self.z = np.array(self.optic_center) - t[0] * self.vec
+
+        # t = self.kfp * np.dot(self.xp, real_positions[SW] - optic_center) / (-self.middle[0] + screen_positions[SW][0]) - np.dot(self.vec, real_positions[SW] - optic_center)
+        print(f' {t = }', end='')
+        self.x, self.y, self.z = np.array(optic_center) - t[0] * self.vec
+        print(f' {self.render(np.array(optic_center)) = }', end='')
 
     def update_physics(self, screen_positions):
         tmp_dist = frdist(

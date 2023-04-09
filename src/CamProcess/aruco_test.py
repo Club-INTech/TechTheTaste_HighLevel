@@ -32,8 +32,7 @@ def debug_position_loop(cam: Camera):
         cv2.putText(frame, str(id_), point, font, .5, (192, 192, 192), 1, cv2.LINE_AA)
 
     if all(x in screen_positions for x in (20, 21, 22, 23)):
-        if cam.old_dist is not None:
-            print(f'\r{cam.old_dist = :.2f}, {cam.x = :.3f}, {cam.y = :.3f}, {cam.z = :.3f}, {cam.alpha = :.3f}, {cam.beta = :.3f}', end='')
+        print(f'\r{cam.x = :.3f}, {cam.y = :.3f}, {cam.z = :.3f}, {cam.alpha = :.3f}, {cam.beta = :.3f}', end='')
         cam.find_physics_cross_ratio(screen_positions)
         cam.anchor_tag_render = {id_: cam.render(point) for id_, point in real_positions.items()}
     return frame
@@ -98,7 +97,7 @@ def new_loop(cam: Camera):
 
 
 def camera_test():
-    camera = LogitechCamera(1)
+    camera = LogitechCamera(0)
 
     running = True
     while running and cv2.getWindowProperty(win_name, cv2.WND_PROP_VISIBLE) > 0:

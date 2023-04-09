@@ -3,17 +3,24 @@ import time
 from constants import *
 
 
-class _Base:
+class BaseMicro:
     serial: serial.Serial
     log_level: int
     log_method = print
 
     def synchronise(self):
+        self.pre_sync()
+        time.sleep(1.)
+        self.clear_buffer()
+
+    def pre_sync(self):
         if self.log_level > NEC:
             self.log_method(f'{type(self).__name__}: info : Trying to sync with pico')
         self.serial.write(SYNC_BYTES)
-        time.sleep(1.)
-        self.serial.read(self.serial.in_waiting)
+
+    def clear_buffer(self):
+        if self.log_level > N_NEC:
+            self.log_method(f'{type(self).__name__} : info : Clearing buffer')
 
     def make_message(self, id_: int, comp: int, arg: int) -> bytes:
         if self.log_level > N_NEC:
@@ -35,6 +42,38 @@ class _Base:
             self.log_method(f'{type(self).__name__} : info : Received 0x{res.hex()}')
         return res
 
+    #  default feedback methods do nothing
+    def acknowledgement(self, message):
+        pass
+
+    #  default feedback methods do nothing
+    def termination(self, message):
+        pass
+
+    #  default feedback methods do nothing
+    def var_get(self, message):
+        pass
+
+    #  default feedback methods do nothing
+    def tracked(self, message):
+        pass
+
+    #  default feedback methods do nothing
+    def error(self, message):
+        pass
+
+    #  default feedback methods do nothing
+    def wheel_update(self, message):
+        pass
+
+    #  default feedback methods do nothing
+    def debug(self, message):
+        pass
+
+    #  default feedback methods do nothing
+    def identify(self, message):
+        pass
+
     manage_feedback = tuple(n.lower() for n in FEEDBACKS)
 
     def feedback(self, message):
@@ -48,5 +87,4 @@ class _Base:
         getattr(self, attr)(message)
 
 
-#  default feedback methods do nothing
-BaseMicro = type('BaseMicro', (_Base,), {name: (lambda self, message: None) for name in _Base.manage_feedback})
+# BaseMicro = type('BaseMicro', (_Base,), {name: (lambda self, message: None) for name in _Base.manage_feedback})
