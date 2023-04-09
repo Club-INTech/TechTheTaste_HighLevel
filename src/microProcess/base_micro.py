@@ -6,17 +6,18 @@ from constants import *
 class _Base:
     serial: serial.Serial
     log_level: int
+    log_method = print
 
     def synchronise(self):
         if self.log_level > NEC:
-            print(f'{type(self).__name__}: info : Trying to sync with pico')
+            self.log_method(f'{type(self).__name__}: info : Trying to sync with pico')
         self.serial.write(SYNC_BYTES)
         time.sleep(1.)
         self.serial.read(self.serial.in_waiting)
 
     def make_message(self, id_: int, comp: int, arg: int) -> bytes:
         if self.log_level > N_NEC:
-            print(f'{type(self).__name__} : info : Building order with arguments {id_}({ORDERS[id_]}), {comp}, {arg}')
+            self.log_method(f'{type(self).__name__} : info : Building order with arguments {id_}({ORDERS[id_]}), {comp}, {arg}')
 
         # current message scheme:
         #  | 4 bits | 4 bits |            32 bits             |
@@ -25,13 +26,13 @@ class _Base:
 
     def send(self, mess: bytes):
         if self.log_level > NEC:
-            print(f'{type(self).__name__} : info : Sending 0x{mess.hex()}')
+            self.log_method(f'{type(self).__name__} : info : Sending 0x{mess.hex()}')
         self.serial.write(mess)
 
     def receive(self) -> bytes:
         res = self.serial.read(FEEDBACK_LENGTH)
         if self.log_level > NEC:
-            print(f'{type(self).__name__} : info : Received 0x{res.hex()}')
+            self.log_method(f'{type(self).__name__} : info : Received 0x{res.hex()}')
         return res
 
     manage_feedback = tuple(n.lower() for n in FEEDBACKS)
@@ -39,11 +40,11 @@ class _Base:
     def feedback(self, message):
         nb = message[0] >> 4
         if nb >= len(self.manage_feedback):
-            print(f'{type(self).__name__} : ERROR : Invalid feedback received {nb}')
+            self.log_method(f'{type(self).__name__} : ERROR : Invalid feedback received {nb}')
             return self.synchronise()
         attr = self.manage_feedback[message[0] >> 4]
         if self.log_level > N_NEC:
-            print(f'{type(self).__name__} : info : Processing feedback {attr.upper()}')
+            self.log_method(f'{type(self).__name__} : info : Processing feedback {attr.upper()}')
         getattr(self, attr)(message)
 
 

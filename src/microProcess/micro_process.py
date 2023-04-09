@@ -9,6 +9,7 @@ def empty():
 
 
 class MicroProcess(BaseMicro):
+    last = 0, 0
 
     def __init__(self, port, lidar, main, robot_x, robot_y, robot_heading, axle_track, log=NECESSARY):
         self.log_level = log
