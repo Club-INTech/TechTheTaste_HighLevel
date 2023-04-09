@@ -14,6 +14,7 @@ from launcher import Xrobot, Yrobot, Hrobot
 from routine_sender import RoutineSender
 from constants import *
 from params import *
+import math
 
 # simple function to find the right angle
 
@@ -59,18 +60,6 @@ class OrderToMicroProcress(RoutineSender):
     def receiveDataFromMicro2(self, data):
         return self.pipeToMicro2.recv()
 
-    # this function send where the robot has to go (Xgoal, Ygoal) and then what is the next
-    # trajctory the robot has to do to get there
-    def askLPAprocess(self, Xgoal, Ygoal):
-        #we send the global trajectory we want to do
-        self.pipeToLPA.send( [1, (Xgoal,Ygoal) ] )
-        data = self.pipeToLPA.recv()
-        Xstep,Ystep = data[1][0],data[1][1]
-        self.indexes_to_coors(Xstep,Ystep)
-        log.logMessage(2,"robot is going to ("+ str(Xstep) + "," + str(Ystep) + ")", 0)
-        return Xstep, Ystep
-
-
     # all methods have clear name even though we could just need
     # one method instead of all of them. This way, it is easier 
     # to conceive the scenario
@@ -100,36 +89,6 @@ class OrderToMicroProcress(RoutineSender):
     #        self.smallMoovForward(sqrt( (Xstep - Xinit)**2 + (Ystep - Yinit)**2 ))
     #       if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
     #            break
-            
-    def moovTo(self, X, Y):
-        self.goto(X,Y)
-        print(f'New position : {X,Y}')
-    
-    def moovToLpa(self, Xgoal, Ygoal):
-        #Xinit, Yinit = Xrobot.value, Yrobot.value
-        #while True:
-            #Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
-            #Xstep, Ystep = self.indexes_to_coors(Xstep,Ystep)
-        Xstep = 1
-        Ystep = 1
-        self.goto(Xstep,Ystep)
-        #time.sleep(1)
-        if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
-            return 1
-        return 0
-
-    # this function should only be used for small moov
-    # since it is only used without the LPA* process
-    def smallMoovForward(self, ticks):
-        self.sendDataToMicro1((MOVEMENT, 'goto'))
-        # we wait until the moov is well done
-
-    def moovTurn(self, angle):
-        #TODO delete ?
-        #self.sendDataToMicro1(2)
-        ticks = angleToTicks(angle)
-        self.sendDataToMicro1((MOVEMENT,'goto')) #2
-        # we wait until the moov is well done
 
     def moovDeleted(self):
         self.pipeToMicro1(3)
@@ -154,6 +113,23 @@ class OrderToMicroProcress(RoutineSender):
         self.pipeToMicro2(bitCode)
         log.logMessage(3, "pump actualised", 0)
         
+    
+    #-----------------------------------------------------------------------------------------------------------------------------------------------------
+    #------------------------------------------------------ new version ----------------------------------------------------------------------------------
+    #-----------------------------------------------------------------------------------------------------------------------------------------------------
+ 
+    
+    # this function send where the robot has to go (Xgoal, Ygoal) and then what is the next
+    # trajctory the robot has to do to get there
+    def askLPAprocess(self, Xgoal, Ygoal):
+        #we send the global trajectory we want to do
+        self.pipeToLPA.send( [1, (Xgoal,Ygoal) ] )
+        data = self.pipeToLPA.recv()
+        Xstep,Ystep = data[1][0],data[1][1]
+        self.indexes_to_coors(Xstep,Ystep)
+        log.logMessage(2,"robot is going to ("+ str(Xstep) + "," + str(Ystep) + ")", 0)
+        return Xstep, Ystep    
+    
     def indexes_to_coors(self, i: int, j: int):
         """ Converts indices of the graph's vertex to the real life coordinates
 
@@ -167,6 +143,112 @@ class OrderToMicroProcress(RoutineSender):
             Tuple[float, float]: Real life coordinates
         """
         return float(i * RESOLUTION), float(j * RESOLUTION)
-
+    
+    def moovToSimple(self, X, Y):
+        self.goto(self, X,Y)
+        print(f'New position : {X,Y}')
         
+    def moovToApproch(self, X, Y):
+        step = 0.2
+        self.goto(self, X - step,Y - step)
+        print(f'New position : {X - step,Y - step}')
+    
+    def moovToLPA(self, Xgoal, Ygoal):
+        #Xinit, Yinit = Xrobot.value, Yrobot.value
+        #while True:
+            #Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
+            #Xstep, Ystep = self.indexes_to_coors(Xstep,Ystep)
+        Xstep = 1
+        Ystep = 1
+        self.goto(Xstep,Ystep)
+        #time.sleep(1)
+        if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
+            return 1
+        return 0
+    
+    def stopMoov(self):
+        self.stop()
+        print(f'Robot stop')
+        
+    def captureCake(self, x, y, slot):
+        RIGHT, MID, LEFT = 1,2,3
+        ecart = 0.15
+        dx, dy = x - Xrobot.value, y - Yrobot.value
+        magnitude = (dx * dx + dy * dy) ** .5
+        d_theta = math.acos((1, -1)[False] * dx / magnitude) * (-1, 1)[dy >= 0] - Xrobot.value
+        
+        if slot == RIGHT:
+            self.target(self, d_theta + math.atan(ecart/magnitude))
+            self.goto(self, x, y)
+        elif slot == MID:
+            self.target(self, d_theta)
+            self.goto(self, x, y)
+        elif slot == LEFT:
+            self.target(self, d_theta - math.atan(ecart/magnitude))
+            self.goto(self, x, y)
+    
+    def releaseCake(self):
+        step = 0.2
+        self.goto(self, Xrobot.value - step, Yrobot.value - step, reverse=True)
+
+    def moovCake(self,src,dest):
+        self.move_cake(self, src, dest)
+        print(f'the cake was moved from {src} to {dest}')
+        
+    def sortCakePhase1(self, genoise, creme, glacage):
+        left = genoise
+        mid = creme
+        right = glacage
+        
+        self.moovCake(self,right,left)
+        
+        self.moovCake(self,mid,left)
+        self.moovCake(self,mid,left)
+        
+        self.moovCake(self,right,mid)
+        self.moovCake(self,right,mid)
+        
+        self.moovCake(self,left,right)
+        self.moovCake(self,left,right)
+        
+        self.moovCake(self,left,mid)
+        
+        self.moovCake(self,right,left)
+        
+        self.moovCake(self,mid,right)
+        
+        self.moovCake(self,mid,left)
+    
+    def sortCakePhase2(self, genoise, creme, glacage):
+        left = genoise
+        mid = creme
+        right = glacage
+        
+        self.moovCake(self,right,left)
+        self.moovCake(self,right,left)
+        self.moovCake(self,right,left)
+        
+    def sortCakePhase3(self,genoise, creme, glacage):
+        left = genoise
+        mid = creme
+        right = glacage
+        
+        self.moovCake(self,mid,left)
+        self.moovCake(self,mid,left)
+        self.moovCake(self,right,left)
+        
+    def putCherry(self,dest):
+        self.place_cherry(self,dest)
+        print(f'a cherry was placed on cake {dest}')
+    
+    def openCake(self, i):
+        pass
+    
+    def lockCake(self, i):
+        pass
+    
+    def activateCanon():
+        pass
+    
+
         

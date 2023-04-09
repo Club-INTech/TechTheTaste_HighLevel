@@ -107,6 +107,121 @@ def debugSimpleOrderStraight2(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     
     log.logMessage(2,"simulation finished", 0)
 
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------ scenario part -----------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    log.logMessage(2,"scenario simple", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    
+    positionGlacage1, positionCreme1, positionGenoise1 = (0,0), (0,0), (0,0)
+    positionGlacage2, positionCreme2, positionGenoise2 = (0,0), (0,0), (0,0)
+    positionDeposit1, positionDeposit2 = (0,0), (0,0)
+    positionEnd = (0,0)
+    
+    RIGHT, MID, LEFT = 1, 2, 3
+    
+    ########## First wave ############
+    
+    OrderManager.openCake(LEFT)
+    OrderManager.openCake(MID)
+    OrderManager.openCake(RIGHT)
+   
+    OrderManager.moovToSimple(positionGlacage1)
+    OrderManager.captureCake(positionGlacage1,MID)
+    OrderManager.lockCake(MID)
+    
+    OrderManager.moovToSimple(positionCreme1)
+    OrderManager.captureCake(positionCreme1,LEFT)
+    OrderManager.lockCake(LEFT)
+    
+    OrderManager.moovToSimple(positionGenoise1)
+    OrderManager.captureCake(positionGenoise1,RIGHT)
+    OrderManager.lockCake(RIGHT)
+    
+    #Phase 1
+    
+    OrderManager.moovToSimple(positionDeposit1)
+    
+    OrderManager.sortCakePhase1(genoise=RIGHT,creme=LEFT,glacage=MID)
+    
+    OrderManager.putCherry()
+    OrderManager.openCake(RIGHT)
+    OrderManager.releaseCake()
+    
+    #Phase 2
+    
+    OrderManager.moovToSimple(positionDeposit1) #a bit different
+    
+    OrderManager.sortCakePhase2(genoise=RIGHT,creme=LEFT,glacage=MID)
+    
+    OrderManager.putCherry()
+    OrderManager.openCake(RIGHT)
+    OrderManager.releaseCake()
+    
+    #Phase 3
+    
+    OrderManager.moovToSimple(positionDeposit1) #a bit different
+    
+    OrderManager.sortCakePhase3(genoise=RIGHT,creme=LEFT,glacage=MID)
+    
+    OrderManager.putCherry()
+    OrderManager.openCake(RIGHT)
+    OrderManager.releaseCake()
+    
+    ########## Second wave ############
+    
+    OrderManager.openCake(LEFT)
+    OrderManager.openCake(MID)
+    OrderManager.openCake(RIGHT)
+    
+    OrderManager.moovToSimple(positionGenoise2)
+    OrderManager.captureCake(positionGenoise2,RIGHT)
+    OrderManager.lockCake(RIGHT)
+    
+    OrderManager.moovToSimple(positionCreme2)
+    OrderManager.captureCake(positionCreme2,LEFT)
+    OrderManager.lockCake(LEFT)
+    
+    OrderManager.moovToSimple(positionGlacage2)
+    OrderManager.captureCake(positionGlacage2, MID)
+    OrderManager.lockCake(MID)
+    
+    #Phase 1
+    
+    OrderManager.moovToSimple(positionDeposit2)
+    
+    OrderManager.sortCakePhase1(genoise=RIGHT,creme=LEFT,glacage=MID)
+    
+    OrderManager.putCherry()
+    OrderManager.openCake(RIGHT)
+    OrderManager.releaseCake()
+    
+    #Phase 2
+    
+    OrderManager.moovToSimple(positionDeposit2) #a bit different
+    
+    OrderManager.sortCakePhase2(genoise=RIGHT,creme=LEFT,glacage=MID)
+    
+    OrderManager.putCherry()
+    OrderManager.openCake(RIGHT)
+    OrderManager.releaseCake()
+    
+    #Phase 3
+    
+    OrderManager.moovToSimple(positionDeposit2) #a bit different
+    
+    OrderManager.sortCakePhase3(genoise=RIGHT,creme=LEFT,glacage=MID)
+    
+    OrderManager.putCherry()
+    OrderManager.openCake(RIGHT)
+    OrderManager.releaseCake()
+    
+    OrderManager.moovToSimple(positionEnd)
+    
+    log.logMessage(2,"simulation finished", 0)
 
 
 if __name__ == "__main__":
