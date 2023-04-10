@@ -69,3 +69,11 @@ MIN_TICKS, MAX_TICKS = -32768, 32768  # valid range of tick arguments
 MIN_T_MS, MAX_T_MS = 0, 65536  # valid range of time arguments in ms
 
 MAX_DISTANCE = 2 * math.pi * WHEEL_RADIUS * MAX_TICKS / TICKS_PER_REVOLUTION  # maximum distance covered by goto
+
+AmpVertiArm = 8000
+AmpHoriArm = 8000
+
+UP_arm = -1
+DOWN_arm = 1
+LEFT_arm = 1
+LEFT_arm = -1

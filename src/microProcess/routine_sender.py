@@ -10,6 +10,10 @@ def target(angle):
     yield ROT, 0, angle + 0x10000 * (angle < 0)
 
 
+#control if arm is left ()
+def ARMPos(leftPos, rightPos):
+    yield ARM, leftPos, rightPos
+
 def stop():
     yield CAN, 0, 0
 
@@ -45,6 +49,19 @@ class RoutineSender:
         self.micro_pipe.send((MOVEMENT, target, (
             int(TICKS_PER_REVOLUTION * d_theta * self.axle_track / (math.pi * WHEEL_RADIUS)),
         )))
+    #position = UP_arm = -1 or position = DOWN_arm  = 1
+    def ARMverticalPos (self, position = UP):
+        left = AmpVertiArm * position
+        right = AmpVertiArm * position
+        self.micro_pipe.send(ACTION, ARMPos, (left, right) )
+
+    #position = LEFT_arm = 1 or position = RIGHT_arm = -1
+    #the function onlu change of 1 step the arm so if the arm is compeletly on the left of robot, calling one time the function with 
+    #args = right will put the arm on the middle of the robot
+    def ARMhorizontalPos (self, position):
+        left = AmpHoriArm * position
+        right = (-1) * AmpHoriArm *position 
+        self.micro_pipe.send(ACTION, ARMPos, (left, right) )
 
     def stop(self):
         self.micro_pipe.send((MOVEMENT, stop, ()))
