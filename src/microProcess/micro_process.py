@@ -183,3 +183,10 @@ class NewMicroProcess(MicroManager):
     def __init__(self, lida_pipe, main_pipe):
         self.main_pipe, self.lidar_pipe = main_pipe, lida_pipe
         MicroManager.__init__(self)
+
+    def scan_feedbacks(self):
+        if self.main_pipe.poll():
+            pass
+        if self.lidar_pipe.poll():
+            pass
+        MicroManager.scan_feedbacks(self)

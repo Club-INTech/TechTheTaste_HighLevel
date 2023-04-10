@@ -1,5 +1,5 @@
 from constants import *
-from base_micro import BaseMicro, _Base
+from base_micro import BaseMicro
 import serial
 import cmd
 import struct
@@ -183,16 +183,34 @@ Move 1A's robot arm left motor moves by <left> ticks, right motor moves by <righ
 @command
 def pumps(self, line):
     args = line.split()
-    if any(ranged_int('pump_id', x) for x in args):
+    if any(ranged_int('pump_id', x, 0, 4) for x in args):
         return
-    self.send(self.make_message(PUM, 0, sum(1 << int(x) for x in set(args))))
+    self.send(self.make_message(PUM, 1, sum(1 << int(x) for x in set(args))))
+    self.wait(PUM)
+
+
+@command
+def motors(self, line):
+    args = line.split()
+    if any(ranged_int('motor_id', x, 0, 4) for x in args):
+        return
+    self.send(self.make_message(PUM, 2, sum(1 << int(x) for x in set(args)) << 8))
+    self.wait(PUM)
+
+
+@command
+def solenoids(self, line):
+    args = line.split()
+    if any(ranged_int('solenoid_id', x, 0, 4) for x in args):
+        return
+    self.send(self.make_message(PUM, 4, sum(1 << int(x) for x in set(args)) << 16))
     self.wait(PUM)
 
 
 pumps.__doc__ = """
 Command: pumps
-set_pumps *[0 <= pump_id < 16]
-sets every pump in pump_ids on other will be off
+pumps *[0 <= pump_id < 4]
+sets every pump in pump_ids on, others will be off
 """
 
 
@@ -325,13 +343,13 @@ def load_vars(self, args):
 
 @command
 @arg_number(0)
-def synchronise(self: _Base, args):
+def synchronise(self, args):
     self.synchronise()
 
 
 @command
 @arg_number(0)
-def waiting_bytes(self: _Base, args):
+def waiting_bytes(self, args):
     print(f"Number of waiting bytes: {self.serial.in_waiting}")
 
 
@@ -345,7 +363,7 @@ class Shell(BaseShell):
     last_movement = None
     last_received_var = 0.
 
-    def __init__(self: _Base, port, log_level=NECESSARY):
+    def __init__(self, port, log_level=NECESSARY):
         self.log_level = log_level
         BaseShell.__init__(self)
         self.serial = serial.Serial(port, BAUDRATE)
