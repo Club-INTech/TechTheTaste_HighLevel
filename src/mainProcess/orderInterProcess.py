@@ -2,6 +2,7 @@
 # IRTC !!!!!
 import sys
 import os
+import time
 from multiprocessing import Pipe, Process
 from math import sqrt, asin
 # path managing
@@ -250,5 +251,23 @@ class OrderToMicroProcress(RoutineSender):
     def activateCanon():
         pass
     
+    #this function goal is to throw the cherry once bebouzator2 is at the good position
+    def thrownCherry(self, waitingTime):
+        maskActivateCanon_on = 0b00000001
+        #                            |-> pump1 the one for the cannon on
 
+        maskActivateCanon_off = 0b00000000
+        self.Actuator2AControll(maskActivateCanon_on)
+        time.sleep(waitingTime) #time to throw all the cherry
+        self.Actuator2AControll(maskActivateCanon_off)
+
+    #to grab the cherry
+    def hooverActivation(self):
+        maskActivateVaccum = 0b00000010
+        #                            |-> pump2 for the hoover
+        self.Actuator2AControll(maskActivateVaccum)
+
+    def hooverDesactivate(self):
+        maskActivateVaccum = 0b00000000
+        self.Actuator2AControll(maskActivateVaccum)
         
