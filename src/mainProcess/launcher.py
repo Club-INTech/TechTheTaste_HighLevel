@@ -27,9 +27,10 @@ from micro_process import MicroProcess
 from multiprocessing import Process, Pipe, Value, current_process
 
 #global variable 
-Xrobot = Value('i', 0) #meter
-Yrobot = Value('i', 0) #meter
-Hrobot = Value('f', 0) #meter
+Xrobot = Value('f', 0) #meter
+Yrobot = Value('f', 0) #meter
+Hrobot = Value('f', 0) #meter (head)
+Arobot = Value('i', 1) #RIGHT, MID, LEFT = 1,2,3
 XYinitialised = Value('i', 0) # to know if Xrobot and Yrobothave been initialised by the cam process, 0 = false, 1 = True
 # TODO, add Hrobot to config 1
 # fix the issue about Lpastar integer and float
