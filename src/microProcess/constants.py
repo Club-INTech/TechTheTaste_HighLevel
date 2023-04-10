@@ -14,15 +14,15 @@ LOG_MODES = 'nothing', 'necessary', 'everything'
 NEC, N_NEC = range(2)  # Necessary, Not Necessary
 
 # Feedbacks
-ACK, TER, VAR, TRA, ERR, WHE = range(6)
-FEEDBACKS = 'ACKNOWLEDGEMENT', 'TERMINAISON', 'VAR_GET', 'TRACKED', 'ERROR', 'WHEEL_UPDATE', 'DEBUG'
+ACK, TER, VAR, TRA, ERR, WHE, ID_F = range(7)
+FEEDBACKS = 'ACKNOWLEDGEMENT', 'TERMINATION', 'VAR_GET', 'TRACKED', 'ERROR', 'WHEEL_UPDATE', 'DEBUG', 'IDENTIFY'
 
 # orders
 # c.f. https://docs.google.com/spreadsheets/d/1NDprMKYs9L7S2TkqgACDOh6OKDJRHhz_LrTCKmEuD-k/edit#gid=0
-LID, MOV, ROT, CAN, ARM, _, PUM, _, _, VAR_SET, VAR_GET, TRACK, _, _, _, _ = range(16)
+LID, MOV, ROT, CAN, ARM, _, PUM, _, _, VAR_SET, VAR_GET, TRACK, _, _, ID, _ = range(16)
 ORDERS = (
     'LIDAR', 'MOVE', 'ROT', 'CANCEL', 'ARM', '', 'PUMPS', '', '', 'VAR_SET', 'VAR_GET', 'TRACK',
-    '', '', '', ''
+    '', '', 'ID', ''
 )
 
 
@@ -32,7 +32,7 @@ CATEGORIES = 'MOVEMENT', 'ACTION', 'OTHER'
 
 # correspondance of an order type to each order
 TYPES = (
-    OTHER, MOVEMENT, MOVEMENT, MOVEMENT, ACTION, None, ACTION, None, None, OTHER, OTHER, OTHER, None, None, None,
+    OTHER, MOVEMENT, MOVEMENT, MOVEMENT, ACTION, None, ACTION, None, None, OTHER, OTHER, OTHER, None, None, OTHER,
     None
 )
 

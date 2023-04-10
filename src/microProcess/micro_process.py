@@ -1,4 +1,7 @@
+import serial
+
 from base_micro import *
+from serial.tools.list_ports import comports
 from constants import *
 import math
 
@@ -40,7 +43,7 @@ class MicroProcess(BaseMicro):
         except StopIteration:
             self.pull(type_)
 
-    def terminaison(self, message):
+    def termination(self, message):
         t = TYPES[message[0] & 0xf]
         if t != OTHER:
             self.next(t)
@@ -97,3 +100,93 @@ class MicroProcess(BaseMicro):
         except KeyboardInterrupt:
             self.send(self.make_message(CAN, 0, 0))
             self.serial.close()
+
+
+class GenericMicro(BaseMicro):
+    id_ = -1
+
+    def __init__(self, serial_, master):
+        self.master = master
+        self.serial = serial_
+
+    @classmethod
+    def new(cls, old):
+        return cls(old.serial, old.master)
+
+    @property
+    def log_level(self):
+        return self.master.log_level
+
+    @property
+    def log_method(self):
+        return self.master.log_method
+
+    def identify(self, message):
+        self.id_ = message[0] & 0xf
+
+
+class MovementMicro(GenericMicro):
+    pass
+
+
+class ActionMicro(GenericMicro):
+    pass
+
+
+class ArduinoMicro(GenericMicro):
+    pass
+
+
+MICRO_CLASSES = MovementMicro, ActionMicro, ArduinoMicro
+
+
+class MicroManager:
+    log_method = print
+    log_level = NECESSARY
+
+    def __init__(self):
+        serials = tuple(
+            GenericMicro(serial.Serial(usb.usb_description(), BAUDRATE), self) for usb in comports()
+        )
+
+        for s in serials:
+            s.pre_sync()
+        time.sleep(1.)
+        for index, s in enumerate(serials):
+            s.clear_buffer()
+            s.send(s.make_message(ID, 0, 0))
+
+        # identifies all serial connections
+        # any port that is not responding within 5 secs will be discarded
+        date = time.perf_counter()
+        while any(s.id_ == -1 for s in serials) and time.perf_counter() - date < 5.:
+            for s in serials:
+                if s.serial.in_waiting:
+                    s.feedback(s.receive())
+
+        for s in serials:
+            if s.id_ != -1 or self.log_level <= NEC:
+                continue
+            self.log_method(f'{type(self).__name__} : info : Could not identify hardware on {s.serial.portstr}')
+
+        self.serials = {
+            s.id_: MICRO_CLASSES[s.id_].new(s) for s in serials if s.id_ != -1
+        }
+
+    def scan_feedbacks(self):
+        for s in self.serials.values():
+            if s.serial.in_waiting:
+                s.feedback(s.receive())
+
+
+class NewMicroProcess(MicroManager):
+    def __init__(self, lida_pipe, main_pipe):
+        self.main_pipe, self.lidar_pipe = main_pipe, lida_pipe
+        MicroManager.__init__(self)
+
+    def scan_feedbacks(self):
+        if self.main_pipe.poll():
+            pass
+        if self.lidar_pipe.poll():
+            pass
+        MicroManager.scan_feedbacks(self)
