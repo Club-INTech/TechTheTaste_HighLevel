@@ -11,7 +11,7 @@ sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'microProcess')
 # import part
 import time
 import log
-from launcher import Xrobot, Yrobot, Hrobot
+from launcher import Xrobot, Yrobot, Hrobot, Arobot
 from routine_sender import RoutineSender
 from constants import *
 from params import *
@@ -176,7 +176,7 @@ class OrderToMicroProcress(RoutineSender):
         ecart = 0.15
         dx, dy = x - Xrobot.value, y - Yrobot.value
         magnitude = (dx * dx + dy * dy) ** .5
-        d_theta = math.acos((1, -1)[False] * dx / magnitude) * (-1, 1)[dy >= 0] - Xrobot.value
+        d_theta = math.acos((1, -1)[False] * dx / magnitude) * (-1, 1)[dy >= 0] - Hrobot.value
         
         if slot == RIGHT:
             self.target(self, d_theta + math.atan(ecart/magnitude))
@@ -192,9 +192,75 @@ class OrderToMicroProcress(RoutineSender):
         step = 0.2
         self.goto(self, Xrobot.value - step, Yrobot.value - step, reverse=True)
 
-    def moovCake(self,src,dest):
-        self.move_cake(self, src, dest)
-        print(f'the cake was moved from {src} to {dest}')
+    def moovCake(self, src, dest):
+        RIGHT, MID, LEFT = 1,2,3
+        LEFT_arm, RIGHT_arm = 1, -1
+        UP_arm, DOWN_arm = -1, 1 
+        ACTIVATE, DESACTIVATE = 1,0 #TODO change ByteMask
+        
+        if src == dest or (src, dest) not in {1,2,3}:
+            pass
+        else :
+            #setting ARM to src
+            if Arobot.value == src :
+                pass
+            
+            elif abs(Arobot.value - src) == 1:
+                if Arobot.value - src > 0:
+                    self.ARMhorizontalPos(RIGHT_arm)
+                else :
+                    self.ARMhorizontalPos(LEFT_arm)
+                    
+                
+            else : #abs(Arobot.value - src) == 2:
+                if Arobot.value - src > 0:
+                    self.ARMhorizontalPos(RIGHT_arm)
+                    self.ARMhorizontalPos(RIGHT_arm)
+                else :
+                    self.ARMhorizontalPos(LEFT_arm)
+                    self.ARMhorizontalPos(LEFT_arm)
+            
+            #updating ARM position        
+            Arobot.value = src
+            
+            #uplifting genoise
+            self.ARMverticalPos(position=DOWN_arm)
+            self.PumpControll(ACTIVATE)
+            self.ARMverticalPos(position=UP_arm)
+            
+            #ARM move to dest    
+            if abs(Arobot.value - dest) == 1 :
+                if Arobot.value - dest > 0 :
+                    self.ARMhorizontalPos(RIGHT_arm)
+                else :
+                    self.ARMhorizontalPos(LEFT_arm)
+        
+                        
+            else : #abs(Arobot.value - dest) == 2
+                if Arobot.value - dest > 0 :
+                    self.ARMhorizontalPos(RIGHT_arm)
+                    self.ARMhorizontalPos(RIGHT_arm)
+                else :
+                    self.ARMhorizontalPos(LEFT_arm)
+                    self.ARMhorizontalPos(LEFT_arm)
+            
+            #Deposit genoise
+            self.ARMverticalPos(position = DOWN_arm)
+            self.PumpControll(DESACTIVATE)
+            self.ARMverticalPos(position = UP_arm)
+            
+            #updating ARM position 
+            Arobot.value = dest
+            
+            
+            
+                
+                    
+            
+                
+                
+                
+        
         
     def sortCakePhase1(self, genoise, creme, glacage):
         left = genoise
