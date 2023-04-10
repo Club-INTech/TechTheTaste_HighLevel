@@ -12,7 +12,15 @@ def target(angle):
 
 #control if arm is left ()
 def ARMPos(leftPos, rightPos):
-    yield ARM, leftPos, rightPos
+    yield ARM, 0, leftPos, rightPos
+
+#PUMPstate is a bytemask to controll all the pump on the bot
+#for instance if you want to turn on only pump1, call pumpState(0b00000001)
+#Actuator2A is a bytemask tocontroll all the actuator of the bot
+#ValveState is a bytemask to controll all the valve of the bot
+#use the order pump https://docs.google.com/spreadsheets/d/1NDprMKYs9L7S2TkqgACDOh6OKDJRHhz_LrTCKmEuD-k/edit#gid=0
+def actuatorControll(PUMPstate : int, Actuator2A : int, ValveState : int):
+    yield PUM, 0, ( (0xFF << 24) | (ValveState << 16) | (Actuator2A << 8) | (PUMPstate << 0 ))
 
 def stop():
     yield CAN, 0, 0
@@ -50,7 +58,7 @@ class RoutineSender:
             int(TICKS_PER_REVOLUTION * d_theta * self.axle_track / (math.pi * WHEEL_RADIUS)),
         )))
     #position = UP_arm = -1 or position = DOWN_arm  = 1
-    def ARMverticalPos (self, position = UP):
+    def ARMverticalPos (self, position = UP_arm):
         left = AmpVertiArm * position
         right = AmpVertiArm * position
         self.micro_pipe.send(ACTION, ARMPos, (left, right) )
@@ -62,6 +70,15 @@ class RoutineSender:
         left = AmpHoriArm * position
         right = (-1) * AmpHoriArm *position 
         self.micro_pipe.send(ACTION, ARMPos, (left, right) )
+
+    def PumpControll(self, byteMask):
+        self.micro_pipe.send(ACTION, (byteMask, 0, 0) )
+
+    def Actuator2AControll(self, byteMask):
+        self.micro_pipe.send(ACTION, (0, byteMask, 0))
+
+    def ValveControll(self, byteMask):
+        self.micro_pipe.send(ACTION, (0, 0, byteMask))
 
     def stop(self):
         self.micro_pipe.send((MOVEMENT, stop, ()))
