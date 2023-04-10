@@ -167,6 +167,9 @@ class OrderToMicroProcress(RoutineSender):
             return 1
         return 0
     
+    def turn(self, angle):
+        self.target(angle)
+    
     def stopMoov(self):
         self.stop()
         print(f'Robot stop')
@@ -252,16 +255,6 @@ class OrderToMicroProcress(RoutineSender):
             #updating ARM position 
             Arobot.value = dest
             
-            
-            
-                
-                    
-            
-                
-                
-                
-        
-        
     def sortCakePhase1(self, genoise, creme, glacage):
         left = genoise
         mid = creme

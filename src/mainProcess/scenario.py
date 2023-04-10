@@ -10,6 +10,7 @@ sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'utils'))
 
 #import part
 import log
+import math
 
 def scenarioSimple(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     log.logMessage(2,"début du scenario!")
@@ -80,35 +81,95 @@ def debugRaspy(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
 
     log.logMessage(2,"simulation finished", 0)
     
-def debugSimpleOrderDiagonal(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
-    log.logMessage(2,"scenario test simple order : Diagonal (1,1)", 0)
-    
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
-   
-    OrderManager.moovToSimple(1,1)
-    
-    log.logMessage(2,"simulation finished", 0)
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------ test movement --------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
+
     
 def debugSimpleOrderStraight1(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     log.logMessage(2,"scenario test simple order : Straight (1,0)", 0)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
    
-    OrderManager.moovToSimple(1,0)
+    OrderManager.moovToSimple(0.5,0)
     
     log.logMessage(2,"simulation finished", 0)
     
 def debugSimpleOrderStraight2(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
-    log.logMessage(2,"scenario test simple order : Straight (0,1)", 0)
+    log.logMessage(2,"scenario test simple order : Straight-left (0,1)", 0)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
    
-    OrderManager.moovToSimple(0,1)
+    OrderManager.moovToSimple(0,0.5)
+    
+    log.logMessage(2,"simulation finished", 0)
+    
+def debugSimpleOrderStraight3(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    log.logMessage(2,"scenario test simple order : Straight-right (0,1)", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+   
+    OrderManager.moovToSimple(0.5,0)
+    
+    log.logMessage(2,"simulation finished", 0)
+    
+def debugSimpleOrderStraight4(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    log.logMessage(2,"scenario test simple order : Straight-right (-1,0)", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+   
+    OrderManager.moovToSimple(0.5,0, reversed=True)
     
     log.logMessage(2,"simulation finished", 0)
 
+def debugSimpleOrderTurn(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    log.logMessage(2,"scenario test simple order : Turn (pi/2)", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+   
+    OrderManager.turn(math.pi/2)
+    
+    log.logMessage(2,"simulation finished", 0)
+    
+def debugSimpleOrderCaptureCakeMid(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    log.logMessage(2,"scenario test simple order : CaptureCake (1,1)", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    
+    RIGHT, MID, LEFT = 1,2,3
+    x, y = 0.2, 0
+    slot = MID
+    OrderManager.captureCake(x, y, slot)
+    
+    log.logMessage(2,"simulation finished", 0)
+    
+def debugSimpleOrderCaptureCakeRight(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    log.logMessage(2,"scenario test simple order : CaptureCake (1,1)", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    
+    RIGHT, MID, LEFT = 1,2,3
+    x, y = 0.2, 0
+    slot = RIGHT
+    OrderManager.captureCake(x, y, slot)
+    
+    log.logMessage(2,"simulation finished", 0)
+
+def debugSimpleOrderCaptureCakeLeft(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    log.logMessage(2,"scenario test simple order : CaptureCake (1,1)", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    
+    RIGHT, MID, LEFT = 1,2,3
+    x, y = 0.2, 0
+    slot = LEFT
+    OrderManager.captureCake(x, y, slot)
+    
+    log.logMessage(2,"simulation finished", 0)
+    
+
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
-#------------------------------------------------------ scenario part -----------------------------------------------------------------------------------
+#------------------------------------------------------ scenario part --------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
