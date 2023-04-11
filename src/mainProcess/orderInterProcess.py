@@ -145,8 +145,8 @@ class OrderToMicroProcress(RoutineSender):
         """
         return float(i * RESOLUTION), float(j * RESOLUTION)
     
-    def moovToSimple(self, X, Y):
-        self.goto(X,Y)
+    def moovToSimple(self, X, Y, reversed=False):
+        self.goto(X,Y,reversed)
         print(f'New position : {X,Y}')
         
     def moovToApproch(self, X, Y):
