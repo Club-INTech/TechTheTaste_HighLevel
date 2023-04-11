@@ -1,7 +1,4 @@
-import serial
-
 from base_micro import *
-from serial.tools.list_ports import comports
 from constants import *
 import math
 
