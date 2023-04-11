@@ -299,6 +299,13 @@ def log_mode(self, args):
         print(f"Unknown log_mode: {args[0]}, chose among {LOG_MODES}")
 
 
+@command
+@arg_number(0)
+def identify(self, args):
+    self.send(self.make_message(ID, 0, 0))
+    self.wait(ID)
+
+
 BaseShell = type('BaseShell', (cmd.Cmd, BaseMicro), cmds)
 
 
@@ -352,6 +359,9 @@ class Shell(BaseShell):
         self.right_wheel.append(right - 0x10000 * (right >= 0x1000))
         self.left_wheel.append(left - 0x10000 * (left >= 0x1000))
 
+    def identify(self, message):
+        print(message[0] & 0xff)
+
     def tracked(self, message):
         self.tracked_values.append(bytes_to_float(message[1:]))
 
@@ -402,6 +412,11 @@ class Shell(BaseShell):
         return os.listdir('./saved_sessions')
 
     complete_load_vars = complete_save_vars
+
+    def complete_log_mode(self, text, line, begidx, endidx):
+        if text:
+            return [x for x in LOG_MODES if x.startswith(text)]
+        return LOG_MODES
 
 
 if __name__ == '__main__':
