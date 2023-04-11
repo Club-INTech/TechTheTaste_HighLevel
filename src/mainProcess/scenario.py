@@ -12,6 +12,9 @@ sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import log
 import math
 
+
+
+#test
 def scenarioSimple(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     log.logMessage(2,"début du scenario!")
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
