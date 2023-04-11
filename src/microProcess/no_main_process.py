@@ -18,10 +18,36 @@ def move():
     yield MOV, 0, -2000 + 0x10000
 
 
+def vert(dv):
+    n_dv = -dv
+    dv += 0x10000 * (dv < 0)
+    n_dv += 0x10000 * (n_dv < 0)
+    return ARM, 0, (n_dv << 16) | dv
+
+
+def horiz(dh):
+    dh += 0x10000 * (dh < 0)
+    return ARM, 0, (dh << 16) | dh
+
+
+def arm():
+    yield vert(-400)
+    yield PUM, 1, 1
+    yield vert(400)
+    yield horiz(500)
+    yield vert(-400)
+    yield PUM, 1, 0
+    yield vert(400)
+
+
 def main_process(pipe):
     while True:
-        if pipe.poll() and not pipe.recv():
-            pipe.send((0, move, ()))
+        if pipe.poll():
+            x = pipe.recv()
+            if not x:
+                pipe.send((0, move, ()))
+            if x:
+                pipe.send((1, arm, ()))
 
 
 lidar_pipe, _ = mp.Pipe()
@@ -31,7 +57,7 @@ main_pipe0, main_pipe1 = mp.Pipe()
 if __name__ == '__main__':
     main_ = mp.Process(target=main_process, args=(main_pipe0,))
     lidar_ = mp.Process(target=lidar_process, args=())
-    micro_ = mp.Process(target=MicroProcess, args=(sys.argv[1], lidar_pipe, main_pipe1, robot_x, robot_y, robot_h, 1., EVERYTHING))
+    micro_ = mp.Process(target=MicroProcess, args=(sys.argv[1], lidar_pipe, main_pipe1, robot_x, robot_y, robot_h, 1., DEBUG))
 
     lidar_.start()
     main_.start()

@@ -10,17 +10,26 @@ def target(angle):
     yield ROT, 0, angle + 0x10000 * (angle < 0)
 
 
-#control if arm is left ()
-def ARMPos(leftPos, rightPos):
-    yield ARM, 0, leftPos, rightPos
+def set_arm_x(dx):
+    dx = dx + 0x10000 * (dx < 0)
+    yield ARM, 0, (dx << 16) | dx
+
+
+def set_arm_y(dy):
+    n_dy = -dy
+    dy = dy + 0x10000 * (dy < 0)
+    n_dy = -n_dy + 0x10000 * (n_dy < 0)
+    yield ARM, 0, (dy << 16) | n_dy
 
 #PUMPstate is a bytemask to controll all the pump on the bot
 #for instance if you want to turn on only pump1, call pumpState(0b00000001)
 #Actuator2A is a bytemask tocontroll all the actuator of the bot
 #ValveState is a bytemask to controll all the valve of the bot
 #use the order pump https://docs.google.com/spreadsheets/d/1NDprMKYs9L7S2TkqgACDOh6OKDJRHhz_LrTCKmEuD-k/edit#gid=0
+
 def actuatorControll(PUMPstate : int, Actuator2A : int, ValveState : int):
-    yield PUM, 0, ( (0xFF << 24) | (ValveState << 16) | (Actuator2A << 8) | (PUMPstate << 0 ))
+    yield PUM, 0,  (0xFF << 24) | (ValveState << 16) | (Actuator2A << 8) | (PUMPstate)
+
 
 def stop():
     yield CAN, 0, 0
@@ -36,8 +45,8 @@ def place_cherry():
 
 class RoutineSender:
 
-    def __init__(self, robot_x, robot_y, robot_heading, micro_pipe, axle_track):
-        self.robot_x, self.robot_y, self.robot_heading = robot_x, robot_y, robot_heading
+    def __init__(self, robot_x, robot_y, robot_heading, arm_pos_x, arm_pos_y, micro_pipe, axle_track):
+        self.robot_x, self.robot_y, self.robot_heading, self.arm_pos_x, self.arm_pos_y = robot_x, robot_y, robot_heading, arm_pos_x, arm_pos_y
         self.micro_pipe = micro_pipe
         self.axle_track = axle_track
 
@@ -63,13 +72,8 @@ class RoutineSender:
         right = AmpVertiArm * position
         self.micro_pipe.send(ACTION, ARMPos, (left, right) )
 
-    #position = LEFT_arm = 1 or position = RIGHT_arm = -1
-    #the function onlu change of 1 step the arm so if the arm is compeletly on the left of robot, calling one time the function with 
-    #args = right will put the arm on the middle of the robot
-    def ARMhorizontalPos (self, position):
-        left = AmpHoriArm * position
-        right = (-1) * AmpHoriArm *position 
-        self.micro_pipe.send(ACTION, ARMPos, (left, right) )
+    def set_arm_x(self, pos):
+        self.micro_pipe.send(ACTION, set_arm_x, (pos - self.arm_pos_x.value) )
 
     def PumpControll(self, byteMask):
         self.micro_pipe.send(ACTION, (byteMask, 0, 0) )
