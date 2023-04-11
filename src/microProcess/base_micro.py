@@ -1,4 +1,5 @@
 import serial
+from serial.tools.list_ports import comports
 import time
 from constants import *
 
@@ -87,4 +88,80 @@ class BaseMicro:
         getattr(self, attr)(message)
 
 
-# BaseMicro = type('BaseMicro', (_Base,), {name: (lambda self, message: None) for name in _Base.manage_feedback})
+class GenericMicro(BaseMicro):
+    id_ = -1
+
+    def __init__(self, serial_, master):
+        self.master = master
+        self.serial = serial_
+
+    @classmethod
+    def new(cls, old):
+        return cls(old.serial, old.master)
+
+    @property
+    def log_level(self):
+        return self.master.log_level
+
+    @property
+    def log_method(self):
+        return self.master.log_method
+
+    def identify(self, message):
+        self.id_ = message[0] & 0xf
+
+
+class MovementMicro(GenericMicro):
+    id_ = 0
+
+
+class ActionMicro(GenericMicro):
+    id_ = 1
+
+
+class ArduinoMicro(GenericMicro):
+    id_ = 2
+
+
+DEFAULT_MICRO_CLASSES = MovementMicro, ActionMicro, ArduinoMicro
+
+
+class MicroManager:
+    micro_classes = DEFAULT_MICRO_CLASSES
+
+    log_method = print
+    log_level = MINIMAL
+
+    def __init__(self):
+        serials = tuple(
+            GenericMicro(serial.Serial(usb.usb_description(), BAUDRATE), self) for usb in comports()
+        )
+
+        for s in serials:
+            s.pre_sync()
+        time.sleep(1.)
+        for index, s in enumerate(serials):
+            s.clear_buffer()
+            s.send(s.make_message(ID, 0, 0))
+
+        # identifies all serial connections
+        # any port that is not responding within 5 secs will be discarded
+        date = time.perf_counter()
+        while any(s.id_ == -1 for s in serials) and time.perf_counter() - date < 5.:
+            for s in serials:
+                if s.serial.in_waiting:
+                    s.feedback(s.receive())
+
+        for s in serials:
+            if s.id_ != -1 or self.log_level <= NEC:
+                continue
+            self.log_method(f'{type(self).__name__} : info : Could not identify hardware on {s.serial.portstr}')
+
+        self.serials = {
+            s.id_: self.micro_classes[s.id_].new(s) for s in serials if s.id_ != -1
+        }
+
+    def scan_feedbacks(self):
+        for s in self.serials.values():
+            if s.serial.in_waiting:
+                s.feedback(s.receive())

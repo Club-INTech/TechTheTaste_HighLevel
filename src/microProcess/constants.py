@@ -7,8 +7,8 @@ BAUDRATE = 115200
 SYNC_BYTES = b'\xf0\xf1\xf2\xf3\xf4\xf5\xf6\xf7\xf8\xf9'
 
 # log modes
-NOTHING, NECESSARY, EVERYTHING = range(3)
-LOG_MODES = 'nothing', 'necessary', 'everything'
+NOTHING, MINIMAL, DEBUG = range(3)
+LOG_MODES = 'nothing', 'minimal', 'debug'
 
 # log priorities
 NEC, N_NEC = range(2)  # Necessary, Not Necessary
@@ -19,10 +19,10 @@ FEEDBACKS = 'ACKNOWLEDGEMENT', 'TERMINATION', 'VAR_GET', 'TRACKED', 'ERROR', 'WH
 
 # orders
 # c.f. https://docs.google.com/spreadsheets/d/1NDprMKYs9L7S2TkqgACDOh6OKDJRHhz_LrTCKmEuD-k/edit#gid=0
-LID, MOV, ROT, CAN, ARM, _, PUM, _, _, VAR_SET, VAR_GET, TRACK, _, _, ID, _ = range(16)
+LID, MOV, ROT, CAN, ARM, _, PUM, _, _, VAR_SET, VAR_GET, TRACK, _, _, LATCH, ID = range(16)
 ORDERS = (
     'LIDAR', 'MOVE', 'ROT', 'CANCEL', 'ARM', '', 'PUMPS', '', '', 'VAR_SET', 'VAR_GET', 'TRACK',
-    '', '', 'ID', ''
+    '', '', 'LATCH', 'ID'
 )
 
 
@@ -39,10 +39,10 @@ TYPES = (
 
 # controllers
 PICO1, PICO2, ARDUINO, WHO_CARES = range(4)
-# correspondance of a controller to each order
+# correspondence of a controller to each order
 DESTINATION = (
     PICO1, PICO1, PICO1, PICO1, PICO2, WHO_CARES, PICO2, WHO_CARES, WHO_CARES, PICO1, PICO1, PICO1, WHO_CARES,
-    WHO_CARES, WHO_CARES, WHO_CARES
+    WHO_CARES, ARDUINO, WHO_CARES
 )
 
 

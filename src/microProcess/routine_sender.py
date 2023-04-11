@@ -42,10 +42,10 @@ class RoutineSender:
         self.axle_track = axle_track
 
     def goto(self, x, y, reverse=False):
-
         dx, dy = x - self.robot_x.value, y - self.robot_y.value
         magnitude = (dx * dx + dy * dy) ** .5
-        d_theta = math.acos((1, -1)[reverse] * dx / magnitude) * (-1, 1)[dy >= 0] - self.robot_heading.value
+        d_theta = math.acos((1, -1)[reverse] * dx / magnitude) * (-1, 1)[(dy >= 0) ^ reverse] - self.robot_heading.value
+        print(f'{d_theta = }')
         self.micro_pipe.send((MOVEMENT, goto, (
             int(TICKS_PER_REVOLUTION * d_theta * self.axle_track / (math.pi * WHEEL_RADIUS)),
             int(TICKS_PER_REVOLUTION * magnitude / (2 * math.pi * WHEEL_RADIUS) * (1, -1)[reverse]),
@@ -57,6 +57,7 @@ class RoutineSender:
         self.micro_pipe.send((MOVEMENT, target, (
             int(TICKS_PER_REVOLUTION * d_theta * self.axle_track / (math.pi * WHEEL_RADIUS)),
         )))
+
     #position = UP_arm = -1 or position = DOWN_arm  = 1
     def ARMverticalPos (self, position = UP_arm):
         left = AmpVertiArm * position

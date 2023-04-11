@@ -61,27 +61,6 @@ def arg_number(nb):
     return decor
 
 
-# Verifies if arguements are given by pair
-def test_pair(lst):
-    if len(lst) & 1:
-        print('Arguments work by pairs')
-        return True
-    return False
-
-
-# Divides a list into pairs
-def pair(lst):
-    for i in range(0, len(lst), 2):
-        yield lst[i], lst[i+1]
-
-
-def no_duplicate(lst):
-    if len(set(lst[::2])) != len(lst) // 2:
-        print('No duplicates are allowed in motor_id')
-        return True
-    return False
-
-
 @command
 @arg_number(1)
 def rotate(self, args):
@@ -122,7 +101,7 @@ def move(self, args):
 move.__doc__ = f"""
 Command: move
 move [{MIN_TICKS} <= ticks < {MAX_TICKS}]
-Robot will move algebraicly <ticks> ticks forward
+Robot will move <ticks> ticks forward, ticks is algebraic
 """
 
 
@@ -145,41 +124,6 @@ Move 1A's robot arm left motor moves by <left> ticks, right motor moves by <righ
 """
 
 
-# @command
-# @arg_number(2)
-# def motor_value(self, args):
-#     if ranged_int('motor_id', args[0]) or ranged_int('t', args[1], MIN_T_MS, MAX_T_MS):
-#         return
-#     m_id, t = map(int, args)
-#     self.send(self.make_message(MOT_VALUE, m_id, t))
-#     self.wait(MOT_VALUE)
-#
-#
-# motor_value.__doc__ = f"""
-# Command: motor_value
-# motor_value [0 <= motor_id < 16] [{MIN_T_MS} <= t < {MAX_T_MS}]
-# sets motor <motor_id> on position m + t * (M - n) / 65536 (linear interpolation)
-# m, M being minimal and maximal positions of the motor
-# """
-
-
-# @command
-# @arg_number(2)
-# def motor_time(self, args):
-#     if ranged_int('motor_id', args[0]) or ranged_int('ms', args[1], MIN_T_MS, MAX_T_MS):
-#         return
-#     m_id, ms = map(int, args)
-#     self.send(self.make_message(MOT_TIME, m_id, ms))
-#     self.wait(MOT_TIME)
-#
-#
-# motor_time.__doc__ = f"""
-# Command: motor_time
-# motor_time [0 <= motor_id < 16] [{MIN_T_MS} <= ms < {MAX_T_MS}]
-# Rotates motor <motor_id> during <ms> ms at its velocity
-# """
-
-
 @command
 def pumps(self, line):
     args = line.split()
@@ -187,6 +131,13 @@ def pumps(self, line):
         return
     self.send(self.make_message(PUM, 1, sum(1 << int(x) for x in set(args))))
     self.wait(PUM)
+
+
+pumps.__doc__ = """
+Command: pumps
+pumps *[0 <= pump_id < 4]
+sets every pump in pump_ids on, others will be off
+"""
 
 
 @command
@@ -198,6 +149,13 @@ def motors(self, line):
     self.wait(PUM)
 
 
+motors.__doc__ = """
+Command: motors
+motors *[0 <= motor_id < 4]
+sets every pump in motor_ids on, others will be off
+"""
+
+
 @command
 def solenoids(self, line):
     args = line.split()
@@ -207,32 +165,11 @@ def solenoids(self, line):
     self.wait(PUM)
 
 
-pumps.__doc__ = """
-Command: pumps
-pumps *[0 <= pump_id < 4]
-sets every pump in pump_ids on, others will be off
+solenoids.__doc__ = """
+Command: solenoids
+solenoids *[0 <= solenoid_id < 4]
+sets every pump in solenoid_ids on, others will be off
 """
-
-
-# @command
-# def motors(self, line):
-#     args = line.split()
-#     if not len(args):
-#         return print("At least one pair of arguments is expected")
-#     if test_pair(args) or no_duplicate(args) or any(ranged_int('motor_id', x) or ranged_int('t', y, h=0x10000) for x, y in pair(args)):
-#         return
-#     self.send(self.make_message(MOTS, len(args) // 2, sum(1 << int(x) for x in args[::2])))
-#     for x, y in pair(args):
-#         self.send(self.make_message(MOTS_A, int(x), int(y)))
-#     self.wait(MOTS)
-#
-#
-# motors.__doc__ = f"""
-# Command: motors
-# motors *([0 <= motor_id < 16] [{MIN_T_MS} <= t < {MAX_T_MS}])
-# identical to motor_value, but for mulitple motors at once (no duplicates allowed).
-# Expects at least one pair.
-# """
 
 
 @command
@@ -353,6 +290,15 @@ def waiting_bytes(self, args):
     print(f"Number of waiting bytes: {self.serial.in_waiting}")
 
 
+@command
+@arg_number(1)
+def log_mode(self, args):
+    if args[0] in LOG_MODES:
+        self.log_level = LOG_MODES.index(args[0])
+    else:
+        print(f"Unknown log_mode: {args[0]}, chose among {LOG_MODES}")
+
+
 BaseShell = type('BaseShell', (cmd.Cmd, BaseMicro), cmds)
 
 
@@ -363,7 +309,7 @@ class Shell(BaseShell):
     last_movement = None
     last_received_var = 0.
 
-    def __init__(self, port, log_level=NECESSARY):
+    def __init__(self, port, log_level=MINIMAL):
         self.log_level = log_level
         BaseShell.__init__(self)
         self.serial = serial.Serial(port, BAUDRATE)
@@ -377,7 +323,7 @@ class Shell(BaseShell):
         self.last_received_var = bytes_to_float(message[1:])
         print(f'Variable {VAR_NAMES[message[0] & 0xf]} = {bytes_to_float(message[1:])}')
 
-    def terminaison(self, message):
+    def termination(self, message):
         #  the waited order is finished
         if message[0] & 0xf == self.waited_id:
             self.waiting = False
@@ -410,7 +356,7 @@ class Shell(BaseShell):
         self.tracked_values.append(bytes_to_float(message[1:]))
 
     def wait(self, order_id):
-        # waits for the terminaison of the given order_id
+        # waits for the termination of the given order_id
         self.waited_id = order_id
         self.waiting = True
 
@@ -438,7 +384,7 @@ class Shell(BaseShell):
                     self.send(self.make_message(CAN, 0, 0))
                     self.waited_id = CAN
                     self.last_movement = self.waited_id
-                    print(f'{type(self).__name__} : info : Now waiting for CANCEL terminaison')
+                    print(f'{type(self).__name__} : info : Now waiting for CANCEL termination')
 
                 else:
                     self.waiting = False

@@ -14,7 +14,7 @@ def empty():
 class MicroProcess(BaseMicro):
     last = 0, 0
 
-    def __init__(self, port, lidar, main, robot_x, robot_y, robot_heading, axle_track, log=NECESSARY):
+    def __init__(self, port, lidar, main, robot_x, robot_y, robot_heading, axle_track, log=MINIMAL):
         self.log_level = log
         self.serial = serial.Serial(port, BAUDRATE)
         self.synchronise()
@@ -35,10 +35,6 @@ class MicroProcess(BaseMicro):
         try:
             next_order = next(self.routines[type_])
             self.send(self.make_message(*next_order))
-            # if next_order[0] == MOTS: # deprecated
-            #     for _ in range(next_order[1]):
-            #         next_order = next(self.routines[type_])
-            #         self.send(self.make_message(*next_order))
         # routine is finished
         except StopIteration:
             self.pull(type_)
@@ -63,8 +59,8 @@ class MicroProcess(BaseMicro):
 
         # straight movement
         if left == right:
-            self.robot_pos[0] += left_arc * math.cos(self.robot_heading)
-            self.robot_pos[1] += left_arc * math.sin(self.robot_heading)
+            self.robot_x.value += left_arc * math.cos(self.robot_heading)
+            self.robot_y.value += left_arc * math.sin(self.robot_heading)
             return
 
         # circular movement
@@ -102,91 +98,67 @@ class MicroProcess(BaseMicro):
             self.serial.close()
 
 
-class GenericMicro(BaseMicro):
-    id_ = -1
-
-    def __init__(self, serial_, master):
-        self.master = master
-        self.serial = serial_
-
-    @classmethod
-    def new(cls, old):
-        return cls(old.serial, old.master)
-
-    @property
-    def log_level(self):
-        return self.master.log_level
-
-    @property
-    def log_method(self):
-        return self.master.log_method
-
-    def identify(self, message):
-        self.id_ = message[0] & 0xf
-
-
-class MovementMicro(GenericMicro):
-    pass
-
-
-class ActionMicro(GenericMicro):
-    pass
-
-
-class ArduinoMicro(GenericMicro):
-    pass
-
-
-MICRO_CLASSES = MovementMicro, ActionMicro, ArduinoMicro
-
-
-class MicroManager:
-    log_method = print
-    log_level = NECESSARY
-
-    def __init__(self):
-        serials = tuple(
-            GenericMicro(serial.Serial(usb.usb_description(), BAUDRATE), self) for usb in comports()
-        )
-
-        for s in serials:
-            s.pre_sync()
-        time.sleep(1.)
-        for index, s in enumerate(serials):
-            s.clear_buffer()
-            s.send(s.make_message(ID, 0, 0))
-
-        # identifies all serial connections
-        # any port that is not responding within 5 secs will be discarded
-        date = time.perf_counter()
-        while any(s.id_ == -1 for s in serials) and time.perf_counter() - date < 5.:
-            for s in serials:
-                if s.serial.in_waiting:
-                    s.feedback(s.receive())
-
-        for s in serials:
-            if s.id_ != -1 or self.log_level <= NEC:
-                continue
-            self.log_method(f'{type(self).__name__} : info : Could not identify hardware on {s.serial.portstr}')
-
-        self.serials = {
-            s.id_: MICRO_CLASSES[s.id_].new(s) for s in serials if s.id_ != -1
-        }
-
-    def scan_feedbacks(self):
-        for s in self.serials.values():
-            if s.serial.in_waiting:
-                s.feedback(s.receive())
-
-
 class NewMicroProcess(MicroManager):
-    def __init__(self, lida_pipe, main_pipe):
+    axle_track = AXLE_TRACK_1A
+
+    def __init__(self, lida_pipe, main_pipe, robot_x, robot_y, robot_heading):
+        self.robot_x, self.robot_y, self.robot_heading = robot_x, robot_y, robot_heading
         self.main_pipe, self.lidar_pipe = main_pipe, lida_pipe
         MicroManager.__init__(self)
 
+        self.action_pool = [empty(), empty()]
+
     def scan_feedbacks(self):
-        if self.main_pipe.poll():
-            pass
         if self.lidar_pipe.poll():
             pass
+        if self.main_pipe.poll():
+            type_, gen, args = self.main_pipe.recv()
         MicroManager.scan_feedbacks(self)
+
+    def terminate(self, order_id, order_type):
+        pass
+
+
+class MPGenericMicro(GenericMicro):
+    master: NewMicroProcess
+
+    def termination(self, message):
+        order_id = message[0] & 0xf
+        self.master.terminate(order_id, self.id_)
+
+
+class MPMovement(MovementMicro, MPGenericMicro):
+    old_wheel = 0., 0.
+
+    def wheel_update(self, message):
+        # tick positions for each wheel
+        left, right = message[1] * 256 + message[2], message[3] * 256 + message[4]
+        # Two's complement
+        left -= 0x10000 * (left >= 0x8000)
+        right -= 0x10000 * (right >= 0x8000)
+
+        d_left, d_right = left - self.old_wheel[0], right - self.old_wheel[1]
+        self.old_wheel = left, right
+
+        left_arc, right_arc = (
+            2 * math.pi * d_left * WHEEL_RADIUS / TICKS_PER_REVOLUTION,
+            2 * math.pi * d_right * WHEEL_RADIUS / TICKS_PER_REVOLUTION
+        )
+
+        # straight movement
+        if d_left == d_right:
+            self.master.robot_x.value += left_arc * math.cos(self.master.robot_heading)
+            self.master.robot_y.value += left_arc * math.sin(self.master.robot_heading)
+            return
+
+        # circular movement
+        radius = .5 * self.master.axle_track * (d_left + d_right) / (d_right - d_left)
+        angle = (right_arc - left_arc) / self.master.axle_track
+        a0, a1 = self.master.robot_heading - math.pi * .5, self.master.robot_heading - math.pi * .5 + angle
+        self.master.robot_x.value += radius * (math.cos(a1) - math.cos(a0))
+        self.master.robot_y.value += radius * (math.sin(a1) - math.sin(a0))
+        self.master.robot_heading.value += angle
+
+
+class MPArduinoMicro(ArduinoMicro, MPGenericMicro):
+    pass
