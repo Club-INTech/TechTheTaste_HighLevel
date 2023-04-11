@@ -76,13 +76,13 @@ class RoutineSender:
         self.micro_pipe.send(ACTION, set_arm_x, (pos - self.arm_pos_x.value) )
 
     def PumpControll(self, byteMask):
-        self.micro_pipe.send(ACTION, (byteMask, 0, 0) )
+        self.micro_pipe.send(ACTION, actuatorControll, (byteMask, 0, 0) )
 
     def Actuator2AControll(self, byteMask):
-        self.micro_pipe.send(ACTION, (0, byteMask, 0))
+        self.micro_pipe.send(ACTION,actuatorControll, (0, byteMask, 0))
 
     def ValveControll(self, byteMask):
-        self.micro_pipe.send(ACTION, (0, 0, byteMask))
+        self.micro_pipe.send(ACTION, actuatorControll, (0, 0, byteMask))
 
     def stop(self):
         self.micro_pipe.send((MOVEMENT, stop, ()))
