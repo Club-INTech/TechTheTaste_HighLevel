@@ -27,6 +27,7 @@ def vert(dv):
 
 def horiz(dh):
     dh += 0x10000 * (dh < 0)
+    print(dh)
     return ARM, 0, (dh << 16) | dh
 
 
