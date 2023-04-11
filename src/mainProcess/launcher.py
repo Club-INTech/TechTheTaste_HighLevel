@@ -21,7 +21,7 @@ from lpastarProcess.LPAStarPathFinder import LPAStarPathFinder
 from processManager import config1
 from com import RxPipe
 from testing import generate_obstacles
-from smicro_process import MicroProcess
+from micro_process import MicroProcess
 # TODO change lidar on lidarProcess import lidarProcess 
 
 from multiprocessing import Process, Pipe, Value, current_process
