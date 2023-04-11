@@ -11,7 +11,7 @@ echo 'starting setup INTech CDR 2022 2023'
 
 python3 -m venv ./venv
 echo 'venv created'
-
+sudo chmod a+rwx setup.sh
 source ./venv/bin/activate
 
 echo -n 'check path:'
