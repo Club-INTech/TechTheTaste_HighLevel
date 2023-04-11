@@ -118,7 +118,7 @@ def debugSimpleOrderStraight4(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
    
-    OrderManager.moovToSimple(0.5,0, reversed=True)
+    OrderManager.moovToSimple(-0.5,0)
     
     log.logMessage(2,"simulation finished", 0)
 
