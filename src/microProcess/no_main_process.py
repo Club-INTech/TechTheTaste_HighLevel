@@ -48,6 +48,9 @@ def main_process(pipe):
             #     pipe.send((0, move, ()))
             if x:
                 pipe.send((1, arm, ()))
+                break
+    while True:
+        continue
 
 
 lidar_pipe, _ = mp.Pipe()
