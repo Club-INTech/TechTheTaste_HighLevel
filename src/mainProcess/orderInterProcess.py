@@ -176,20 +176,51 @@ class OrderToMicroProcress(RoutineSender):
         
     def captureCake(self, x, y, slot):
         RIGHT, MID, LEFT = 1,2,3
-        ecart = 0.15
+        adjustement = 0.12
+        
         dx, dy = x - Xrobot.value, y - Yrobot.value
         magnitude = (dx * dx + dy * dy) ** .5
-        d_theta = math.acos((1, -1)[False] * dx / magnitude) * (-1, 1)[dy >= 0] - Hrobot.value
         
         if slot == RIGHT:
-            self.target(self, d_theta + math.atan(ecart/magnitude))
-            self.goto(self, x, y)
+            alpha1 = math.acos(dx/magnitude)
+            
+            magnitude2 = (adjustement**2 + magnitude**2)**0.5
+            alpha2 = math.acos(magnitude/magnitude2)
+            
+            x = x + math.cos(alpha1 + alpha2)
+            y = y + math.sin(alpha1 + alpha2)
+            
+            dx, dy = x - Xrobot.value, y - Yrobot.value
+            magnitude = (dx * dx + dy * dy) ** .5
+            magnitude_adjusted = magnitude2 - adjustement
+            
+            x_right = x - (dx - magnitude_adjusted * math.cos(magnitude_adjusted/dx))
+            y_right = x - (dy - magnitude_adjusted * math.cos(magnitude_adjusted/dy))
+            self.goto(self, x_right, y_right)
+            
         elif slot == MID:
-            self.target(self, d_theta)
-            self.goto(self, x, y)
+            magnitude_adjusted = magnitude - adjustement
+            x_mid = x - (dx - magnitude_adjusted * math.cos(magnitude_adjusted/dx))
+            y_mid = x - (dy - magnitude_adjusted * math.cos(magnitude_adjusted/dy))
+            self.goto(self, x_mid, y_mid)
+            
         elif slot == LEFT:
-            self.target(self, d_theta - math.atan(ecart/magnitude))
-            self.goto(self, x, y)
+            alpha1 = math.acos(dx/magnitude)
+            
+            magnitude2 = (adjustement**2 + magnitude**2)**0.5
+            alpha2 = math.acos(magnitude/magnitude2)
+            
+            x = x + math.cos(alpha1 - alpha2)
+            y = y + math.sin(alpha1 - alpha2)
+            
+            dx, dy = x - Xrobot.value, y - Yrobot.value
+            magnitude = (dx * dx + dy * dy) ** .5
+            magnitude_adjusted = magnitude2 - adjustement
+            
+            x_left = x - (dx - magnitude_adjusted * math.cos(magnitude_adjusted/dx))
+            y_left = x - (dy - magnitude_adjusted * math.cos(magnitude_adjusted/dy))
+            self.goto(self, x_left, y_left)
+            
     
     def releaseCake(self):
         step = 0.2
