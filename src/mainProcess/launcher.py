@@ -30,6 +30,8 @@ from multiprocessing import Process, Pipe, Value, current_process
 Xrobot = Value('f', 0) #meter
 Yrobot = Value('f', 0) #meter
 Hrobot = Value('f', 0) #meter (head)
+Xarm = Value('f', 0) 
+Yarm = Value('f', 0)
 Arobot = Value('i', 1) #RIGHT, MID, LEFT = 1,2,3
 XYinitialised = Value('i', 0) # to know if Xrobot and Yrobothave been initialised by the cam process, 0 = false, 1 = True
 # TODO, add Hrobot to config 1
