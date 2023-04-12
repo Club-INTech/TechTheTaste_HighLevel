@@ -32,13 +32,15 @@ def horiz(dh):
 
 
 def arm():
-    yield vert(-400)
+    yield horiz(-700)
+    yield vert(-550)
     yield PUM, 1, 1
-    yield vert(400)
-    yield horiz(500)
-    yield vert(-400)
+    yield vert(550)
+    yield horiz(-700)
+    yield vert(-550)
     yield PUM, 1, 0
-    yield vert(400)
+    yield vert(550)
+    yield horiz(1400)
 
 
 def main_process(pipe):

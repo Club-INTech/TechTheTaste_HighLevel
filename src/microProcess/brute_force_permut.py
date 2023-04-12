@@ -75,6 +75,7 @@ def dijkstra():
                 visited[key].dist = dist
                 visited[key].previous = current
 
+
 date = time.perf_counter()
 res = dijkstra()
 print('\n', time.perf_counter() - date, 's')

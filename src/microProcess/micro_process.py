@@ -27,8 +27,8 @@ class MicroProcess(BaseMicro):
         self.run()
 
     def next(self, type_):
-        if self.log_level > N_NEC:
-            print(f'{type(self).__name__} : info : Next step of routine {self.routines[type_]}({CATEGORIES[type_]})')
+        if self.log_level > NOT_NECESSARY:
+            print(f'{type(self).__name__} : info : Next step of routine {self.routines[type_].__name__}({CATEGORIES[type_]})')
         # goes through the routine of the given type (MOVEMENT or ACTION)
         try:
             next_order = next(self.routines[type_])
@@ -71,7 +71,7 @@ class MicroProcess(BaseMicro):
         self.robot_heading.value += angle
 
     def pull(self, type_):
-        if self.log_level > N_NEC:
+        if self.log_level > NOT_NECESSARY:
             print(f'{type(self).__name__} : info : Asking next routine ({CATEGORIES[type_]})')
         # asks for a new routine of a given type
         self.main.send(type_)
@@ -105,17 +105,33 @@ class NewMicroProcess(MicroManager):
         self.main_pipe, self.lidar_pipe = main_pipe, lida_pipe
         MicroManager.__init__(self)
 
-        self.action_pool = [empty(), empty()]
+        self.last = [0, 0]
+        self.routines = [empty(), empty()]
 
     def scan_feedbacks(self):
         if self.lidar_pipe.poll():
             pass
         if self.main_pipe.poll():
             type_, gen, args = self.main_pipe.recv()
+            self.routines[type_] = gen(*args)
         MicroManager.scan_feedbacks(self)
 
     def terminate(self, order_id, order_type):
         pass
+
+    def next(self, type_):
+        if self.log_level > NOT_NECESSARY:
+            print(f'{type(self).__name__} : info : Next step of routine {self.routines[type_].__name__}({CATEGORIES[type_]})')
+        # goes through the routine of the given type (MOVEMENT or ACTION)
+        try:
+            id_, comp, arg = next(self.routines[type_])
+            self.last[type_] = id_
+            if DESTINATION[id_] in self.serials:
+                port = self.serials[DESTINATION[id_]]
+                port.send(port.make_message(id_, comp, arg))
+        # routine is finished
+        except StopIteration:
+            self.pull(type_)
 
 
 class MPGenericMicro(GenericMicro):

@@ -11,7 +11,7 @@ NOTHING, MINIMAL, DEBUG = range(3)
 LOG_MODES = 'nothing', 'minimal', 'debug'
 
 # log priorities
-NEC, N_NEC = range(2)  # Necessary, Not Necessary
+NECESSARY, NOT_NECESSARY = range(2)
 
 # Feedbacks
 ACK, TER, VAR, TRA, ERR, WHE, ID_F = range(7)
@@ -30,7 +30,7 @@ ORDERS = (
 MOVEMENT, ACTION, OTHER = range(3)
 CATEGORIES = 'MOVEMENT', 'ACTION', 'OTHER'
 
-# correspondance of an order type to each order
+# correspondence of an order type to each order
 TYPES = (
     OTHER, MOVEMENT, MOVEMENT, MOVEMENT, ACTION, None, ACTION, None, None, OTHER, OTHER, OTHER, None, None, OTHER,
     None
@@ -71,5 +71,5 @@ MIN_T_MS, MAX_T_MS = 0, 65536  # valid range of time arguments in ms
 MAX_DISTANCE = 2 * math.pi * WHEEL_RADIUS * MAX_TICKS / TICKS_PER_REVOLUTION  # maximum distance covered by goto
 
 LEFT_SLOT = 0
-MID_SLOT = 2000
-RIGHT_SLOT = 4000
+MID_SLOT = 500
+RIGHT_SLOT = 1000
