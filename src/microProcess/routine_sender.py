@@ -67,7 +67,7 @@ class RoutineSender:
         )))
 
     #position = UP_arm = -1 or position = DOWN_arm  = 1
-    UP_arm, DOWN_arm = -1
+    UP_arm, DOWN_arm = -1, 1
     def ARMverticalPos (self, position = UP_arm):
         left = AmpVertiArm * position
         right = AmpVertiArm * position
