@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import os
 import json
 
-
 def float_to_int(num):
     # integer from the IEEE-754 representation of a float
     return sum(b << (8 * i) for i, b in enumerate(struct.pack('f', num)))
@@ -360,7 +359,7 @@ class Shell(BaseShell):
         self.left_wheel.append(left - 0x10000 * (left >= 0x1000))
 
     def identify(self, message):
-        print(message[0] & 0xff)
+        print(message[0] & 0xf)
 
     def tracked(self, message):
         self.tracked_values.append(bytes_to_float(message[1:]))
@@ -398,6 +397,9 @@ class Shell(BaseShell):
 
                 else:
                     self.waiting = False
+
+    def manage_error(self):
+        self.waiting = False
 
     def complete_set_var(self, text, line, begidx, endidx):
         if text:
