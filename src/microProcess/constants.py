@@ -32,13 +32,14 @@ CATEGORIES = 'MOVEMENT', 'ACTION', 'OTHER'
 
 # correspondence of an order type to each order
 TYPES = (
-    OTHER, MOVEMENT, MOVEMENT, MOVEMENT, ACTION, None, ACTION, None, None, OTHER, OTHER, OTHER, None, None, OTHER,
-    None
+    OTHER, MOVEMENT, MOVEMENT, MOVEMENT, ACTION, None, ACTION, None, None, MOVEMENT, MOVEMENT, MOVEMENT, None, None, OTHER,
+    OTHER
 )
 
 
 # controllers
 PICO1, PICO2, ARDUINO, WHO_CARES = range(4)
+BOARDS = 'MovementPico', 'ActionPico', 'Arduino'
 # correspondence of a controller to each order
 DESTINATION = (
     PICO1, PICO1, PICO1, PICO1, PICO2, WHO_CARES, PICO2, WHO_CARES, WHO_CARES, PICO1, PICO1, PICO1, WHO_CARES,
@@ -49,7 +50,7 @@ DESTINATION = (
 # --------------------------------------------------------- Physics ----------------------------------------------------
 
 AXLE_TRACK_1A, AXLE_TRACK_2A = .213, .274  # in m, +- 1mm, measurements 18/02/2023 ~17h
-TICKS_PER_REVOLUTION = 1024  # arbitrary
+TICKS_PER_REVOLUTION = 2048
 WHEEL_RADIUS = .0340  # in m, +- 0.1mm, measurements 18/02/2023 ~17h coupling both wheels of both robots
 
 
@@ -60,6 +61,9 @@ WHEEL_RADIUS = .0340  # in m, +- 0.1mm, measurements 18/02/2023 ~17h coupling bo
 VAR_NAMES = (
     'Kp_right', 'Kd_right', 'Ki_right', 'Kp_left', 'Kd_left', 'Ki_left', 'Kp_trans', 'Kd_trans', 'Ki_trans',
     'Kp_rot', 'Kd_rot', 'Ki_rot', 'vitesse'
+)
+VAR_DESTINATION = (
+    PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO2
 )
 VAR_DICT = {n: i for i, n in enumerate(VAR_NAMES)}
 
