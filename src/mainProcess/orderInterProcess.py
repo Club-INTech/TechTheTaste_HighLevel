@@ -11,7 +11,7 @@ sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'microProcess')
 # import part
 import time
 import log
-from launcher import Xrobot, Yrobot, Hrobot, Arobot
+from launcher import Xrobot, Yrobot, Hrobot, Xarm, Yarm
 from routine_sender import RoutineSender
 from constants import *
 from params import *
@@ -42,7 +42,7 @@ def angleToTicks(angle):
 
 class OrderToMicroProcress(RoutineSender):
     def __init__(self, pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
-        super().__init__(Xrobot, Yrobot, Hrobot, pipeMainToMicro1, AXLE_TRACK_1A)
+        super().__init__(Xrobot, Yrobot, Hrobot, Xarm, Yarm, pipeMainToMicro1, AXLE_TRACK_1A)
         self.pipeToMicro1 = pipeMainToMicro1
         self.pipeToMicro2 = pipeMainToMicro2
         self.pipeToLPA = pipeMaintoLPA
