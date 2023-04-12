@@ -16,6 +16,7 @@ class MicroProcess(BaseMicro):
         self.serial = serial.Serial(port, BAUDRATE)
         self.synchronise()
 
+        self.last = [None, None]
         self.lidar, self.main = lidar, main
         # Routines corresponding to order types MOVEMENT and ACTION
         self.routines = [empty(), empty()]
@@ -31,6 +32,7 @@ class MicroProcess(BaseMicro):
         # goes through the routine of the given type (MOVEMENT or ACTION)
         try:
             next_order = next(self.routines[type_])
+            self.last[type_] = next_order[0]
             self.send(self.make_message(*next_order))
         # routine is finished
         except StopIteration:
@@ -38,7 +40,7 @@ class MicroProcess(BaseMicro):
 
     def termination(self, message):
         t = TYPES[message[0] & 0xf]
-        if t != OTHER:
+        if t != OTHER and self.last[t] == message[0] & 0xf:
             self.next(t)
 
     def wheel_update(self, message):
