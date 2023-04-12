@@ -50,7 +50,7 @@ DESTINATION = (
 # --------------------------------------------------------- Physics ----------------------------------------------------
 
 AXLE_TRACK_1A, AXLE_TRACK_2A = .213, .274  # in m, +- 1mm, measurements 18/02/2023 ~17h
-TICKS_PER_REVOLUTION = 2048
+TICKS_PER_REVOLUTION = 1024
 WHEEL_RADIUS = .0340  # in m, +- 0.1mm, measurements 18/02/2023 ~17h coupling both wheels of both robots
 
 
