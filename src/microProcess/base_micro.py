@@ -17,6 +17,7 @@ class BaseMicro:
     def pre_sync(self):
         if self.log_level > NECESSARY:
             self.log_method(f'{type(self).__name__}: info : Trying to sync with hardware {self}')
+        print("Nin")
         self.serial.write(SYNC_BYTES)
         print('Bleu')
 
