@@ -361,7 +361,7 @@ class OrderToMicroProcress(RoutineSender):
         EDGE = EDGES[edge] #select the edge
 
         GPIO.setmode(GPIO.BCM)
-        jumper = 12 #digital Output
+        jumper = 24 #digital Output
 
         GPIO.setup(jumper, GPIO.IN)
         ctn = True
