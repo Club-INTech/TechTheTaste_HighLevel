@@ -17,6 +17,21 @@ class PS4Control1A(MicroManager):
 
         self.h_speed, self.v_speed = 0, 0
         self.left_target, self.right_target = 0, 0
+        self.positions = [2, 3]
+        self.moving_arm, self.pump = False, False
+        self.last = [0, 0]
+
+    @staticmethod
+    def set_arm_x(dx):
+        dx = dx + 0x10000 * (dx < 0)
+        return ARM, 0, (dx << 16) | dx
+
+    @staticmethod
+    def set_arm_y(dy):
+        n_dy = -dy
+        dy = dy + 0x10000 * (dy < 0)
+        n_dy = -n_dy + 0x10000 * (n_dy < 0)
+        return ARM, 0, (dy << 16) | n_dy
 
     def send(self, port, id_, comp, arg):
         if port not in self.serials:
@@ -51,16 +66,33 @@ class PS4Control1A(MicroManager):
     def rx(self, event):
         # rotate
         self.h_speed = -event.value
-        # print(f"Rotatating speed {event.value}")
+        # print(f"Rotating speed {event.value}")
 
     def h_arrows(self, event):
-        # horizontal deplacement of the kart
-        self.left_target = self.right_target = -100 if event.value < 0 else 100 if event.value > 0 else 0
+        # horizontal displacement of the kart
+        if not self.last[0] and event.value and not self.moving_arm:
+            if event.value > 0 and self.positions[0] + 1 < len(HORIZONTAL_POSITIONS):
+                new_p = self.positions[0] + 1
+                self.send(PICO2, *self.set_arm_x(HORIZONTAL_POSITIONS[new_p] - HORIZONTAL_POSITIONS[self.positions[0]]))
+                self.positions[0] = new_p
+            elif event.value < 0 and self.positions[0]:
+                new_p = self.positions[0] - 1
+                self.send(PICO2, *self.set_arm_x(HORIZONTAL_POSITIONS[new_p] - HORIZONTAL_POSITIONS[self.positions[0]]))
+                self.positions[0] = new_p
+        self.last[0] = event.value
 
     def v_arrows(self, event):
         # vertical displacement of the kart
-        self.right_target = -50 if event.value < 0 else 50 if event.value > 0 else 0
-        self.left_target = -self.right_target
+        if not self.last[1] and event.value and not self.moving_arm:
+            if event.value > 0 and self.positions[1] + 1 < len(VERTICAL_POSITIONS):
+                new_p = self.positions[1] + 1
+                self.send(PICO2, *self.set_arm_y(HORIZONTAL_POSITIONS[new_p] - HORIZONTAL_POSITIONS[self.positions[1]]))
+                self.positions[1] = new_p
+            elif event.value < 0 and self.positions[1]:
+                new_p = self.positions[1] - 1
+                self.send(PICO2, *self.set_arm_y(HORIZONTAL_POSITIONS[new_p] - HORIZONTAL_POSITIONS[self.positions[1]]))
+                self.positions[1] = new_p
+        self.last[0] = event.value
 
     manage_event = {
         (DIGITAL, CROSS): 'cross',
@@ -90,6 +122,26 @@ class PS4Control1A(MicroManager):
                     # gets the method corresponding to the event, if the event is not managed, it does nothing
                     getattr(self, self.manage_event.get((event.type, event.button), 'nothing'))(event)
                 self.scan_feedbacks()
+
+
+class PS4Generic(GenericMicro):
+    master: PS4Control1A
+
+    def termination(self, message):
+        if message[0] & 0xf == ARM:
+            self.master.moving_arm = False
+
+
+class PS4Movement(MovementMicro, PS4Generic):
+    pass
+
+
+class PS4Action(ActionMicro, PS4Generic):
+    pass
+
+
+class PS4Arduino(ArduinoMicro, PS4Generic):
+    pass
 
 
 if __name__ == '__main__':
