@@ -17,13 +17,13 @@ class Lili(object) :
     
     def __init__(self):
         self.state = 0
-        #TODO new possibility of where to place it laser=hokuyo.HokuyoLX()
+        self.laser= hokuyo.HokuyoLX()
         
     def lidarstop(self, conn) -> None:
         '''Send a message to the main process if drobot < dmin'''
         self.state = 0
         while True : 
-            data = laser.get_dist(grouping=group)
+            data = self.laser.get_dist(grouping=group)
             Lr = []
             for i in range(len(data[1])):
                 Lr.append(data[1][i])

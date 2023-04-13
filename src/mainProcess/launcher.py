@@ -22,7 +22,7 @@ from processManager import config1
 from com import RxPipe
 from testing import generate_obstacles
 from micro_process import MicroProcess
-# TODO change lidar on lidarProcess import lidarProcess 
+import lidarProcess 
 
 from multiprocessing import Process, Pipe, Value, current_process
 
@@ -72,10 +72,9 @@ class Launcher :
 
     # TODO, remove the comment
     def processLIDAR(self,lidar_main_pipeLidar):
-        log.logMessage(2, "start the lidar processus", 1)
-        #TODO 
-        #lidar=lidarProcess.Lili()
-        #lidar.lidarstop(lidar_main_pipeLidar)
+        log.logMessage(2, "start the lidar processus", 1) 
+        lidar=lidarProcess.Lili()
+        lidar.lidarstop(lidar_main_pipeLidar)
 
         
     def processMicro1(self, port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track, logg):
