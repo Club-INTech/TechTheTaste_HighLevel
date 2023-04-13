@@ -1,7 +1,6 @@
 from micro_process import MicroProcess
 from constants import *
 import multiprocessing as mp
-import sys
 
 robot_x, robot_y, robot_h = mp.Value('f', 0.), mp.Value('f', 0.), mp.Value('f', 0.)
 
@@ -44,16 +43,16 @@ def arm():
 
 
 def main_process(pipe):
+    action, movement = True, True
     while True:
         if pipe.poll():
             x = pipe.recv()
-            # if not x:
-            #     pipe.send((0, move, ()))
-            if x:
+            if not x and movement:
+                movement = False
+                pipe.send((0, move, ()))
+            if x and action:
+                action = False
                 pipe.send((1, arm, ()))
-                break
-    while True:
-        continue
 
 
 lidar_pipe, _ = mp.Pipe()
@@ -63,7 +62,7 @@ main_pipe0, main_pipe1 = mp.Pipe()
 if __name__ == '__main__':
     main_ = mp.Process(target=main_process, args=(main_pipe0,))
     lidar_ = mp.Process(target=lidar_process, args=())
-    micro_ = mp.Process(target=MicroProcess, args=(sys.argv[1], lidar_pipe, main_pipe1, robot_x, robot_y, robot_h, 1., DEBUG))
+    micro_ = mp.Process(target=MicroProcess, args=(lidar_pipe, main_pipe1, robot_x, robot_y, robot_h, 1.))
 
     lidar_.start()
     main_.start()

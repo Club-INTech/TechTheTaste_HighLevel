@@ -16,12 +16,13 @@ class BaseMicro:
 
     def pre_sync(self):
         if self.log_level > NECESSARY:
-            self.log_method(f'{type(self).__name__}: info : Trying to sync with pico')
+            self.log_method(f'{type(self).__name__}: info : Trying to sync with hardware {self}')
         self.serial.write(SYNC_BYTES)
 
     def clear_buffer(self):
         if self.log_level > NOT_NECESSARY:
             self.log_method(f'{type(self).__name__} : info : Clearing buffer')
+        self.serial.read(self.serial.in_waiting)
 
     def make_message(self, id_: int, comp: int, arg: int) -> bytes:
         if self.log_level > NOT_NECESSARY:
@@ -42,6 +43,9 @@ class BaseMicro:
         if self.log_level > NECESSARY:
             self.log_method(f'{type(self).__name__} : info : Received 0x{res.hex()}')
         return res
+
+    def manage_error(self):
+        pass
 
     #  default feedback methods do nothing
     def acknowledgement(self, message):
@@ -81,6 +85,8 @@ class BaseMicro:
         nb = message[0] >> 4
         if nb >= len(self.manage_feedback):
             self.log_method(f'{type(self).__name__} : ERROR : Invalid feedback received {nb}')
+            self.manage_error()
+            print('hey')
             return self.synchronise()
         attr = self.manage_feedback[message[0] >> 4]
         if self.log_level > NOT_NECESSARY:
@@ -110,6 +116,9 @@ class GenericMicro(BaseMicro):
     def identify(self, message):
         self.id_ = message[0] & 0xf
 
+    def __repr__(self):
+        return f'{type(self).__name__} on {self.serial.portstr}'
+
 
 class MovementMicro(GenericMicro):
     id_ = 0
@@ -134,7 +143,7 @@ class MicroManager:
 
     def __init__(self):
         serials = tuple(
-            GenericMicro(serial.Serial(usb.usb_description(), BAUDRATE), self) for usb in comports()
+            GenericMicro(serial.Serial(usb.device, BAUDRATE), self) for usb in comports()
         )
 
         for s in serials:
