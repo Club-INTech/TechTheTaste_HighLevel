@@ -46,11 +46,13 @@ class PS4Control1A(MicroManager):
     def cross(self, event):
         # catch cake
         if event.value:
+            self.send(PICO2, PUM, 1, 1)
             print('Catching the cake')
 
     def circle(self, event):
         # drop cake
         if event.value:
+            self.send(PICO2, PUM, 1, 0)
             print('Dropping the cake')
 
     def triangle(self, event):
