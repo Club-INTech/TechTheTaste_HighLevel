@@ -1,5 +1,6 @@
 import time
 
+
 class Permutation:
     def __init__(self, left, mid, right, dropped, previous, dist):
         self.left, self.mid, self.right, self.dropped = left, mid, right, dropped
@@ -29,14 +30,6 @@ class Permutation:
             if len(self.mid) < 4:
                 yield self.dist + 1, self.left, self.mid + self.right[-1], self.right[:-1], self.dropped
 
-        # slots = self.left, self.mid, self.right
-        # for src in range(3):
-        #     if not slots[src]:
-        #         continue
-        #     for des in range(2):
-        #         if len(slots[src - des - 1]) < 5:
-        #             yield self.dist + 1, *(slot[:-1] if i == src else slot + slots[src][-1] if i == (src - des - 1) % 3 else slot for i, slot in enumerate(slots)), self.dropped
-
     def get_key(self):
         return self.left, self.mid, self.right
 
@@ -53,20 +46,11 @@ def dijkstra():
     while queue and running:
         current = queue.pop(min(tuple(enumerate(queue)), key=lambda x: x[1].dist)[0])
 
-        print(f'\r{len(visited) = }, {len(queue) = }, {current.dist = }', end='')
-        display = False
-        # if current.left == 'MJR' and not current.mid and not current.right:
-        #     print(current)
-        #     display = True
-
         if current.dropped == 3:
             return current
 
         for dist, left, mid, right, dropped in current.neighbors():
             nb = Permutation(left, mid, right, dropped, current, dist)
-            if display:
-                print('hey')
-                print(nb)
             key = nb.get_key()
             if key not in visited:
                 visited[key] = nb
