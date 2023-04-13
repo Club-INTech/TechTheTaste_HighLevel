@@ -1,5 +1,10 @@
+import sys
+import os
+sys.path.append(os.path.dirname(__file__))
+
 from multiprocessing import Process, SimpleQueue
 from controller_classes import ControllerButtons, ControllerMouse
+
 
 
 class Controller:
