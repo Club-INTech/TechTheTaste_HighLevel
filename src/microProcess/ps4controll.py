@@ -14,6 +14,8 @@ class PS4Control1A(MicroManager):
         self.controller.start()
 
         MicroManager.__init__(self)
+        print(self.serials)
+
 
         self.h_speed, self.v_speed = 0, 0
         self.left_target, self.right_target = 0, 0
@@ -144,6 +146,8 @@ class PS4Action(ActionMicro, PS4Generic):
 
 class PS4Arduino(ArduinoMicro, PS4Generic):
     pass
+
+PS4Control1A.micro_classes = PS4Movement, PS4Action, PS4Arduino
 
 
 if __name__ == '__main__':
