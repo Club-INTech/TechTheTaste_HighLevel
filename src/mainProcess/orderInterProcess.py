@@ -4,6 +4,7 @@ import sys
 import os
 import time
 from multiprocessing import Pipe, Process
+import RPi.GPIO as GPIO 
 from math import sqrt, asin
 # path managing
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'utils'))
@@ -69,14 +70,7 @@ class OrderToMicroProcress(RoutineSender):
     # know which id correspond to wich order
     # then we send the necessary datas
 
-    # blocking function that finish when juper is off
-    def jumperState(self):
-        jumper = False
-        while(jumper):  
-            jumper = True #read the state of the jumper and stock this value in the var jumper
-            log.logMessage(3, "jumper on", 0)
 
-        return 1
 
     # to moov the robot to the point Xgoal,Ygoal
     #def moovTo(self, Xgoal, Ygoal):
@@ -360,4 +354,18 @@ class OrderToMicroProcress(RoutineSender):
     def hooverDesactivate(self):
         maskActivateVaccum = 0b00000000
         self.Actuator2AControll(maskActivateVaccum)
-        
+
+
+    def waitingJumper(self, edge):
+        EDGES = [ [True, False], [False, True]]
+        EDGE = EDGES[edge] #select the edge
+
+        GPIO.setmode(GPIO.BCM)
+        jumper = 12 #digital Output
+
+        GPIO.setup(jumper, GPIO.IN)
+        ctn = True
+        while ctn:
+            ctn = EDGE[ GPIO.input(jumper)
+            log.logMessage(3, "waiting jumper", 0)   
+
