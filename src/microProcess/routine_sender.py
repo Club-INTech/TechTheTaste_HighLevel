@@ -12,14 +12,26 @@ def target(angle):
 
 def set_arm_x(dx):
     dx = dx + 0x10000 * (dx < 0)
-    yield ARM, 0, (dx << 16) | dx
+    return ARM, 0, (dx << 16) | dx
 
 
 def set_arm_y(dy):
     n_dy = -dy
     dy = dy + 0x10000 * (dy < 0)
     n_dy = -n_dy + 0x10000 * (n_dy < 0)
-    yield ARM, 0, (dy << 16) | n_dy
+    return ARM, 0, (dy << 16) | n_dy
+
+
+def move_cake(to_src, down1, to_des, down2):
+    yield set_arm_x(to_src)
+    yield set_arm_y(down1)
+    yield PUM, 1, 1
+    yield set_arm_y(-down1)
+    yield set_arm_x(to_des)
+    yield set_arm_y(down2)
+    yield PUM, 1, 0
+    yield set_arm_y(-down2)
+
 
 #PUMPstate is a bytemask to controll all the pump on the bot
 #for instance if you want to turn on only pump1, call pumpState(0b00000001)
@@ -28,15 +40,11 @@ def set_arm_y(dy):
 #use the order pump https://docs.google.com/spreadsheets/d/1NDprMKYs9L7S2TkqgACDOh6OKDJRHhz_LrTCKmEuD-k/edit#gid=0
 
 def actuatorControll(PUMPstate : int, Actuator2A : int, ValveState : int):
-    yield PUM, 0,  (0xFF << 24) | (ValveState << 16) | (Actuator2A << 8) | (PUMPstate)
+    yield PUM, 7, (ValveState << 16) | (Actuator2A << 8) | (PUMPstate)
 
 
 def stop():
     yield CAN, 0, 0
-
-
-def move_cake():
-    pass
 
 
 def place_cherry():
@@ -45,8 +53,9 @@ def place_cherry():
 
 class RoutineSender:
 
-    def __init__(self, robot_x, robot_y, robot_heading, arm_pos_x, arm_pos_y, micro_pipe, axle_track):
-        self.robot_x, self.robot_y, self.robot_heading, self.arm_pos_x, self.arm_pos_y = robot_x, robot_y, robot_heading, arm_pos_x, arm_pos_y
+    def __init__(self, robot_x, robot_y, robot_heading, arm_pos_x, rake_state, micro_pipe, axle_track):
+        self.rake_state = rake_state
+        self.robot_x, self.robot_y, self.robot_heading, self.arm_pos_x = robot_x, robot_y, robot_heading, arm_pos_x
         self.micro_pipe = micro_pipe
         self.axle_track = axle_track
 
@@ -73,8 +82,17 @@ class RoutineSender:
         right = AmpVertiArm * position
         self.micro_pipe.send(ACTION, ARMPos, (left, right) )
 
+    # pos: LEFT, MIDDLE, or RIGHT
     def set_arm_x(self, pos):
-        self.micro_pipe.send(ACTION, set_arm_x, (pos - self.arm_pos_x.value) )
+        self.micro_pipe.send(ACTION, set_arm_x, (pos - self.arm_pos_x.value,))
+        self.arm_pos_x = pos
+
+    # pos: DOWN, UP
+    def set_arm_y(self, pos):
+        down_pos = len(self.rake_state[X_POSITIONS.index(self.arm_pos_x.value)]) * CAKE_HEIGHT + ONE_CAKE
+        destination = (down_pos, 0)[pos]
+        self.micro_pipe.send(ACTION, set_arm_y, (destination - self.arm_pos_y.value,))
+        self.arm_pos_y = destination
 
     def PumpControll(self, byteMask):
         self.micro_pipe.send(ACTION, actuatorControll, (byteMask, 0, 0) )
@@ -88,8 +106,15 @@ class RoutineSender:
     def stop(self):
         self.micro_pipe.send((MOVEMENT, stop, ()))
 
-    def move_cake(self, src, dest):
-        pass
+    # src, destination: LEFT, MIDDLE or RIGHT
+    def move_cake(self, src, destination):
+        to_src = src - self.arm_pos_x.value
+        self.arm_pos_x.value = src
+        down1 = len(self.rake_state[X_POSITIONS.index(self.arm_pos_x.value)]) * CAKE_HEIGHT + ONE_CAKE
+        to_des = destination - self.arm_pos_x.value
+        self.arm_pos_x.value = destination
+        down2 = len(self.rake_state[X_POSITIONS.index(self.arm_pos_x.value)]) * CAKE_HEIGHT + CAKE_HEIGHT + ONE_CAKE
+        self.micro_pipe.send(ACTION, move_cake, (to_src, down1, to_des, down2))
 
     def place_cherry(self, dest):
         pass

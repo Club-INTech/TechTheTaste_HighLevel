@@ -74,6 +74,8 @@ MIN_T_MS, MAX_T_MS = 0, 65536  # valid range of time arguments in ms
 
 MAX_DISTANCE = 2 * math.pi * WHEEL_RADIUS * MAX_TICKS / TICKS_PER_REVOLUTION  # maximum distance covered by goto
 
-LEFT_SLOT = 0
-MID_SLOT = 500
-RIGHT_SLOT = 1000
+# arm positions
+X_POSITIONS = LEFT, MIDDLE, RIGHT = -1400, 700, 0
+DOWN, UP = range(2)
+ONE_CAKE = -550
+CAKE_HEIGHT = 80

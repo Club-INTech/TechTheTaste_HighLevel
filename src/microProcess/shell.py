@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import os
 import json
 
+
 def float_to_int(num):
     # integer from the IEEE-754 representation of a float
     return sum(b << (8 * i) for i, b in enumerate(struct.pack('f', num)))
