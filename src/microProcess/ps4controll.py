@@ -118,8 +118,7 @@ class PS4Control1A(MicroManager):
             if value:
                 self.send(PICO1, (ROT, MOV)[step], 0, value + 0x10000 * (value < 0))
             step ^= True
-            left, right = self.left_target + 0x10000 * (self.left_target < 0), self.right_target + 0x10000 * (self.right_target < 0)
-            self.send(PICO2, ARM, 0, (left << 16) | right)
+
             # delays for 20 ms
             while time.perf_counter() - date < .02:
                 for event in self.controller.get_events():
@@ -146,6 +145,7 @@ class PS4Action(ActionMicro, PS4Generic):
 
 class PS4Arduino(ArduinoMicro, PS4Generic):
     pass
+
 
 PS4Control1A.micro_classes = PS4Movement, PS4Action, PS4Arduino
 
