@@ -120,7 +120,7 @@ class PS4Control1A(MicroManager):
             step ^= True
 
             # delays for 20 ms
-            while time.perf_counter() - date < .02:
+            while time.perf_counter() - date < .1:
                 for event in self.controller.get_events():
                     # gets the method corresponding to the event, if the event is not managed, it does nothing
                     getattr(self, self.manage_event.get((event.type, event.button), 'nothing'))(event)
