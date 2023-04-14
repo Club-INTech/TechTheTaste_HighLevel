@@ -2,8 +2,8 @@ import log
 from time import sleep
 from multiprocessing import Pipe, Process
 
-port = "/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A50285BI-if00-port0"
-
+port1 = "/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A50285BI-if00-port0"
+port2 = '/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A50285BI-if00-port1'
 
 # we wait X and Y initialized to start the other process
 def isXYinitialised(XYinitialised):
@@ -14,10 +14,9 @@ def isXYinitialised(XYinitialised):
 
 
 
-def startProcess(processCam, listProcess, boolXY):
+def startProcess(processCam, listProcess):
     processCam.start()
     #blocking mode function to wait until Xrobot and Yrobot initialised
-    isXYinitialised(boolXY)
 
     for proc in listProcess :
         try :
@@ -27,7 +26,7 @@ def startProcess(processCam, listProcess, boolXY):
 
     log.logMessage(1, "all process started!",0)
 
-def config1(self, processCamMat, processMicro1, processLpastar, processMain, processLIDAR, Xrobot, Yrobot, XYinitialised): 
+def config1(self, processCamMat, processMicro1, processLpastar, processMain, processLIDAR, Xrobot, Yrobot, Hrobot):
         log.logMessage(2, "start config1",0)
         lidar_main_pipeLidar, lidar_main_pipeMain = Pipe()                  #to kill process
         CamMat_Lpastar_pipeCamMat, CamMat_Lpastar_pipeLpastar = Pipe()      #for obstacles
@@ -38,13 +37,14 @@ def config1(self, processCamMat, processMicro1, processLpastar, processMain, pro
 
         procCamMat = Process(target = processCamMat, args = (CamMat_Lpastar_pipeCamMat,))
         procLIDAR = Process(target = processLIDAR, args = (lidar_main_pipeLidar,))
-        procMicro1 = Process(target = processMicro1, args = (port, lidar_main_pipeMain, main_micro1_pipeMicro1, Xrobot, Yrobot, 1, 1, 2,))
+        procMicro1 = Process(target = processMicro1, args = (port1, lidar_main_pipeMain, main_micro1_pipeMicro1, Xrobot, Yrobot, Hrobot, 1, 2,))
+        procMicro2 = Process(target = processMicro1, args = (port2, lidar_main_pipeMain, main_micro2_pipeMicro2, Xrobot, Yrobot, Hrobot, 1, 2,))
         procLpastar = Process(target = processLpastar, args = (lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, Xrobot, Yrobot))
         procMain = Process(target= processMain, args = (main_micro1_pipeMain, main_micro2_pipeMain, lidar_main_pipeMain, lpastar_main_pipeMain, Xrobot, Yrobot) )
 
-        #processList= [procMain, procCamBot, procCamMat, procLIDAR, procMicro1, procMicro2, procLpastar]
-        processList= [procMain, procMicro1, procLpastar, procLIDAR]
-        startProcess(procCamMat, processList, XYinitialised)
+        processList= [procMain, procCamMat, procLIDAR, procMicro1, procMicro2, procLpastar]
+        # processList= [procMain, procMicro1, procLpastar, procLIDAR]
+        startProcess(procCamMat, processList)
 
 
         return processList, (lidar_main_pipeLidar, lidar_main_pipeMain), (CamMat_Lpastar_pipeCamMat, CamMat_Lpastar_pipeLpastar), (lpastar_main_pipeLpastar, lpastar_main_pipeMain), (lidar_main_pipeLidar, lidar_main_pipeMain)
