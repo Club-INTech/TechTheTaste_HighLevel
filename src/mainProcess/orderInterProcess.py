@@ -43,7 +43,7 @@ def angleToTicks(angle):
 
 class OrderToMicroProcress(RoutineSender):
     def __init__(self, pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
-        super().__init__(Xrobot, Yrobot, Hrobot, Xarm, Yarm, pipeMainToMicro1, AXLE_TRACK_1A)
+        super().__init__(Xrobot, Yrobot, Hrobot, Xarm, [(1, ), (1, ), (1,)], pipeMainToMicro1, AXLE_TRACK_1A)
         self.pipeToMicro1 = pipeMainToMicro1
         self.pipeToMicro2 = pipeMainToMicro2
         self.pipeToLPA = pipeMaintoLPA
