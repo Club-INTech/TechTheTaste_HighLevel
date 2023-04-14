@@ -356,7 +356,7 @@ class OrderToMicroProcress(RoutineSender):
         self.Actuator2AControll(maskActivateVaccum)
 
 
-    def waitingJumper(self, edge):
+    def waitingJumper(self, edge=1):
         EDGES = [ [True, False], [False, True]]
         EDGE = EDGES[edge] #select the edge
 
@@ -366,6 +366,6 @@ class OrderToMicroProcress(RoutineSender):
         GPIO.setup(jumper, GPIO.IN)
         ctn = True
         while ctn:
-            ctn = EDGE[ GPIO.input(jumper)
+            ctn = EDGE[ GPIO.input(jumper)]
             log.logMessage(3, "waiting jumper", 0)   
 
