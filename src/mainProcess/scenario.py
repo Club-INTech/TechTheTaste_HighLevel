@@ -4,9 +4,10 @@ import time
 import orderInterProcess as ord
 import sys, os
 from multiprocessing import Pipe, Process
-from microProcess.constants import *
 #path managing
 sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'utils'))
+sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..'))
+from microProcess.constants import *
 
 #import part
 import log
