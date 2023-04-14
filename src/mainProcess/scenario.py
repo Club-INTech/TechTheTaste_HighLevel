@@ -306,43 +306,34 @@ def scenarioGreenStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMainto
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     
     OrderManager.waitingJumper(1)
-    while not pipeMainToMicro1.poll():
+    while pipeMainToMicro1.recv():
         continue
-    pipeMainToMicro1.recv()
 
     OrderManager.moovToSimple(1.5,0)
-    while not pipeMainToMicro1.poll():
+    while pipeMainToMicro1.recv():
         continue
-    pipeMainToMicro1.recv()
     OrderManager.moovToSimple(1.125,0,True)
-    while not pipeMainToMicro1.poll():
+    while pipeMainToMicro1.recv():
         continue
-    pipeMainToMicro1.recv()
 
     OrderManager.moovToSimple(1.125,-1.1)
-    while not pipeMainToMicro1.poll():
+    while pipeMainToMicro1.recv():
         continue
-    pipeMainToMicro1.recv()
     OrderManager.moovToSimple(1.125,-0.825, True)
-    while not pipeMainToMicro1.poll():
+    while pipeMainToMicro1.recv():
         continue
-    pipeMainToMicro1.recv()
     OrderManager.moovToSimple(1.875,-1.05)
-    while not pipeMainToMicro1.poll():
+    while pipeMainToMicro1.recv():
         continue
-    pipeMainToMicro1.recv()
     OrderManager.moovToSimple(2.65,-1.05)
-    while not pipeMainToMicro1.poll():
+    while pipeMainToMicro1.recv():
         continue
-    pipeMainToMicro1.recv()
     OrderManager.moovToSimple(2.55,-1.05,True)
-    while not pipeMainToMicro1.poll():
+    while pipeMainToMicro1.recv():
         continue
-    pipeMainToMicro1.recv()
     OrderManager.moovToSimple(0.1,0)
-    while not pipeMainToMicro1.poll():
+    while pipeMainToMicro1.recv():
         continue
-    pipeMainToMicro1.recv()
     log.logMessage(2,"scenario finished", 0)
     
 def scenarioBlueStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
