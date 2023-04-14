@@ -6,6 +6,13 @@ from constants import *
 def goto(angle, magnitude):
     yield TRACK, 0, 0
     yield ROT, 0, angle + 0x10000 * (angle < 0)
+    while abs(magnitude) > 2000:
+        if magnitude > 0:
+            yield MOV, 0, 2000
+            magnitude -= 2000
+        else:
+            yield MOV, 0, -2000 + 0x10000
+            magnitude += 2000
     yield MOV, 0, magnitude + 0x10000 * (magnitude < 0)
     yield TRACK, 0, 0
 
