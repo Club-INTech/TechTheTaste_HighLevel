@@ -1,7 +1,7 @@
 from base_micro import *
 from constants import *
 import math
-
+import time
 
 def empty():
     return
@@ -10,6 +10,7 @@ def empty():
 
 class MicroProcess(BaseMicro):
     last = 0, 0
+    timeout = None
 
     def __init__(self, port, lidar, main, robot_x, robot_y, robot_heading, axle_track, log=MINIMAL):
         self.log_level = log
@@ -32,6 +33,8 @@ class MicroProcess(BaseMicro):
         # goes through the routine of the given type (MOVEMENT or ACTION)
         try:
             next_order = next(self.routines[type_])
+            if next_order[0] in (MOV, ROT):
+                self.timeout = time.perf_counter()
             self.last[type_] = next_order[0]
             self.send(self.make_message(*next_order))
         # routine is finished
@@ -41,6 +44,8 @@ class MicroProcess(BaseMicro):
     def termination(self, message):
         t = TYPES[message[0] & 0xf]
         if t != OTHER and self.last[t] == message[0] & 0xf:
+            if message[0] & 0xf in (MOV, ROT) and self.timeout is not None:
+                self.timeout = None
             self.next(t)
 
     def wheel_update(self, message):
@@ -85,6 +90,9 @@ class MicroProcess(BaseMicro):
             self.next(type_)
         if self.serial.in_waiting:
             self.feedback(self.receive())
+        if self.timeout is not None and time.perf_counter() - self.timeout > 5.:
+            self.send(self.make_message(CAN, 0, 0))
+            self.timeout = None
 
     def run(self):
         try:
