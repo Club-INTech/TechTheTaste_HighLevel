@@ -293,10 +293,9 @@ def scenarioApproval(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     
-    OrderManager.jumperState(1)
+    OrderManager.waitingJumper(1)
     
-    OrderManager.moovToSimple(0.4,0)
-    OrderManager.moovToSimple(0.4,0,True)
+    OrderManager.moovToSimple(1.5,0)
     
     log.logMessage(2,"scenario finished", 0)
     
@@ -318,7 +317,7 @@ def scenarioGreenStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMainto
     OrderManager.moovToSimple(2.65,-1.05)
     OrderManager.moovToSimple(2.55,-1.05,True)
     
-    OrderManager.moovToSimple(0,0)
+    OrderManager.moovToSimple(0.1,0)
     
     log.logMessage(2,"scenario finished", 0)
     
@@ -340,7 +339,7 @@ def scenarioBlueStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoL
     OrderManager.moovToSimple(2.65,1.05)
     OrderManager.moovToSimple(2.55,1.05,True)
     
-    OrderManager.moovToSimple(0,0)
+    OrderManager.moovToSimple(0.1,0)
     
     log.logMessage(2,"scenario finished", 0)
 
