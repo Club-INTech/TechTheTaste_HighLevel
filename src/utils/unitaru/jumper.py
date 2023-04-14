@@ -1,5 +1,7 @@
 import RPi.GPIO as GPIO 
+ 
 
+//small test jumper
 RISING = 0
 FALLING = 1
 
