@@ -4,6 +4,7 @@ import sys
 import os
 import time
 from multiprocessing import Pipe, Process
+import RPi.GPIO as GPIO 
 from math import sqrt, asin
 # path managing
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'utils'))
@@ -361,3 +362,15 @@ class OrderToMicroProcress(RoutineSender):
         maskActivateVaccum = 0b00000000
         self.Actuator2AControll(maskActivateVaccum)
         
+    def waitingJumper(self, edge=1):
+        EDGES = [ [True, False], [False, True]]
+        EDGE = EDGES[edge] #select the edge
+
+        GPIO.setmode(GPIO.BCM)
+        jumper = 24 #digital Output
+
+        GPIO.setup(jumper, GPIO.IN)
+        ctn = True
+        while ctn:
+            ctn = EDGE[ GPIO.input(jumper)]
+            log.logMessage(3, "waiting jumper", 0) 
