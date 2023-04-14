@@ -65,7 +65,7 @@ class MicroProcess(BaseMicro):
         # circular movement
         radius = .5 * self.robot_axle_track * (left + right) / (right - left)
         angle = (right_arc - left_arc) / self.robot_axle_track
-        a0, a1 = self.robot_heading - math.pi * .5, self.robot_heading.value - math.pi * .5 + angle
+        a0, a1 = self.robot_heading.value - math.pi * .5, self.robot_heading.value - math.pi * .5 + angle
         self.robot_x.value += radius * (math.cos(a1) - math.cos(a0))
         self.robot_y.value += radius * (math.sin(a1) - math.sin(a0))
         self.robot_heading.value += angle
