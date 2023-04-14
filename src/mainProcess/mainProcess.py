@@ -30,9 +30,9 @@ class mainProcess:
         #scenario.debugSimpleOrderCaptureCakeRight(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
         #scenario.debugSimpleOrderCaptureCakeLeft(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
         
-        scenario.scenarioApproval(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
-        #scenarioGreenStartPushingCake(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMaintoLPA)
-        #scenarioGreenStartPushingCake(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMaintoLPA)
+        #scenario.scenarioApproval(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
+        scenario.scenarioGreenStartPushingCake(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
+        #scenario.scenarioBlueStartPushingCake(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
         
         
         
