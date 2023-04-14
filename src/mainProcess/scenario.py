@@ -255,7 +255,6 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     OrderManager.moovToSimple(positionDeposit2)
     
     OrderManager.sortCakePhase1(genoise=RIGHT,creme=LEFT,glacage=MIDDLE)
-    Ò
     OrderManager.putCherry()
     OrderManager.openCake(RIGHT)
     OrderManager.releaseCake()
