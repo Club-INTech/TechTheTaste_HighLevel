@@ -34,14 +34,14 @@ def horiz(dh):
 
 def arm():
     yield horiz(-700)
-    yield vert(-550)
+    yield vert(-600)
     yield PUM, 1, 1
     time.sleep(0.1)
-    yield vert(550)
+    yield vert(600)
     yield horiz(-700)
-    yield vert(-550)
+    yield vert(-600)
     yield PUM, 1, 0
-    yield vert(550)
+    yield vert(600)
     yield horiz(1400)
 
 
