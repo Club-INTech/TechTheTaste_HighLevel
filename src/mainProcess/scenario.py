@@ -182,17 +182,17 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     positionDeposit1, positionDeposit2 = (0,0), (0,0)
     positionEnd = (0,0)
     
-    RIGHT, MID, LEFT = 1, 2, 3
+    RIGHT, MIDDLE, LEFT = 1, 2, 3
     
     ########## First wave ############
     
     OrderManager.openCake(LEFT)
-    OrderManager.openCake(MID)
+    OrderManager.openCake(MIDDLE)
     OrderManager.openCake(RIGHT)
    
     OrderManager.moovToSimple(positionGlacage1)
-    OrderManager.captureCake(positionGlacage1,MID)
-    OrderManager.lockCake(MID)
+    OrderManager.captureCake(positionGlacage1,MIDDLE)
+    OrderManager.lockCake(MIDDLE)
     
     OrderManager.moovToSimple(positionCreme1)
     OrderManager.captureCake(positionCreme1,LEFT)
@@ -206,7 +206,7 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     
     OrderManager.moovToSimple(positionDeposit1)
     
-    OrderManager.sortCakePhase1(genoise=RIGHT,creme=LEFT,glacage=MID)
+    OrderManager.sortCakePhase1(genoise=RIGHT,creme=LEFT,glacage=MIDDLE)
     
     OrderManager.putCherry()
     OrderManager.openCake(RIGHT)
@@ -216,7 +216,7 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     
     OrderManager.moovToSimple(positionDeposit1) #a bit different
     
-    OrderManager.sortCakePhase2(genoise=RIGHT,creme=LEFT,glacage=MID)
+    OrderManager.sortCakePhase2(genoise=RIGHT,creme=LEFT,glacage=MIDDLE)
     
     OrderManager.putCherry()
     OrderManager.openCake(RIGHT)
@@ -226,7 +226,7 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     
     OrderManager.moovToSimple(positionDeposit1) #a bit different
     
-    OrderManager.sortCakePhase3(genoise=RIGHT,creme=LEFT,glacage=MID)
+    OrderManager.sortCakePhase3(genoise=RIGHT,creme=LEFT,glacage=MIDDLE)
     
     OrderManager.putCherry()
     OrderManager.openCake(RIGHT)
@@ -235,7 +235,7 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     ########## Second wave ############
     
     OrderManager.openCake(LEFT)
-    OrderManager.openCake(MID)
+    OrderManager.openCake(MIDDLE)
     OrderManager.openCake(RIGHT)
     
     OrderManager.moovToSimple(positionGenoise2)
@@ -247,15 +247,15 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     OrderManager.lockCake(LEFT)
     
     OrderManager.moovToSimple(positionGlacage2)
-    OrderManager.captureCake(positionGlacage2, MID)
-    OrderManager.lockCake(MID)
+    OrderManager.captureCake(positionGlacage2, MIDDLE)
+    OrderManager.lockCake(MIDDLE)
     
     #Phase 1
     
     OrderManager.moovToSimple(positionDeposit2)
     
-    OrderManager.sortCakePhase1(genoise=RIGHT,creme=LEFT,glacage=MID)
-    
+    OrderManager.sortCakePhase1(genoise=RIGHT,creme=LEFT,glacage=MIDDLE)
+    Ò
     OrderManager.putCherry()
     OrderManager.openCake(RIGHT)
     OrderManager.releaseCake()
@@ -264,7 +264,7 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     
     OrderManager.moovToSimple(positionDeposit2) #a bit different
     
-    OrderManager.sortCakePhase2(genoise=RIGHT,creme=LEFT,glacage=MID)
+    OrderManager.sortCakePhase2(genoise=RIGHT,creme=LEFT,glacage=MIDDLE)
     
     OrderManager.putCherry()
     OrderManager.openCake(RIGHT)
@@ -274,7 +274,7 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     
     OrderManager.moovToSimple(positionDeposit2) #a bit different
     
-    OrderManager.sortCakePhase3(genoise=RIGHT,creme=LEFT,glacage=MID)
+    OrderManager.sortCakePhase3(genoise=RIGHT,creme=LEFT,glacage=MIDDLE)
     
     OrderManager.putCherry()
     OrderManager.openCake(RIGHT)
@@ -283,7 +283,67 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     OrderManager.moovToSimple(positionEnd)
     
     log.logMessage(2,"simulation finished", 0)
+    
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------ DavinciBot --------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
 
+def scenarioApproval(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    
+    log.logMessage(2,"scenario DavinciBot approval : leaving and going back to the depart zone ", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    
+    OrderManager.jumperState(1)
+    
+    OrderManager.moovToSimple(0.4,0)
+    OrderManager.moovToSimple(0.4,0,True)
+    
+    log.logMessage(2,"scenario finished", 0)
+    
+def scenarioGreenStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    
+    log.logMessage(2,"scenario DavinciBot : Pushing from GreenStart ", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    
+    OrderManager.jumperState(1)
+    
+    OrderManager.moovToSimple(1.5,0)
+    
+    OrderManager.moovToSimple(1.125,0,True)
+    OrderManager.moovToSimple(1.125,-1.1)
+    OrderManager.moovToSimple(1.125,-0.825, True)
+    
+    OrderManager.moovToSimple(1.875,-1.05)
+    OrderManager.moovToSimple(2.65,-1.05)
+    OrderManager.moovToSimple(2.55,-1.05,True)
+    
+    OrderManager.moovToSimple(0,0)
+    
+    log.logMessage(2,"scenario finished", 0)
+    
+def scenarioBlueStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    
+    log.logMessage(2,"scenario DavinciBot : Pushing from BlueStart ", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    
+    OrderManager.jumperState(1)
+    
+    OrderManager.moovToSimple(1.5,0)
+    
+    OrderManager.moovToSimple(1.125,0,True)
+    OrderManager.moovToSimple(1.125,1.1)
+    OrderManager.moovToSimple(1.125,0.825, True)
+    
+    OrderManager.moovToSimple(1.875,1.05)
+    OrderManager.moovToSimple(2.65,1.05)
+    OrderManager.moovToSimple(2.55,1.05,True)
+    
+    OrderManager.moovToSimple(0,0)
+    
+    log.logMessage(2,"scenario finished", 0)
 
 if __name__ == "__main__":
     def readEsay(pipe1, pipe2):

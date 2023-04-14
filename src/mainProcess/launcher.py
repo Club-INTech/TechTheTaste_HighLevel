@@ -73,8 +73,8 @@ class Launcher :
     # TODO, remove the comment
     def processLIDAR(self,lidar_main_pipeLidar):
         log.logMessage(2, "start the lidar processus", 1) 
-        lidar=lidarProcess.Lili()
-        lidar.lidarstop(lidar_main_pipeLidar)
+        #lidar=lidarProcess.Lili()
+        #lidar.lidarstop(lidar_main_pipeLidar)
 
         
     def processMicro1(self, port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track, logg):

@@ -227,107 +227,51 @@ class OrderToMicroProcress(RoutineSender):
         step = 0.2
         self.goto(self, Xrobot.value - step, Yrobot.value - step, reverse=True)
 
+    #LEFT, MIDDLE, RIGHT = -1400, 700, 0
     def moovCake(self, src, dest):
-        RIGHT, MID, LEFT = 1,2,3
-        LEFT_arm, RIGHT_arm = 1, -1
-        UP_arm, DOWN_arm = -1, 1 
-        ACTIVATE, DESACTIVATE = 1,0 #TODO change ByteMask
-        
-        if src == dest or (src, dest) not in {1,2,3}:
-            pass
-        else :
-            #setting ARM to src
-            if Arobot.value == src :
-                pass
-            
-            elif abs(Arobot.value - src) == 1:
-                if Arobot.value - src > 0:
-                    self.ARMhorizontalPos(RIGHT_arm)
-                else :
-                    self.ARMhorizontalPos(LEFT_arm)
-                    
-                
-            else : #abs(Arobot.value - src) == 2:
-                if Arobot.value - src > 0:
-                    self.ARMhorizontalPos(RIGHT_arm)
-                    self.ARMhorizontalPos(RIGHT_arm)
-                else :
-                    self.ARMhorizontalPos(LEFT_arm)
-                    self.ARMhorizontalPos(LEFT_arm)
-            
-            #updating ARM position        
-            Arobot.value = src
-            
-            #uplifting genoise
-            self.ARMverticalPos(position=DOWN_arm)
-            self.PumpControll(ACTIVATE)
-            self.ARMverticalPos(position=UP_arm)
-            
-            #ARM move to dest    
-            if abs(Arobot.value - dest) == 1 :
-                if Arobot.value - dest > 0 :
-                    self.ARMhorizontalPos(RIGHT_arm)
-                else :
-                    self.ARMhorizontalPos(LEFT_arm)
-        
-                        
-            else : #abs(Arobot.value - dest) == 2
-                if Arobot.value - dest > 0 :
-                    self.ARMhorizontalPos(RIGHT_arm)
-                    self.ARMhorizontalPos(RIGHT_arm)
-                else :
-                    self.ARMhorizontalPos(LEFT_arm)
-                    self.ARMhorizontalPos(LEFT_arm)
-            
-            #Deposit genoise
-            self.ARMverticalPos(position = DOWN_arm)
-            self.PumpControll(DESACTIVATE)
-            self.ARMverticalPos(position = UP_arm)
-            
-            #updating ARM position 
-            Arobot.value = dest
+        self.move_cake(src,dest)
             
     def sortCakePhase1(self, genoise, creme, glacage):
         left = genoise
         mid = creme
         right = glacage
         
-        self.moovCake(self,right,left)
+        self.moovCake(right,left)
         
-        self.moovCake(self,mid,left)
-        self.moovCake(self,mid,left)
+        self.moovCake(mid,left)
+        self.moovCake(mid,left)
         
-        self.moovCake(self,right,mid)
-        self.moovCake(self,right,mid)
+        self.moovCake(right,mid)
+        self.moovCake(right,mid)
         
-        self.moovCake(self,left,right)
-        self.moovCake(self,left,right)
+        self.moovCake(left,right)
+        self.moovCake(left,right)
         
-        self.moovCake(self,left,mid)
+        self.moovCake(left,mid)
         
-        self.moovCake(self,right,left)
+        self.moovCake(right,left)
         
-        self.moovCake(self,mid,right)
+        self.moovCake(mid,right)
         
-        self.moovCake(self,mid,left)
+        self.moovCake(mid,left)
     
     def sortCakePhase2(self, genoise, creme, glacage):
         left = genoise
         mid = creme
         right = glacage
         
-        self.moovCake(self,right,left)
-        self.moovCake(self,right,left)
-        self.moovCake(self,right,left)
+        self.moovCake(right,left)
+        self.moovCake(right,left)
+        self.moovCake(right,left)
         
     def sortCakePhase3(self,genoise, creme, glacage):
         left = genoise
         mid = creme
         right = glacage
         
-        self.moovCake(self,mid,left)
-        self.moovCake(self,mid,left)
-        self.moovCake(self,right,left)
+        self.moovCake(mid,left)
+        self.moovCake(mid,left)
+        self.moovCake(right,left)
         
     def putCherry(self,dest):
         self.place_cherry(self,dest)
@@ -373,4 +317,5 @@ class OrderToMicroProcress(RoutineSender):
         ctn = True
         while ctn:
             ctn = EDGE[ GPIO.input(jumper)]
-            log.logMessage(3, "waiting jumper", 0) 
+            print("waiting jumper")
+            #log.logMessage(3, "waiting jumper", 0) 
