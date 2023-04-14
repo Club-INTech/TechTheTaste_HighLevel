@@ -58,14 +58,14 @@ class MicroProcess(BaseMicro):
 
         # straight movement
         if left == right:
-            self.robot_x.value += left_arc * math.cos(self.robot_heading)
-            self.robot_y.value += left_arc * math.sin(self.robot_heading)
+            self.robot_x.value += left_arc * math.cos(self.robot_heading.value)
+            self.robot_y.value += left_arc * math.sin(self.robot_heading.value)
             return
 
         # circular movement
         radius = .5 * self.robot_axle_track * (left + right) / (right - left)
         angle = (right_arc - left_arc) / self.robot_axle_track
-        a0, a1 = self.robot_heading - math.pi * .5, self.robot_heading - math.pi * .5 + angle
+        a0, a1 = self.robot_heading - math.pi * .5, self.robot_heading.value - math.pi * .5 + angle
         self.robot_x.value += radius * (math.cos(a1) - math.cos(a0))
         self.robot_y.value += radius * (math.sin(a1) - math.sin(a0))
         self.robot_heading.value += angle
