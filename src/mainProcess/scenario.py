@@ -306,34 +306,8 @@ def scenarioGreenStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMainto
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     
     OrderManager.waitingJumper(1)
-    while pipeMainToMicro1.recv():
-        continue
 
     OrderManager.moovToSimple(1.5,0)
-    while pipeMainToMicro1.recv():
-        continue
-    OrderManager.moovToSimple(1.125,0,True)
-    while pipeMainToMicro1.recv():
-        continue
-
-    OrderManager.moovToSimple(1.125,-1.1)
-    while pipeMainToMicro1.recv():
-        continue
-    OrderManager.moovToSimple(1.125,-0.825, True)
-    while pipeMainToMicro1.recv():
-        continue
-    OrderManager.moovToSimple(1.875,-1.05)
-    while pipeMainToMicro1.recv():
-        continue
-    OrderManager.moovToSimple(2.65,-1.05)
-    while pipeMainToMicro1.recv():
-        continue
-    OrderManager.moovToSimple(2.55,-1.05,True)
-    while pipeMainToMicro1.recv():
-        continue
-    OrderManager.moovToSimple(0.1,0)
-    while pipeMainToMicro1.recv():
-        continue
     log.logMessage(2,"scenario finished", 0)
     
 def scenarioBlueStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
@@ -345,17 +319,7 @@ def scenarioBlueStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoL
     OrderManager.waitingJumper(1)
     
     OrderManager.moovToSimple(1.5,0)
-    
-    OrderManager.moovToSimple(1.125,0,True)
-    OrderManager.moovToSimple(1.125,1.1)
-    OrderManager.moovToSimple(1.125,0.825, True)
-    
-    OrderManager.moovToSimple(1.875,1.05)
-    OrderManager.moovToSimple(2.65,1.05)
-    OrderManager.moovToSimple(2.55,1.05,True)
-    
-    OrderManager.moovToSimple(0.1,0)
-    
+
     log.logMessage(2,"scenario finished", 0)
 
 if __name__ == "__main__":
