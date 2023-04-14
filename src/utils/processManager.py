@@ -2,7 +2,7 @@ import log
 from time import sleep
 from multiprocessing import Pipe, Process
 
-port1 = "/dev/ttyUSB1"
+port1 = "/dev/ttyUSB0"
 # port2 = '/dev/ttyUSB1'
 
 # we wait X and Y initialized to start the other process
