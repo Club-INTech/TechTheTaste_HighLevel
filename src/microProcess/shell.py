@@ -355,7 +355,7 @@ class Shell(BaseShell):
                 self.left_wheel = []
 
     def wheel_update(self, message):
-        if not self.track and not self.solved:
+        if self.waited_id not in (MOV, ROT) and not self.solved:
             self.send(self.make_message(TRACK, 0, 0))
             self.left_wheel, self.right_wheel = [], []
             self.solved = True

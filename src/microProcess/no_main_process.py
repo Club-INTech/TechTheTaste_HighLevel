@@ -2,6 +2,7 @@ from micro_process import MicroProcess
 from constants import *
 import multiprocessing as mp
 import sys
+import time
 
 robot_x, robot_y, robot_h = mp.Value('f', 0.), mp.Value('f', 0.), mp.Value('f', 0.)
 
@@ -35,6 +36,7 @@ def arm():
     yield horiz(-700)
     yield vert(-550)
     yield PUM, 1, 1
+    time.sleep(0.1)
     yield vert(550)
     yield horiz(-700)
     yield vert(-550)
