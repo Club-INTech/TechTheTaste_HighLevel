@@ -1,13 +1,19 @@
+import time
+
 from constants import *
 
 
 def goto(angle, magnitude):
+    yield TRACK, 0, 0
     yield ROT, 0, angle + 0x10000 * (angle < 0)
     yield MOV, 0, magnitude + 0x10000 * (magnitude < 0)
+    yield TRACK, 0, 0
 
 
 def target(angle):
+    yield TRACK, 0, 0
     yield ROT, 0, angle + 0x10000 * (angle < 0)
+    yield TRACK, 0, 0
 
 
 def set_arm_x(dx):
@@ -26,6 +32,7 @@ def move_cake(to_src, down1, to_des, down2):
     yield set_arm_x(to_src)
     yield set_arm_y(down1)
     yield PUM, 1, 1
+    time.sleep(.2)
     yield set_arm_y(-down1)
     yield set_arm_x(to_des)
     yield set_arm_y(down2)
