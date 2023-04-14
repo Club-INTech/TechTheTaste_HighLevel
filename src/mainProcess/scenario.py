@@ -351,7 +351,7 @@ def scenarioBlueStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoL
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     
-    OrderManager.jumperState(1)
+    OrderManager.waitingJumper(1)
     
     OrderManager.moovToSimple(1.5,0)
     
