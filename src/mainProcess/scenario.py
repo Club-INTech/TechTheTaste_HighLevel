@@ -317,7 +317,7 @@ def scenarioGreenStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMainto
 
     def move_back():
         yield MOV, 0, -5000 + 0x10000
-
+    print('hey')
     pipeMainToMicro1.send((MOVEMENT, move_back, ()))
 
     log.logMessage(2,"scenario finished", 0)
