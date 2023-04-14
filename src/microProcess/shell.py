@@ -315,6 +315,7 @@ class Shell(BaseShell):
     waited_id = None
     last_movement = None
     last_received_var = 0.
+    solved = False
 
     def __init__(self, port, log_level=MINIMAL):
         self.log_level = log_level
@@ -354,6 +355,11 @@ class Shell(BaseShell):
                 self.left_wheel = []
 
     def wheel_update(self, message):
+        if not self.track and not self.solved:
+            self.send(self.make_message(TRACK, 0, 0))
+            self.left_wheel, self.right_wheel = [], []
+            self.solved = True
+            return
         left = (message[1] << 8) + message[2]
         right = (message[3] << 8) + message[4]
         self.right_wheel.append(right - 0x10000 * (right >= 0x1000))
@@ -369,6 +375,7 @@ class Shell(BaseShell):
         # waits for the termination of the given order_id
         self.waited_id = order_id
         self.waiting = True
+        self.solved = False
 
         date, stops, restarts = 0., (), ()
         if self.lidar_stops and order_id in (MOV, ROT):
