@@ -4,7 +4,7 @@ import time
 import orderInterProcess as ord
 import sys, os
 from multiprocessing import Pipe, Process
-
+from microProcess.constants import *
 #path managing
 sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'utils'))
 
@@ -304,10 +304,21 @@ def scenarioGreenStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMainto
     log.logMessage(2,"scenario DavinciBot : Pushing from GreenStart ", 0)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
-    
+
+    while pipeMainToMicro1.poll():
+        pipeMainToMicro1.recv()
     OrderManager.waitingJumper(1)
 
     OrderManager.moovToSimple(1.5,0)
+
+    while pipeMainToMicro1.recv():
+        continue
+
+    def move_back():
+        yield MOV, 0, -5000 + 0x10000
+
+    pipeMainToMicro1.send((MOVEMENT, move_back, ()))
+
     log.logMessage(2,"scenario finished", 0)
     
 def scenarioBlueStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
