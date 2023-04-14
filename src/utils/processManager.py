@@ -2,8 +2,8 @@ import log
 from time import sleep
 from multiprocessing import Pipe, Process
 
-port1 = "/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A50285BI-if00-port0"
-port2 = '/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A50285BI-if00-port1'
+port1 = "/dev/ttyUSB0"
+port2 = '/dev/ttyUSB1'
 
 # we wait X and Y initialized to start the other process
 def isXYinitialised(XYinitialised):
