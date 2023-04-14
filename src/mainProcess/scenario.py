@@ -295,8 +295,7 @@ def scenarioApproval(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     
     OrderManager.jumperState(1)
     
-    OrderManager.moovToSimple(0.4,0)
-    OrderManager.moovToSimple(0.4,0,True)
+    OrderManager.moovToSimple(1.5,0)
     
     log.logMessage(2,"scenario finished", 0)
     
