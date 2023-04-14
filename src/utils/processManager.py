@@ -2,8 +2,8 @@ import log
 from time import sleep
 from multiprocessing import Pipe, Process
 
-port1 = "/dev/ttyUSB0"
-port2 = '/dev/ttyUSB1'
+port1 = "/dev/ttyUSB1"
+# port2 = '/dev/ttyUSB1'
 
 # we wait X and Y initialized to start the other process
 def isXYinitialised(XYinitialised):
@@ -38,11 +38,11 @@ def config1(self, processCamMat, processMicro1, processLpastar, processMain, pro
         procCamMat = Process(target = processCamMat, args = (CamMat_Lpastar_pipeCamMat,))
         procLIDAR = Process(target = processLIDAR, args = (lidar_main_pipeLidar,))
         procMicro1 = Process(target = processMicro1, args = (port1, lidar_main_pipeMain, main_micro1_pipeMicro1, Xrobot, Yrobot, Hrobot, 1, 2,))
-        procMicro2 = Process(target = processMicro1, args = (port2, lidar_main_pipeMain, main_micro2_pipeMicro2, Xrobot, Yrobot, Hrobot, 1, 2,))
+        # procMicro2 = Process(target = processMicro1, args = (port2, lidar_main_pipeMain, main_micro2_pipeMicro2, Xrobot, Yrobot, Hrobot, 1, 2,))
         procLpastar = Process(target = processLpastar, args = (lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, Xrobot, Yrobot))
         procMain = Process(target= processMain, args = (main_micro1_pipeMain, main_micro2_pipeMain, lidar_main_pipeMain, lpastar_main_pipeMain, Xrobot, Yrobot) )
 
-        processList= [procMain, procCamMat, procLIDAR, procMicro1, procMicro2, procLpastar]
+        processList= [procMain, procCamMat, procLIDAR, procMicro1, procLpastar]
         # processList= [procMain, procMicro1, procLpastar, procLIDAR]
         startProcess(procCamMat, processList)
 

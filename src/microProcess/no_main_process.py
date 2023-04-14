@@ -49,11 +49,11 @@ def main_process(pipe):
     while True:
         if pipe.poll():
             x = pipe.recv()
-            # if not x:
-            #     pipe.send((0, move, ()))
-            if x:
-                pipe.send((1, arm, ()))
-                break
+            if not x:
+                 pipe.send((0, move, ()))
+            # if x:
+            #     pipe.send((1, arm, ()))
+            #     break
     while True:
         continue
 
