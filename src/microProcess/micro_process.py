@@ -92,6 +92,7 @@ class MicroProcess(BaseMicro):
             self.feedback(self.receive())
         if self.timeout is not None and time.perf_counter() - self.timeout > 5.:
             self.send(self.make_message(CAN, 0, 0))
+            self.last[0] = CAN
             self.timeout = None
 
     def run(self):
