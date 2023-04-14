@@ -177,7 +177,7 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     
-    positionGlacage1, positionCreme1, positionGenoise1 = (0,0), (0,0), (0,0)
+    greenSidePositionGlacage1, greenSidePositionCreme1, positionGenoise1 = (0,0), (0,0), (0,0)
     positionGlacage2, positionCreme2, positionGenoise2 = (0,0), (0,0), (0,0)
     positionDeposit1, positionDeposit2 = (0,0), (0,0)
     positionEnd = (0,0)
@@ -305,7 +305,7 @@ def scenarioGreenStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMainto
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     
-    OrderManager.jumperState(1)
+    OrderManager.waitingJumper(1)
     
     OrderManager.moovToSimple(1.5,0)
     
