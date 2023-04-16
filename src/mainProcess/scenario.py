@@ -183,6 +183,8 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     positionEnd = (0,0)
     
     RIGHT, MID, LEFT = 1, 2, 3
+
+    
     
     ########## First wave ############
     

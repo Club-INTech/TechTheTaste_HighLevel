@@ -9,6 +9,7 @@ from math import sqrt, asin
 # path managing
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'microProcess'))
+sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'actuatorProcess'))
 # import part
 import time
 import log
@@ -16,6 +17,7 @@ from launcher import Xrobot, Yrobot, Hrobot, Xarm, Yarm
 from routine_sender import RoutineSender
 from constants import *
 from params import *
+from orderActuator import onVAccum, offVAccum, onCanon, offCanon
 import math
 
 # simple function to find the right angle
@@ -42,11 +44,12 @@ def angleToTicks(angle):
 
 
 class OrderToMicroProcress(RoutineSender):
-    def __init__(self, pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+    def __init__(self, pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator2A):
         super().__init__(Xrobot, Yrobot, Hrobot, Xarm, Yarm, pipeMainToMicro1, AXLE_TRACK_1A)
         self.pipeToMicro1 = pipeMainToMicro1
         self.pipeToMicro2 = pipeMainToMicro2
         self.pipeToLPA = pipeMaintoLPA
+        self.pipeToActuator2A = pipeMainToActuator2A
 
     # 4 methodes created in the case whe have to do an
     # harder comunication protocol btwn our 2 process
@@ -334,38 +337,29 @@ class OrderToMicroProcress(RoutineSender):
     
     def activateCanon():
         pass
-    
-    #this function goal is to throw the cherry once bebouzator2 is at the good position
-    def thrownCherry(self, waitingTime):
-        maskActivateCanon_on = 0b00000001
-        #                            |-> pump1 the one for the cannon on
 
-        maskActivateCanon_off = 0b00000000
-        self.Actuator2AControll(maskActivateCanon_on)
-        time.sleep(waitingTime) #time to throw all the cherry
-        self.Actuator2AControll(maskActivateCanon_off)
-
-    #to grab the cherry
-    def hooverActivation(self):
-        maskActivateVaccum = 0b00000010
-        #                            |-> pump2 for the hoover
-        self.Actuator2AControll(maskActivateVaccum)
-
-    def hooverDesactivate(self):
-        maskActivateVaccum = 0b00000000
-        self.Actuator2AControll(maskActivateVaccum)
-
-
-    def waitingJumper(self, edge):
+    def waitingJumper(self, edge=1):
         EDGES = [ [True, False], [False, True]]
         EDGE = EDGES[edge] #select the edge
 
         GPIO.setmode(GPIO.BCM)
-        jumper = 12 #digital Output
+        jumper = 24 #digital Output
 
         GPIO.setup(jumper, GPIO.IN)
         ctn = True
         while ctn:
-            ctn = EDGE[ GPIO.input(jumper)
-            log.logMessage(3, "waiting jumper", 0)   
+            ctn = EDGE[ GPIO.input(jumper)]
+            log.logMessage(3, "waiting jumper", 0)  
 
+    def VaccumActivate(self):
+        onVAccum(self.pipeToActuator2A)
+
+    def VaccumDesactivate(self):
+        offVAccum(self.pipeToActuator2A)
+
+
+    def CanonActivate(self):
+        onCanon(self.pipeToActuator2A)
+
+    def CanonDesactivate(self):
+        offCanon(self.pipeToActuator2A)
