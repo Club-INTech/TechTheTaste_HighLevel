@@ -14,6 +14,7 @@ sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lpastarProcess'
 sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'CamProcess'))
 sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lidarProcess'))
 sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'microProcess'))
+sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'actuatorProcess'))
 
 #import part
 import log
@@ -22,6 +23,7 @@ from processManager import config1
 from com import RxPipe
 from testing import generate_obstacles
 from micro_process import MicroProcess
+from actuator import actuatorProcess
 # TODO change lidar on lidarProcess import lidarProcess 
 
 from multiprocessing import Process, Pipe, Value, current_process
@@ -62,13 +64,16 @@ class Launcher :
         self.loggerLpa = createLog('Lpa', 'log/lpa.txt', logging.INFO)
         self.loggerLidar = createLog('Lidar', 'log/lidar.txt', logging.INFO)
         self.loggerCom1 = createLog('Com1', 'log/com1.txt', logging.INFO)
+        self.loggerActua = createLog('Actuator2A', 'log/com1.txt', logging.INFO)
         
 
-    def processMain(self, pipeMicro1, pipeMicro2, lidar_main_pipeMain, lpastar_main_pipMain, Xrobot, Yrobot):
+    def processMain(self, pipeActua, pipeMicro1, pipeMicro2, lidar_main_pipeMain, lpastar_main_pipMain, Xrobot, Yrobot):
         log.logMessage(2, "start the main processus", 0)
-        mainProcss = mainProcess.mainProcess(pipeMicro1, pipeMicro2, lpastar_main_pipMain, lidar_main_pipeMain)
+        mainProcss = mainProcess.mainProcess(pipeActua, pipeMicro1, pipeMicro2, lpastar_main_pipMain, lidar_main_pipeMain)
         mainProcss.run()
 
+    def  processActuator2A(self, actua_main_pipeActua):
+        actuatorProcss = actuatorProcess(actua_main_pipeActua ,self.loggerActua)
 
     # TODO, remove the comment
     def processLIDAR(self,lidar_main_pipeLidar):
