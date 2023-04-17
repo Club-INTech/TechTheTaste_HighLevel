@@ -17,7 +17,7 @@ class Lili(object) :
     
     def __init__(self):
         self.state = 0
-        self.laser = hokuyo.HokuyoLX()
+        self.laser = hokuyo.HokuyoLX(tsync=False)
         
     def lidarstop(self, conn) -> None:
         '''Send a message to the main process if drobot < dmin'''
