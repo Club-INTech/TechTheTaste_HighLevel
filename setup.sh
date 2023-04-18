@@ -19,7 +19,7 @@ which python
 
 pip install --upgrade pip
 pip install -r requirements.txt
-pip install git+git@github.com:Dvdzh/hokuyolx.git
+pip install git+https://github.com/Dvdzh/hokuyolx.git
 echo 'all module installed'
 
 deactivate
