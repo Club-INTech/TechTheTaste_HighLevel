@@ -11,7 +11,7 @@ def sendOrderActuator(connToactuProcess, pinPWM, state): #state = 0 or 1
     connToactuProcess.send(dataToSend)
 
 
-class actuar
+
 def onVAccum(connToactuProcess):
     sendOrderActuator(connToactuProcess, pinVaccum, ON)
 
