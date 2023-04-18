@@ -2,7 +2,7 @@ numpy>=1.24.2
 pyserial~=3.5
 matplotlib>=3.7.1
 typing_extensions
-
+RPi_GPIO
 opencv-python~=4.7.0.72
 scipy>=1.10.1
 frechetdist~=0.6

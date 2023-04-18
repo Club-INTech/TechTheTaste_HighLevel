@@ -7,6 +7,8 @@ from hokuyolx import hokuyo
 
 group = 3
 dmin = 50
+DMAX = 2000
+BORD = 20
 
 #laser=hokuyo.HokuyoLX()
 
@@ -23,20 +25,23 @@ class Lili(object) :
         '''Send a message to the main process if drobot < dmin'''
         self.state = 0
         while True : 
-            data = self.laser.get_dist(grouping=group)
+            timestamp, data = self.laser.get_filtered_dist(dmax=DMAX)
             Lr = []
             for i in range(len(data[1])):
                 Lr.append(data[1][i])
-            Lr = Lr[3:]
-            Lr = Lr[:-7]
-            print(min(Lr))
-            if min(Lr) < dmin and self.state == 0 : #stop the process
+            Lr = Lr[BORD:-BORD]
+            
+            if not Lr:
+                pass
+            minlr = min(Lr)
+            
+            if minlr < dmin and self.state == 0 : #stop the process
                 self.stop(conn)
                 self.state = 1
-            if min(Lr) > dmin and self.state == 1 : #retart the processus
+            elif minlr > dmin and self.state == 1 : #retart the processus
                 self.restart(conn)
                 self.state = 0
-            time.sleep(5)
+            time.sleep(0.001)
                 
     def stop(self,conn) -> None:
         '''Send a message to the main process to stop the Agent'''
