@@ -33,14 +33,15 @@ class Lili(object) :
             
             if not Lr:
                 pass
-            minlr = min(Lr)
+            else :
+                minlr = min(Lr)
             
-            if minlr < dmin and self.state == 0 : #stop the process
-                self.stop(conn)
-                self.state = 1
-            elif minlr > dmin and self.state == 1 : #retart the processus
-                self.restart(conn)
-                self.state = 0
+                if minlr < dmin and self.state == 0 : #stop the process
+                    self.stop(conn)
+                    self.state = 1
+                elif minlr > dmin and self.state == 1 : #retart the processus
+                    self.restart(conn)
+                    self.state = 0
             time.sleep(0.001)
                 
     def stop(self,conn) -> None:
