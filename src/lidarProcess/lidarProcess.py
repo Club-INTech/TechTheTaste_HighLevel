@@ -6,7 +6,7 @@ from hokuyolx import hokuyo
 #from params import __param_getter, paramlidar
 
 group = 3
-dmin = 50
+dmin = 200
 DMAX = 2000
 BORD = 20
 
