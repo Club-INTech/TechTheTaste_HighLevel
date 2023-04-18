@@ -72,7 +72,7 @@ class Launcher :
         mainProcss.run()
 
     def processActuator2A(self, actua_main_pipeActua):
-        log.logMessage(2, "start the  processus", 0)
+        log.logMessage(2, "start the actuator processus", 0)
         actuatorProcss = actuatorProcess(actua_main_pipeActua ,self.loggerActua)
         actuatorProcss.run()
 
