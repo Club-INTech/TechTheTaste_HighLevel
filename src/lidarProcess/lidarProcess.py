@@ -8,7 +8,7 @@ from hokuyolx import hokuyo
 group = 3
 dmin = 50
 
-# TODO used to be here:         laser=hokuyo.HokuyoLX()
+#laser=hokuyo.HokuyoLX()
 
 #data = laser.get_dist(grouping=group)
 #print(data)
@@ -17,7 +17,7 @@ class Lili(object) :
     
     def __init__(self):
         self.state = 0
-        self.laser = hokuyo.HokuyoLX(tsync=False)
+        self.laser = hokuyo.HokuyoLX()
         
     def lidarstop(self, conn) -> None:
         '''Send a message to the main process if drobot < dmin'''
