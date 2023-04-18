@@ -10,10 +10,12 @@ import json
 
 class BaseShell(MicroManager, cmd.Cmd):
     prompt = '(RaspShell) > '
-    track = False
+    track = odometry = False
     cool_downs = ()
     waiting = False
     waited_id = None
+    x, y, h, axle_track = 0, 0, 0, AXLE_TRACK_1A
+    old = 0, 0
 
     def __init__(self):
         MicroManager.__init__(self)
@@ -78,6 +80,7 @@ class BaseShell(MicroManager, cmd.Cmd):
             curves[0].set_data(xs, self.left)
             curves[1].set_data(xs, self.right)
             return curves
+
         anim = FuncAnimation(fig, update)
         plt.show()
 
@@ -100,12 +103,41 @@ class ShellGeneric(GenericMicro):
         print(f'Variable {VAR_NAMES[message[0] & 0xf]} = {f_}')
 
     def wheel_update(self, message):
-        left = (message[1] << 8) + message[2]
-        left -= 0x10000 * (left >= 0x8000)
-        right = (message[3] << 8) + message[4]
-        right -= 0x10000 * (right >= 0x8000)
-        self.master.right = self.master.right[1:] + [right]
-        self.master.left = self.master.left[1:] + [left]
+        if self.master.track:
+            left = (message[1] << 8) + message[2]
+            left -= 0x10000 * (left >= 0x8000)
+            right = (message[3] << 8) + message[4]
+            right -= 0x10000 * (right >= 0x8000)
+            self.master.right = self.master.right[1:] + [right]
+            self.master.left = self.master.left[1:] + [left]
+        elif self.master.odometry:
+            # tick positions for each wheel
+            left, right = message[1] * 256 + message[2], message[3] * 256 + message[4]
+            # Two's complement
+            left -= 0x10000 * (left >= 0x8000)
+            right -= 0x10000 * (right >= 0x8000)
+
+            d_left, d_right = left - self.master.old[0], right - self.master.old[1]
+            self.master.old = left, right
+
+            left_arc, right_arc = (
+                2 * math.pi * d_left * WHEEL_RADIUS / TICKS_PER_REVOLUTION,
+                2 * math.pi * d_right * WHEEL_RADIUS / TICKS_PER_REVOLUTION
+            )
+
+            # straight movement
+            if d_left == d_right:
+                self.master.x += left_arc * math.cos(self.master.h)
+                self.master.y += left_arc * math.sin(self.master.h)
+                return
+
+            # circular movement
+            radius = .5 * self.master.axle_track * (d_left + d_right) / (d_right - d_left)
+            angle = (right_arc - left_arc) / self.master.axle_track
+            a0, a1 = self.master.h - math.pi * .5, self.master.h - math.pi * .5 + angle
+            self.master.x += radius * (math.cos(a1) - math.cos(a0))
+            self.master.y += radius * (math.sin(a1) - math.sin(a0))
+            self.master.h += angle
 
 
 class ShellMovement(MovementMicro, ShellGeneric):
@@ -134,6 +166,7 @@ def command(func):
 
 def add_to_dict(func):
     cmds[func.__name__] = func
+    return func
 
 
 # decorator to check the number of arguments
@@ -209,9 +242,10 @@ def move(self: BaseShell, ticks: str):
         return
     ticks = int(ticks)
     if self.track and self.send(PICO1, MOV, 0, self.twos_complement(ticks)):
-        self.send(PICO1, TRA, 0, 0)
+        self.send(PICO1, TRACK, 0, 0)
         self.plot(ticks, ticks)
-        self.send(PICO1, TRA, 0, 0)
+        self.send(PICO1, TRACK, 0, 0)
+        self.wait(TRACK)
         return
     if self.send(PICO1, MOV, 0, self.twos_complement(ticks)):
         self.wait(MOV)
@@ -334,12 +368,12 @@ def complete_save(self, text, line, begin, end):
 @arg_number(1)
 def load(self: BaseShell, file_name):
     print("Loading ...")
-    variables(self)
     with open(os.path.join('saved_sessions', f"{file_name}.json"), 'r') as f:
         self.vars = json.load(f)
     for var_name, value in self.vars.items():
         if value is None:
             continue
+        _set(self, var_name, value)
 
     print('Loaded.')
 
