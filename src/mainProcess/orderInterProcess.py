@@ -4,7 +4,6 @@ import sys
 import os
 import time
 from multiprocessing import Pipe, Process
-import RPi.GPIO as GPIO 
 from math import sqrt, asin
 # path managing
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'utils'))

@@ -72,8 +72,10 @@ class Launcher :
         mainProcss = mainProcess.mainProcess(pipeActua, pipeMicro1, pipeMicro2, lpastar_main_pipMain, lidar_main_pipeMain)
         mainProcss.run()
 
-    def  processActuator2A(self, actua_main_pipeActua):
+    def processActuator2A(self, actua_main_pipeActua):
+        log.logMessage(2, "start the  processus", 0)
         actuatorProcss = actuatorProcess(actua_main_pipeActua ,self.loggerActua)
+        actuatorProcss.run()
 
     # TODO, remove the comment
     def processLIDAR(self,lidar_main_pipeLidar):
