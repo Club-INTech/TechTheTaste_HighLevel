@@ -14,7 +14,7 @@ class actuatorProcess :
     def __init__(self, connPipeMain, logger):
         self.pipeMain = connPipeMain
         self.logger = logger
-        GPIO.setmode(GPIO.BMC)
+        GPIO.setmode(GPIO.BCM)
         GPIO.setup(pinCanon, GPIO.OUT)
         GPIO.setup(pinVaccum, GPIO.OUT)
         GPIO.output(pinCanon, 0)
