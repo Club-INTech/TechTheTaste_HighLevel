@@ -116,7 +116,7 @@ class Launcher :
     def launch(self):
         self.loggerMain.info("Start processus")
         if (self.version == 1):
-            return config1(self, self.processCamMat, self.processMicro1, self.processLpastar, self.processMain, self.processLIDAR, Xrobot, Yrobot, XYinitialised)
+            return config1(self, self.processActuator2A ,self.processCamMat, self.processMicro1, self.processLpastar, self.processMain, self.processLIDAR, Xrobot, Yrobot, XYinitialised)
         
 
 
