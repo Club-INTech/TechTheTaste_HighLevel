@@ -86,7 +86,7 @@ class Launcher :
         
     def processMicro1(self, port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track, logg):
         log.logMessage(2, "start the micro1 processus", 2)
-        microProcss = MicroProcess(port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track,logg)
+        microProcss = MicroProcess( pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track)
         microProcss.run()
 
     def processCamMat(self, CamMat_Lpastar_pipeCamMat):
@@ -125,16 +125,3 @@ if __name__ == "__main__" :
     starter = Launcher(1)
     # TODO, repair LiDAR process
     list = starter.launch()
-
-    
-    
-         
-     
-
-    
-    
-    
-    
-    
-    
-    
