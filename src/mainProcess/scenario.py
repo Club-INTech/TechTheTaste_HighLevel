@@ -36,10 +36,10 @@ def scenarioSimple(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
 #------------------------------------------------------ debug part -----------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-def debugLidarProc(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+def debugLidarProc(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2,"scenario debug of LPA*", 0)
     
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
     
     log.logMessage(1, "orderManager created", 0)
 
@@ -62,10 +62,10 @@ def debugLidar(pipeMainToMicro1, pipeMainToMicro2, pipeMainToLPA, pipeLidarToMai
             status = pipeLidarToMain.recv()
             print(status)
             
-def debugRaspy(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+def debugRaspy(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2,"scenario debug of LPA*", 0)
     
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
     
     log.logMessage(1, "orderManager created", 0)
 
@@ -86,55 +86,55 @@ def debugRaspy(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 
     
-def debugSimpleOrderStraight1(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+def debugSimpleOrderStraight1(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2,"scenario test simple order : Straight (1,0)", 0)
     
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
    
     OrderManager.moovToSimple(0.5,0)
     
     log.logMessage(2,"simulation finished", 0)
     
-def debugSimpleOrderStraight2(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+def debugSimpleOrderStraight2(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2,"scenario test simple order : Straight-left (0,1)", 0)
     
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
    
     OrderManager.moovToSimple(0,0.5)
     
     log.logMessage(2,"simulation finished", 0)
     
-def debugSimpleOrderStraight3(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+def debugSimpleOrderStraight3(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2,"scenario test simple order : Straight-right (0,1)", 0)
     
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
    
     OrderManager.moovToSimple(0,-0.5)
     
     log.logMessage(2,"simulation finished", 0)
     
-def debugSimpleOrderStraight4(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+def debugSimpleOrderStraight4(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2,"scenario test simple order : Straight-right (-1,0)", 0)
     
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
    
     OrderManager.moovToSimple(-0.5,0)
     
     log.logMessage(2,"simulation finished", 0)
 
-def debugSimpleOrderTurn(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+def debugSimpleOrderTurn(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2,"scenario test simple order : Turn (pi/2)", 0)
     
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
    
     OrderManager.turn(math.pi/2)
     
     log.logMessage(2,"simulation finished", 0)
     
-def debugSimpleOrderCaptureCakeMid(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+def debugSimpleOrderCaptureCakeMid(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2,"scenario test simple order : CaptureCake (1,1)", 0)
     
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
     
     RIGHT, MID, LEFT = 1,2,3
     x, y = 0.2, 0
@@ -143,10 +143,10 @@ def debugSimpleOrderCaptureCakeMid(pipeMainToMicro1, pipeMainToMicro2, pipeMaint
     
     log.logMessage(2,"simulation finished", 0)
     
-def debugSimpleOrderCaptureCakeRight(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+def debugSimpleOrderCaptureCakeRight(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2,"scenario test simple order : CaptureCake (1,1)", 0)
     
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
     
     RIGHT, MID, LEFT = 1,2,3
     x, y = 0.2, 0
@@ -155,10 +155,10 @@ def debugSimpleOrderCaptureCakeRight(pipeMainToMicro1, pipeMainToMicro2, pipeMai
     
     log.logMessage(2,"simulation finished", 0)
 
-def debugSimpleOrderCaptureCakeLeft(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+def debugSimpleOrderCaptureCakeLeft(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2,"scenario test simple order : CaptureCake (1,1)", 0)
     
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
     
     RIGHT, MID, LEFT = 1,2,3
     x, y = 0.2, 0
@@ -166,16 +166,31 @@ def debugSimpleOrderCaptureCakeLeft(pipeMainToMicro1, pipeMainToMicro2, pipeMain
     OrderManager.captureCake(x, y, slot)
     
     log.logMessage(2,"simulation finished", 0)
+
+def debugActioneur2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
+    log.logMessage(2, "scenario test simple order: activate actuator", 0)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
+
+    while True :
+        OrderManager.VaccumActivate()
+        OrderManager.CanonActivate()
+
+        time.sleep(10)
+
+        OrderManager.VaccumDesactivate()
+        OrderManager.CanonDesactivate()
+
+        time.sleep(10)
     
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------ scenario part --------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2,"scenario simple", 0)
     
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
     
     positionGlacage1, positionCreme1, positionGenoise1 = (0,0), (0,0), (0,0)
     positionGlacage2, positionCreme2, positionGenoise2 = (0,0), (0,0), (0,0)

@@ -20,7 +20,6 @@ sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'actuatorProcess
 import log
 from lpastarProcess.LPAStarPathFinder import LPAStarPathFinder
 from processManager import config1
-from com import RxPipe
 from testing import generate_obstacles
 from micro_process import MicroProcess
 from actuator import actuatorProcess
@@ -72,8 +71,10 @@ class Launcher :
         mainProcss = mainProcess.mainProcess(pipeActua, pipeMicro1, pipeMicro2, lpastar_main_pipMain, lidar_main_pipeMain)
         mainProcss.run()
 
-    def  processActuator2A(self, actua_main_pipeActua):
+    def processActuator2A(self, actua_main_pipeActua):
+        log.logMessage(2, "start the actuator processus", 0)
         actuatorProcss = actuatorProcess(actua_main_pipeActua ,self.loggerActua)
+        actuatorProcss.run()
 
     # TODO, remove the comment
     def processLIDAR(self,lidar_main_pipeLidar):
@@ -85,7 +86,7 @@ class Launcher :
         
     def processMicro1(self, port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track, logg):
         log.logMessage(2, "start the micro1 processus", 2)
-        microProcss = MicroProcess(port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track,logg)
+        microProcss = MicroProcess( pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track)
         microProcss.run()
 
     def processCamMat(self, CamMat_Lpastar_pipeCamMat):
@@ -115,7 +116,7 @@ class Launcher :
     def launch(self):
         self.loggerMain.info("Start processus")
         if (self.version == 1):
-            return config1(self, self.processCamMat, self.processMicro1, self.processLpastar, self.processMain, self.processLIDAR, Xrobot, Yrobot, XYinitialised)
+            return config1(self, self.processActuator2A ,self.processCamMat, self.processMicro1, self.processLpastar, self.processMain, self.processLIDAR, Xrobot, Yrobot, XYinitialised)
         
 
 
@@ -124,16 +125,3 @@ if __name__ == "__main__" :
     starter = Launcher(1)
     # TODO, repair LiDAR process
     list = starter.launch()
-
-    
-    
-         
-     
-
-    
-    
-    
-    
-    
-    
-    
