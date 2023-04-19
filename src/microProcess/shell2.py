@@ -213,9 +213,6 @@ def check_float(var_name: str, value: str):
 @command
 @arg_number(0)
 def _exit(self: BaseShell):
-    if PICO1 in self.serials:
-        usb = self.serials[PICO1]
-        usb.send(usb.make_message(CAN, 0, 0))
     for usb in self.serials.values():
         usb.serial.close()
     return 1
