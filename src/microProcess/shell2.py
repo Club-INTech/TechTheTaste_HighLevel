@@ -81,7 +81,7 @@ class BaseShell(MicroManager, cmd.Cmd):
             curves[1].set_data(xs, self.right)
             return curves
 
-        anim = FuncAnimation(fig, update)
+        anim = FuncAnimation(fig, update, cache_frame_data=False)
         plt.show()
 
 
@@ -220,7 +220,6 @@ def _exit(self: BaseShell):
 
 @command
 def lidar(self: BaseShell, line):
-    print('hey')
     args = line.split()
     if args[0] == 'reset':
         self.cool_downs = ()
@@ -244,8 +243,9 @@ def move(self: BaseShell, ticks: str):
     if self.track and self.send(PICO1, MOV, 0, self.twos_complement(ticks)):
         self.send(PICO1, TRACK, 0, 0)
         self.plot(ticks, ticks)
+        self.send(PICO1, CAN, 0, 0)
         self.send(PICO1, TRACK, 0, 0)
-        self.wait(TRACK)
+        self.wait(CAN)
         return
     if self.send(PICO1, MOV, 0, self.twos_complement(ticks)):
         self.wait(MOV)
@@ -401,6 +401,8 @@ def complete_log_mode(self, text, line, begin, end):
 @command
 @arg_number(0)
 def reset(self: BaseShell):
+    for s in self.serials.values():
+        s.serial.close()
     self.serials = self.reset()
 
 
