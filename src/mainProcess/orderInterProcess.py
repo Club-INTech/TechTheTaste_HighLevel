@@ -18,29 +18,6 @@ from constants import *
 from params import *
 import math
 
-# simple function to find the right angle
-
-# work in the case where Yinit < Yfinal
-def findAngleSimple(XInit, YInit, XFinal, YFinal):
-    hyp = sqrt((XFinal - XInit)**2 + (YFinal - YInit)**2)
-    opp = XInit - XFinal
-    return asin(opp/hyp)
-
-
-def findAngle(XInit, YInit, XFinal, YFinal):
-    if YInit < YFinal:
-        rslt = findAngleSimple(XInit,YInit,XFinal,YFinal)
-    else:
-        rslt = 3.14 - findAngleSimple(XInit,YInit,XFinal,YFinal)
-    return rslt
-
-# convert angle to ticks
-def angleToTicks(angle):
-    # not the final alpha of course
-    alpha = 1
-    return angle * alpha
-
-
 class OrderToMicroProcress(RoutineSender):
     def __init__(self, pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
         super().__init__(Xrobot, Yrobot, Hrobot, Xarm, [(1, ), (1, ), (1,)], pipeMainToMicro1, AXLE_TRACK_1A)
@@ -69,28 +46,6 @@ class OrderToMicroProcress(RoutineSender):
     # firstly we send the id of the order, look to the drive to
     # know which id correspond to wich order
     # then we send the necessary datas
-
-    # blocking function that finish when juper is off
-    def jumperState(self):
-        jumper = False
-        while(jumper):  
-            jumper = True #read the state of the jumper and stock this value in the var jumper
-            log.logMessage(3, "jumper on", 0)
-
-        return 1
-
-    # to moov the robot to the point Xgoal,Ygoal
-    #def moovTo(self, Xgoal, Ygoal):
-    #do while (pos != goalpos)
-    #    Xinit, Yinit = Xrobot.value, Yrobot.value
-    #    while True:
-    #        Xstep, Ystep = self.askLPAprocess(Xgoal, Ygoal)
-    #        angle = findAngle(Xinit, Yinit, Xstep, Ystep)
-    #        self.moovTurn(angle)
-    #        #next function is a blocking mode function so wait for the action to be good
-    #        self.smallMoovForward(sqrt( (Xstep - Xinit)**2 + (Ystep - Yinit)**2 ))
-    #       if (Xgoal == Xrobot.value) and (Ygoal == Yrobot.value) :
-    #            break
 
     def moovDeleted(self):
         self.pipeToMicro1(3)

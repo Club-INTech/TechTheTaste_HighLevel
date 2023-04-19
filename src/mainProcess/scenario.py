@@ -12,32 +12,19 @@ from microProcess.constants import *
 #import part
 import log
 import math
+import logging 
 
-def scenarioSimple(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
-    log.logMessage(2,"début du scenario!")
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
-
-    OrderManager.jumperState()
-    log.logMessage(1,"start of the match!!!")
-
-    OrderManager.moovForward(3000)
-    log.logMessage(1,"avancé de 3000 ticks")
-
-    time.sleep(2)
-    log.logMessage(1,"attendue 20 secondes")
-
-    OrderManager.moovForward(-3000)
-    log.logMessage(1,"reculé de 3000 ticks")
-
-    log.logMessage(1,"scenario terminé!")
-    return 1
-
+loggerMain = logging.getLogger('Main')
+loggerLpa = logging.getLogger('Lpa')
+loggerLidar = logging.getLogger('Lidar')
+loggerCom1 = logging.getLogger('Com1')
+loggerCam1 = logging.getLogger('Cam1')
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------ debug part -----------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-def debugLidarProc(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
+def debugLPA(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     log.logMessage(2,"scenario debug of LPA*", 0)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
@@ -56,31 +43,14 @@ def debugLidarProc(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
 
     log.logMessage(2,"simulation finished", 0)
     
-def debugLidar(pipeMainToMicro1, pipeMainToMicro2, pipeMainToLPA, pipeLidarToMain):
-    log.logMessage(2,"scenario debug of LIDAR", 0)
+def debugLidar(self, pipeMainToMicro1, pipeMainToMicro2, pipeMainToLPA, pipeLidarToMain):
+    loggerMain.info( "{} scenario debug lidar" .format("INFO : mainProcess     :"))
+    loggerMain.info("")
     while True :
         if pipeLidarToMain.poll():
             status = pipeLidarToMain.recv()
             print(status)
             
-def debugRaspy(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
-    log.logMessage(2,"scenario debug of LPA*", 0)
-    
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
-    
-    log.logMessage(1, "orderManager created", 0)
-
-    OrderManager.askLPAprocess(1000, 1000)
-
-    log.logMessage(2, "asked for a small moov", 0) 
-
-    OrderManager.askLPAprocess(1999, 2999)
-
-    log.logMessage(2, "asked for a big moov", 0) 
-
-    time.sleep(2)
-
-    log.logMessage(2,"simulation finished", 0)
     
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------ test movement --------------------------------------------------------------------------------
@@ -96,41 +66,6 @@ def debugSimpleOrderStraight1(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     
     log.logMessage(2,"simulation finished", 0)
     
-def debugSimpleOrderStraight2(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
-    log.logMessage(2,"scenario test simple order : Straight-left (0,1)", 0)
-    
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
-   
-    OrderManager.moovToSimple(0,0.5)
-    
-    log.logMessage(2,"simulation finished", 0)
-    
-def debugSimpleOrderStraight3(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
-    log.logMessage(2,"scenario test simple order : Straight-right (0,1)", 0)
-    
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
-   
-    OrderManager.moovToSimple(0,-0.5)
-    
-    log.logMessage(2,"simulation finished", 0)
-    
-def debugSimpleOrderStraight4(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
-    log.logMessage(2,"scenario test simple order : Straight-right (-1,0)", 0)
-    
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
-   
-    OrderManager.moovToSimple(-0.5,0)
-    
-    log.logMessage(2,"simulation finished", 0)
-
-def debugSimpleOrderTurn(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
-    log.logMessage(2,"scenario test simple order : Turn (pi/2)", 0)
-    
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
-   
-    OrderManager.turn(math.pi/2)
-    
-    log.logMessage(2,"simulation finished", 0)
     
 def debugSimpleOrderCaptureCakeMid(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     log.logMessage(2,"scenario test simple order : CaptureCake (1,1)", 0)
@@ -178,7 +113,7 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     
-    greenSidePositionGlacage1, greenSidePositionCreme1, positionGenoise1 = (0,0), (0,0), (0,0)
+    positionGlacage1, positionCreme1, positionGenoise1 = (0,0), (0,0), (0,0)
     positionGlacage2, positionCreme2, positionGenoise2 = (0,0), (0,0), (0,0)
     positionDeposit1, positionDeposit2 = (0,0), (0,0)
     positionEnd = (0,0)

@@ -2,6 +2,14 @@ import os
 import scenario 
 from multiprocessing import Pipe, Process
 
+import logging 
+
+loggerMain = logging.getLogger('Main')
+loggerLpa = logging.getLogger('Lpa')
+loggerLidar = logging.getLogger('Lidar')
+loggerCom1 = logging.getLogger('Com1')
+loggerCam1 = logging.getLogger('Cam1')
+
 
 class mainProcess:
     def __init__(self,pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeLidarToMain):
@@ -11,10 +19,11 @@ class mainProcess:
             self.pipeLidarToMain = pipeLidarToMain
 
     def run(self):
+        
         #scenario.scenarioSimple(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
         #scenario.debugLidarProc(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
         #scenario.debugLidar(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA, self.pipeLidarToMain)
-        scenario.debugLidar(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA, self.pipeLidarToMain)
+        scenario.debugLidar(self, self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA, self.pipeLidarToMain)
         #scenario.debugRaspy(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
         
         #scenario.debugSimpleOrderStraight1(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
