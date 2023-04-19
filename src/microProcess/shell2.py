@@ -65,19 +65,26 @@ class BaseShell(MicroManager, cmd.Cmd):
 
     def plot(self, left_target, right_target):
         fig, ax = plt.subplots()
+        ax.set_ylim(min(-right_target / 20, 2 * right_target), max(-right_target / 20, 2 * right_target))
+
         nb_points = 2000
         self.left, self.right = [float('nan')] * nb_points, [float('nan')] * nb_points
         xs = tuple(range(nb_points))
         curves = (
-            *ax.plot(xs, self.left), *ax.plot(xs, self.right),
-            *ax.plot((0, nb_points), (left_target, left_target)), *ax.plot((0, nb_points), (right_target, right_target))
+            *ax.plot(xs, self.left), *ax.plot(xs, self.right), *ax.plot((0, nb_points), (right_target, right_target))
         )
 
+        wheels = [0, 0]
+
         def update(*args):
+            # for _ in range(20):
+            #     self.serials[PICO1].wheel_update(int.to_bytes((wheels[0] << 16) | wheels[1], 5, 'big'))
+            #     wheels[0] += 2
+            #     wheels[1] += 4
             date = time.perf_counter()
-            while time.perf_counter() - date < 0.1:
+            while time.perf_counter() - date < 1 / 60:
                 self.scan_feedbacks()
-            curves[0].set_data(xs, self.left)
+            curves[0].set_data(xs, [-x if not (left_target + right_target) else x for x in self.left])
             curves[1].set_data(xs, self.right)
             return curves
 
