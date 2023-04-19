@@ -337,7 +337,7 @@ def _set(self: BaseShell, var_name: str, value: str):
         return print(f'Unknown variable {var_name}')
     if check_float('value', value):
         return
-    if self.send(VAR_DESTINATION[VAR_DICT[var_name]], VAR_GET, VAR_DICT[var_name], self.float_to_int(float(value))):
+    if self.send(VAR_DESTINATION[VAR_DICT[var_name]], VAR_SET, VAR_DICT[var_name], self.float_to_int(float(value))):
         self.wait(VAR_SET)
 
 
