@@ -201,10 +201,10 @@ def ranged_int(var_name: str, value: str, inf=0, sup=16):
 def check_float(var_name: str, value: str):
     try:
         float(value)
-        return True
+        return False
     except ValueError:
         print(f'{var_name} must be a floating point number')
-        return False
+        return True
 
 
 # --------------------------------------------------- Commands ---------------------------------------------------------
@@ -223,22 +223,16 @@ def lidar(self: BaseShell, line):
     print('hey')
     args = line.split()
     if args[0] == 'reset':
-        print('reset')
         self.cool_downs = ()
         return
     elif args[0] == 'state':
-        print('state')
         return print(*self.cool_downs, sep='\n')
     if len(args) != 2:
         return print(f'Expected 1 argument that is \'reset\' or \'state\' or 2 arguments for command lidar')
     delay, duration = args
-    print(delay, duration)
     if check_float('delay', delay) or check_float('duration', duration):
-        print('ca va pas')
         return
-    print(self.cool_downs)
     self.cool_downs += (float(delay), float(delay) + float(duration))
-    print(self.cool_downs)
 
 
 @command
