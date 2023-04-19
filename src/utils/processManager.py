@@ -1,6 +1,13 @@
 import log
 from time import sleep
 from multiprocessing import Pipe, Process
+import logging 
+
+loggerMain = logging.getLogger('Main')
+loggerLpa = logging.getLogger('Lpa')
+loggerLidar = logging.getLogger('Lidar')
+loggerCom1 = logging.getLogger('Com1')
+loggerCam1 = logging.getLogger('Cam1')
 
 port1 = "/dev/ttyUSB0"
 # port2 = '/dev/ttyUSB1'
@@ -13,7 +20,6 @@ def isXYinitialised(XYinitialised):
     sleep(1)
 
 
-
 def startProcess(processCam, listProcess):
     processCam.start()
     #blocking mode function to wait until Xrobot and Yrobot initialised
@@ -22,12 +28,15 @@ def startProcess(processCam, listProcess):
         try :
             proc.start()
         except :
-            log.logMessage(0, "process failed to execute",0)
+            loggerMain.info( "{} process failed to execute" .format("INFO : mainProcess     :"))
 
-    log.logMessage(1, "all process started!",0)
+    loggerMain.info( "{} all process started" .format("INFO : mainProcess     :"))
+    loggerMain.info("")
 
 def config1(self, processCamMat, processMicro1, processLpastar, processMain, processLIDAR, Xrobot, Yrobot, Hrobot):
-        log.logMessage(2, "start config1",0)
+        loggerMain.info("Start process : config 1")
+        loggerMain.info("")
+    
         lidar_main_pipeLidar, lidar_main_pipeMain = Pipe()                  #to kill process
         CamMat_Lpastar_pipeCamMat, CamMat_Lpastar_pipeLpastar = Pipe()      #for obstacles
         lpastar_main_pipeLpastar, lpastar_main_pipeMain = Pipe()            #for goals and path
@@ -42,7 +51,7 @@ def config1(self, processCamMat, processMicro1, processLpastar, processMain, pro
         procLpastar = Process(target = processLpastar, args = (lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, Xrobot, Yrobot))
         procMain = Process(target= processMain, args = (main_micro1_pipeMain, main_micro2_pipeMain, lidar_main_pipeMain, lpastar_main_pipeMain, Xrobot, Yrobot) )
 
-        processList= [procMain, procCamMat, procLIDAR, procMicro1, procLpastar]
+        processList= [procLIDAR, procMicro1, procLpastar, procMain]
         # processList= [procMain, procMicro1, procLpastar, procLIDAR]
         startProcess(procCamMat, processList)
 
