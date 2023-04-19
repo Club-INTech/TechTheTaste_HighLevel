@@ -3,11 +3,9 @@ from constants import *
 import math
 
 
-
 def empty():
     return
     yield
-
 
 
 class MicroProcess(MicroManager):
