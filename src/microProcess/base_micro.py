@@ -16,9 +16,8 @@ class BaseMicro:
 
     def pre_sync(self):
         if self.log_level > NECESSARY:
-            self.log_method(f'{type(self).__name__}: info : Trying to sync with hardware {self}, {self.serial.writable() =}')
-        if self.serial.writable():
-            self.serial.write(SYNC_BYTES)
+            self.log_method(f'{type(self).__name__}: info : Trying to sync with hardware {self}')
+        self.serial.write(SYNC_BYTES)
 
     def clear_buffer(self):
         if self.log_level > NOT_NECESSARY:
@@ -147,7 +146,7 @@ class MicroManager:
 
     def reset(self):
         serials = tuple(
-            GenericMicro(serial.Serial(usb.device, BAUDRATE), self) for usb in comports()
+            GenericMicro(serial.Serial(usb.device, BAUDRATE), self) for usb in comports() if 'COM' in usb.device or 'USB' in usb.device
         )
 
         for s in serials:
