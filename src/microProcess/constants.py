@@ -62,7 +62,7 @@ VAR_NAMES = (
     'Kp_direction', 'Kd_direction', 'Ki_direction', 'Kp_distance', 'Kd_distance', 'Ki_distance', 'vitesse'
 )
 VAR_DESTINATION = (
-    PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO2
+    PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO2
 )
 VAR_DICT = {n: i for i, n in enumerate(VAR_NAMES)}
 
