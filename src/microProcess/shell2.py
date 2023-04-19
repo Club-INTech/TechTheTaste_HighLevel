@@ -234,6 +234,7 @@ def lidar(self: BaseShell, line):
     delay, duration = args
     print(delay, duration)
     if check_float('delay', delay) or check_float('duration', duration):
+        print('ca va pas')
         return
     print(self.cool_downs)
     self.cool_downs += (float(delay), float(delay) + float(duration))
