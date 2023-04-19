@@ -232,6 +232,7 @@ def lidar(self: BaseShell, line):
     if check_float('delay', delay) or check_float('duration', duration):
         return
     self.cool_downs += (float(delay), float(delay) + float(duration))
+    print(self.cool_downs)
 
 
 @command
