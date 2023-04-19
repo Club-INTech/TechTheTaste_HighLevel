@@ -101,6 +101,7 @@ class ShellGeneric(GenericMicro):
     master: BaseShell
 
     def termination(self, message):
+        print("HEY")
         if message[0] & 0xf == self.master.waited_id:
             self.master.waiting = False
 
