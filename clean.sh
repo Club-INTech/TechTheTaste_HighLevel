@@ -7,3 +7,4 @@ touch log/main.txt
 touch log/com1.txt
 touch log/com2.txt
 touch log/lidar.txt
+touch log/cam1.txt

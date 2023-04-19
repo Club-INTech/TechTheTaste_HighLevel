@@ -270,19 +270,4 @@ def scenarioBlueStartPushingCake(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoL
     log.logMessage(2,"scenario finished", 0)
 
 if __name__ == "__main__":
-    def readEsay(pipe1, pipe2):
-        while True :
-            print( "micro1: " + str(pipe1.recv()) )
-
-    log.logMessage(1, "Start of debugg", 0)
-    main_micro1_pipe, micro1_main_pipe = Pipe()
-    main_micro2_pipe, micro2_main_pipe = Pipe()
-
-    scenar = Process( target = scenarioSimple, args = (main_micro1_pipe, main_micro2_pipe) )
-    reader = Process( target = readEsay, args = (micro1_main_pipe, micro2_main_pipe) )
-
-    scenar.start()
-    reader.start()
-
-    while True :
-        time.sleep(10)
+    pass
