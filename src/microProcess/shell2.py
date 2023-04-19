@@ -11,7 +11,6 @@ import json
 class BaseShell(MicroManager, cmd.Cmd):
     prompt = '(RaspShell) > '
     track = odometry = False
-    cool_downs = ()
     waiting = False
     waited_id = None
     x, y, h, axle_track = 0, 0, 0, AXLE_TRACK_1A
@@ -22,6 +21,7 @@ class BaseShell(MicroManager, cmd.Cmd):
         cmd.Cmd.__init__(self)
         self.left, self.right = [], []
         self.vars = {name: None for name in VAR_NAMES}
+        self.cool_downs = ()
 
     @staticmethod
     def float_to_int(num):
@@ -92,7 +92,6 @@ cmds = {}
 
 class ShellGeneric(GenericMicro):
     master: BaseShell
-    cool_downs = ()
 
     def termination(self, message):
         if message[0] & 0xf == self.master.waited_id:
@@ -224,9 +223,11 @@ def lidar(self: BaseShell, line):
     print('hey')
     args = line.split()
     if args[0] == 'reset':
+        print('reset')
         self.cool_downs = ()
         return
     elif args[0] == 'state':
+        print('state')
         return print(*self.cool_downs, sep='\n')
     if len(args) != 2:
         return print(f'Expected 1 argument that is \'reset\' or \'state\' or 2 arguments for command lidar')
