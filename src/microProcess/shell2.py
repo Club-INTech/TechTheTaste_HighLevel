@@ -224,8 +224,10 @@ def lidar(self: BaseShell, line):
     if args[0] == 'reset':
         self.cool_downs = ()
         return
+    elif args[0] == 'state':
+        return print(*self.cool_downs, sep='\n')
     if len(args) != 2:
-        return print(f'Expected 1 argument that is \'reset\' or 2 arguments for command lidar')
+        return print(f'Expected 1 argument that is \'reset\' or \'state\' or 2 arguments for command lidar')
     delay, duration = args
     if check_float('delay', delay) or check_float('duration', duration):
         return
