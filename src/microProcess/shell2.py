@@ -378,7 +378,6 @@ def load(self: BaseShell, file_name):
     print('Loaded.')
 
 
-
 @command
 @arg_number(0)
 def track(self: BaseShell):
@@ -397,6 +396,12 @@ def complete_log_mode(self, text, line, begin, end):
     if text:
         return [x for x in LOG_MODES if x.startswith(text)]
     return LOG_MODES
+
+
+@command
+@arg_number(0)
+def reset(self: BaseShell):
+    self.serials = self.reset()
 
 
 Shell = type('Shell', (BaseShell,), cmds)

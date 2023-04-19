@@ -142,6 +142,9 @@ class MicroManager:
     log_level = MINIMAL
 
     def __init__(self):
+        self.serials = self.reset()
+
+    def reset(self):
         serials = tuple(
             GenericMicro(serial.Serial(usb.device, BAUDRATE), self) for usb in comports() if 'COM' in usb.device or 'USB' in usb.device
         )
@@ -166,9 +169,7 @@ class MicroManager:
                 continue
             self.log_method(f'{type(self).__name__} : info : Could not identify hardware on {s.serial.portstr}')
 
-        self.serials = {
-            s.id_: self.micro_classes[s.id_].new(s) for s in serials if s.id_ != -1
-        }
+        return {s.id_: self.micro_classes[s.id_].new(s) for s in serials if s.id_ != -1}
 
     def scan_feedbacks(self):
         for s in self.serials.values():
