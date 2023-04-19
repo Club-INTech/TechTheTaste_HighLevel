@@ -92,6 +92,7 @@ cmds = {}
 
 class ShellGeneric(GenericMicro):
     master: BaseShell
+    cool_downs = ()
 
     def termination(self, message):
         if message[0] & 0xf == self.master.waited_id:
