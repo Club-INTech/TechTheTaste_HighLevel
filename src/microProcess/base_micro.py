@@ -16,8 +16,9 @@ class BaseMicro:
 
     def pre_sync(self):
         if self.log_level > NECESSARY:
-            self.log_method(f'{type(self).__name__}: info : Trying to sync with hardware {self}')
-        self.serial.write(SYNC_BYTES)
+            self.log_method(f'{type(self).__name__}: info : Trying to sync with hardware {self}, {self.serial.writable() =}')
+        if self.serial.writable():
+            self.serial.write(SYNC_BYTES)
 
     def clear_buffer(self):
         if self.log_level > NOT_NECESSARY:
