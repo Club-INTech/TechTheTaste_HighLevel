@@ -358,7 +358,7 @@ def variables(self: BaseShell):
 @arg_number(1)
 def save(self: BaseShell, file_name):
     print("Saving...")
-    variables(self)
+    variables(self, '')
     with open(os.path.join('saved_sessions', f"{file_name}.json"), 'w') as f:
         json.dump(self.vars, f)
     print('Saved.')
