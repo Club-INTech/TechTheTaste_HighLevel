@@ -68,14 +68,14 @@ class Launcher :
 
     def processLIDAR(self,lidar_main_pipeLidar):
         self.loggerLidar.info("INFO : lidarProcess    : starting the process")
-        #lidar=lidarProcess.Lili()
-        #lidar.lidarstop(lidar_main_pipeLidar)
+        lidar=lidarProcess.Lili()
+        lidar.lidarstop(lidar_main_pipeLidar)
         
 
     def processMicro1(self, port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track, logg):
         self.loggerCom1.info("INFO : microProcess    : starting the process")      
-        #microProcss = MicroProcess(port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track,logg)
-        #microProcss.run()
+        microProcss = MicroProcess(port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track,logg)
+        microProcss.run()
         
 
     def processCamMat(self, CamMat_Lpastar_pipeCamMat):
