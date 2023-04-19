@@ -380,9 +380,16 @@ def load(self: BaseShell, file_name):
     for var_name, value in self.vars.items():
         if value is None:
             continue
-        _set(self, var_name, value)
+        _set(self, f'{var_name} {value}')
 
     print('Loaded.')
+
+
+@add_to_dict
+def complete_load(self, text, line, begin, end):
+    if text:
+        return [x[:-5] for x in os.listdir('saved_sessions') if x.startswith(text) and x.endswith('.json')]
+    return [x[:-5] for x in os.listdir('saved_sessions') if x.endswith('.json')]
 
 
 @command
