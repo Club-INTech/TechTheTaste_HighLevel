@@ -6,37 +6,38 @@ from hokuyolx import hokuyo
 #from params import __param_getter, paramlidar
 
 group = 3
-dmin = 50
-
-# TODO used to be here:         laser=hokuyo.HokuyoLX()
-
-#data = laser.get_dist(grouping=group)
-#print(data)
+dmin = 200
+DMAX = 2000
+BORD = 20
 
 class Lili(object) :
     
     def __init__(self):
         self.state = 0
-        #TODO new possibility of where to place it laser=hokuyo.HokuyoLX()
+        self.laser = hokuyo.HokuyoLX()
         
     def lidarstop(self, conn) -> None:
         '''Send a message to the main process if drobot < dmin'''
         self.state = 0
         while True : 
-            data = laser.get_dist(grouping=group)
+            timestamp, data = self.laser.get_filtered_dist(dmax=DMAX)
             Lr = []
             for i in range(len(data[1])):
                 Lr.append(data[1][i])
-            Lr = Lr[3:]
-            Lr = Lr[:-7]
-            print(min(Lr))
-            if min(Lr) < dmin and self.state == 0 : #stop the process
-                self.stop(conn)
-                self.state = 1
-            if min(Lr) > dmin and self.state == 1 : #retart the processus
-                self.restart(conn)
-                self.state = 0
-            time.sleep(5)
+            Lr = Lr[BORD:-BORD]
+            
+            if not Lr:
+                pass
+            else :
+                minlr = min(Lr)
+                print('distance =', minlr)
+                if minlr < dmin and self.state == 0 : #stop the process
+                    self.stop(conn)
+                    self.state = 1
+                elif minlr > dmin and self.state == 1 : #retart the processus
+                    self.restart(conn)
+                    self.state = 0
+            time.sleep(0.001)
                 
     def stop(self,conn) -> None:
         '''Send a message to the main process to stop the Agent'''
