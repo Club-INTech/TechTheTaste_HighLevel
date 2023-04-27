@@ -59,7 +59,7 @@ WHEEL_RADIUS = .0340  # in m, +- 0.1mm, measurements 18/02/2023 ~17h coupling bo
 # pdi right left trans rot
 # PID variables
 VAR_NAMES = (
-    'Kp_direction', 'Kd_direction', 'Ki_direction', 'Kp_distance', 'Kd_distance', 'Ki_distance', 'vitesse'
+    'Kp_rot', 'Kd_rot', 'Ki_rot', 'Kp_trans', 'Kd_trans', 'Ki_trans', 'vitesse'
 )
 VAR_DESTINATION = (
     PICO1, PICO1, PICO1, PICO1, PICO1, PICO1, PICO2
