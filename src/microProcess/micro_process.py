@@ -9,7 +9,6 @@ def empty():
     yield
 
 
-
 class MicroProcess(MicroManager):
     axle_track = AXLE_TRACK_1A
     log_level = DEBUG
