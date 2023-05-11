@@ -1,4 +1,5 @@
 from constants import *
+import time
 
 
 def goto(angle, magnitude):
@@ -12,14 +13,27 @@ def target(angle):
 
 def set_arm_x(dx):
     dx = dx + 0x10000 * (dx < 0)
-    yield ARM, 0, (dx << 16) | dx
+    return ARM, 0, (dx << 16) | dx
 
 
 def set_arm_y(dy):
     n_dy = -dy
     dy = dy + 0x10000 * (dy < 0)
     n_dy = -n_dy + 0x10000 * (n_dy < 0)
-    yield ARM, 0, (dy << 16) | n_dy
+    return ARM, 0, (dy << 16) | n_dy
+
+
+def move_cake(to_src, down1, to_des, down2):
+    yield set_arm_x(to_src)
+    yield set_arm_y(down1)
+    yield PUM, 1, 1
+    time.sleep(.2)
+    yield set_arm_y(-down1)
+    yield set_arm_x(to_des)
+    yield set_arm_y(down2)
+    yield PUM, 1, 0
+    yield set_arm_y(-down2)
+
 
 #PUMPstate is a bytemask to controll all the pump on the bot
 #for instance if you want to turn on only pump1, call pumpState(0b00000001)
