@@ -9,6 +9,7 @@ def empty():
     yield
 
 
+
 class MicroProcess(MicroManager):
     axle_track = AXLE_TRACK_1A
     log_level = DEBUG
@@ -20,7 +21,6 @@ class MicroProcess(MicroManager):
         MicroManager.__init__(self)
 
         self.last = [0, 0]
-        self.timeout = [None, None]
         self.routines = [empty(), empty()]
         self.run()
 
@@ -39,19 +39,9 @@ class MicroProcess(MicroManager):
             self.routines[type_] = gen(*args)
             self.next(type_)
         MicroManager.scan_feedbacks(self)
-        for type_, t in enumerate(self.timeout):
-            if t is not None and time.perf_counter() - t > 2.:
-                print(f"Order type {CATEGORIES[type_]} timed out after {2.} s")
-                self.timeout[type_] = None
-                if not type_:
-                    self.send(PICO1, CAN, 0, 0)
-                    self.last[0] = CAN
-                else:
-                    self.next(type_)
 
     def terminate(self, order_id, order_type):
         if order_id == self.last[order_type]:
-            self.timeout[order_type] = None
             self.next(order_type)
 
     def next(self, type_):
@@ -61,7 +51,6 @@ class MicroProcess(MicroManager):
         try:
             id_, comp, arg = next(self.routines[type_])
             self.last[type_] = id_
-            self.timeout[type_] = time.perf_counter()
             if DESTINATION[id_] in self.serials:
                 port = self.serials[DESTINATION[id_]]
                 port.last_type = type_

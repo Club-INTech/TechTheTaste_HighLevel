@@ -42,7 +42,7 @@ def arm():
 
 
 def main_process(pipe):
-    action, movement = False, True
+    action, movement = True, True
     while True:
         if pipe.poll():
             x = pipe.recv()
@@ -61,7 +61,7 @@ main_pipe0, main_pipe1 = mp.Pipe()
 if __name__ == '__main__':
     main_ = mp.Process(target=main_process, args=(main_pipe0,))
     lidar_ = mp.Process(target=lidar_process, args=())
-    micro_ = mp.Process(target=MicroProcess, args=(lidar_pipe, main_pipe1, robot_x, robot_y, robot_h, 1.))
+    micro_ = mp.Process(target=MicroProcess, args=(lidar_pipe, main_pipe1, robot_x, robot_y, robot_h, AXLE_TRACK_1A))
 
     lidar_.start()
     main_.start()

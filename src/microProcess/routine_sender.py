@@ -35,10 +35,6 @@ def stop():
     yield CAN, 0, 0
 
 
-def move_cake():
-    pass
-
-
 def place_cherry():
     pass
 
@@ -59,9 +55,8 @@ class RoutineSender:
             int(TICKS_PER_REVOLUTION * magnitude / (2 * math.pi * WHEEL_RADIUS) * (1, -1)[reverse]),
         )))
 
-
     def set_arm_x(self, pos):
-        self.micro_pipe.send(ACTION, set_arm_x, (pos - self.arm_pos_x.value) )
+        self.micro_pipe.send(ACTION, set_arm_x, (pos - self.arm_pos_x.value))
 
     def stop(self):
         self.micro_pipe.send((MOVEMENT, stop, ()))
