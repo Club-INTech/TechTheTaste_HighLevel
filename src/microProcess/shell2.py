@@ -63,11 +63,11 @@ class BaseShell(MicroManager, cmd.Cmd):
                 self.send(PICO1, CAN, 0, 0)
                 self.wait(CAN)
 
-    def plot(self, left_target, right_target):
+    def plot_movement(self, left_target, right_target):
         fig, ax = plt.subplots()
         ax.set_ylim(min(-right_target / 20, 2 * right_target), max(-right_target / 20, 2 * right_target))
 
-        nb_points = 2000
+        nb_points = 50
         self.left, self.right = [float('nan')] * nb_points, [float('nan')] * nb_points
         xs = tuple(range(nb_points))
         curves = (
@@ -90,6 +90,19 @@ class BaseShell(MicroManager, cmd.Cmd):
 
         anim = FuncAnimation(fig, update, cache_frame_data=False)
         plt.show()
+
+    def plot_odometry(self):
+        self.x, self.y, self.h = 0., 0., 0.
+        self.old = 0, 0
+        try:
+            while True:
+                date = time.perf_counter()
+                while time.perf_counter() - date < 1 / 60:
+                    self.scan_feedbacks()
+                print(f'\rX : {self.x:.03f} m, Y : {self.y:.03f} m , HEADING : {180 * self.h / math.pi:.03f} deg;  {self.old =}', end=' ' * 8)
+                time.sleep(.2)
+        except KeyboardInterrupt:
+            print()
 
 
 cmds = {}
@@ -120,6 +133,7 @@ class ShellGeneric(GenericMicro):
         elif self.master.odometry:
             # tick positions for each wheel
             left, right = message[1] * 256 + message[2], message[3] * 256 + message[4]
+
             # Two's complement
             left -= 0x10000 * (left >= 0x8000)
             right -= 0x10000 * (right >= 0x8000)
@@ -249,7 +263,7 @@ def move(self: BaseShell, ticks: str):
     ticks = int(ticks)
     if self.track and self.send(PICO1, MOV, 0, self.twos_complement(ticks)):
         self.send(PICO1, TRACK, 0, 0)
-        self.plot(ticks, ticks)
+        self.plot_movement(ticks, ticks)
         self.send(PICO1, CAN, 0, 0)
         self.send(PICO1, TRACK, 0, 0)
         self.wait(CAN)
@@ -265,9 +279,9 @@ def rotate(self: BaseShell, ticks: str):
         return
     ticks = int(ticks)
     if self.track and self.send(PICO1, MOV, 0, self.twos_complement(ticks)):
-        self.send(PICO1, TRA, 0, 0)
-        self.plot(-ticks, ticks)
-        self.send(PICO1, TRA, 0, 0)
+        self.send(PICO1, TRACK, 0, 0)
+        self.plot_movement(-ticks, ticks)
+        self.send(PICO1, TRACK, 0, 0)
         return
     if self.send(PICO1, MOV, 0, self.twos_complement(ticks)):
         self.wait(MOV)
@@ -398,6 +412,14 @@ def track(self: BaseShell):
     self.track = not self.track
     print(f'Tracking toggled to {self.track}')
 
+
+@command
+@arg_number(0)
+def odometry(self: BaseShell):
+    self.odometry, self.track = True, False
+    self.send(PICO1, TRACK, 0, 0)
+    self.plot_odometry()
+    self.send(PICO1, TRACK, 0, 0)
 
 @command
 @arg_number(1)

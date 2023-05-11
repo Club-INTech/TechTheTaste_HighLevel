@@ -146,7 +146,7 @@ class MicroManager:
 
     def reset(self):
         serials = tuple(
-            GenericMicro(serial.Serial(usb.device, BAUDRATE), self) for usb in comports() if 'COM' in usb.device or 'USB' in usb.device
+            GenericMicro(serial.Serial(usb.device, BAUDRATE), self) for usb in comports()
         )
 
         for s in serials:
