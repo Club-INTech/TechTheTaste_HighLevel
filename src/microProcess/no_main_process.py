@@ -42,7 +42,7 @@ def arm():
 
 
 def main_process(pipe):
-    action, movement = True, True
+    action, movement = True, False
     while True:
         if pipe.poll():
             x = pipe.recv()
