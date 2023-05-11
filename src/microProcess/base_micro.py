@@ -19,7 +19,7 @@ class BaseMicro:
             self.log_method(f'{type(self).__name__}: info : Trying to sync with hardware {self}')
         print('Trying to write')
         self.serial.write_timeout = 0
-        self.serial.write(SYNC_BYTES)
+        print(f'Written: {self.serial.write(SYNC_BYTES)}')
         self.serial.write_timeout = None
         print('Written')
 
