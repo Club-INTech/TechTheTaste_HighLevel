@@ -2,9 +2,6 @@ import sys, os
 import time
 from hokuyolx import hokuyo
 
-#sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'utils'))
-#from params import __param_getter, paramlidar
-
 group = 3
 dmin = 200
 DMAX = 2000
@@ -46,3 +43,11 @@ class Lili(object) :
     def restart(self,conn) -> None:
         '''Send a message to the main process to restart the Agent'''
         conn.send(0)
+
+if __name__ == "__main__":
+    from multiprocessing import Pipe
+    conn1, conn2 = Pipe()
+    lidar = Lili()
+    lidar.lidarstop(conn1)
+    
+
