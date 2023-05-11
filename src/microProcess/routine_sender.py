@@ -7,10 +7,6 @@ def goto(angle, magnitude):
     yield MOV, 0, magnitude + 0x10000 * (magnitude < 0)
 
 
-def target(angle):
-    yield ROT, 0, angle + 0x10000 * (angle < 0)
-
-
 def set_arm_x(dx):
     dx = dx + 0x10000 * (dx < 0)
     return ARM, 0, (dx << 16) | dx
@@ -33,16 +29,6 @@ def move_cake(to_src, down1, to_des, down2):
     yield set_arm_y(down2)
     yield PUM, 1, 0
     yield set_arm_y(-down2)
-
-
-#PUMPstate is a bytemask to controll all the pump on the bot
-#for instance if you want to turn on only pump1, call pumpState(0b00000001)
-#Actuator2A is a bytemask tocontroll all the actuator of the bot
-#ValveState is a bytemask to controll all the valve of the bot
-#use the order pump https://docs.google.com/spreadsheets/d/1NDprMKYs9L7S2TkqgACDOh6OKDJRHhz_LrTCKmEuD-k/edit#gid=0
-
-def actuatorControll(PUMPstate : int, Actuator2A : int, ValveState : int):
-    yield PUM, 0,  (0xFF << 24) | (ValveState << 16) | (Actuator2A << 8) | (PUMPstate)
 
 
 def stop():
@@ -73,31 +59,9 @@ class RoutineSender:
             int(TICKS_PER_REVOLUTION * magnitude / (2 * math.pi * WHEEL_RADIUS) * (1, -1)[reverse]),
         )))
 
-    def target(self, angle):
-        d_theta = (angle - self.robot_heading.value) % (2 * math.pi)
-        d_theta -= (d_theta > math.pi) * 2 * math.pi
-        self.micro_pipe.send((MOVEMENT, target, (
-            int(TICKS_PER_REVOLUTION * d_theta * self.axle_track / (math.pi * WHEEL_RADIUS)),
-        )))
-
-    #position = UP_arm = -1 or position = DOWN_arm  = 1
-    UP_arm, DOWN_arm = -1, 1
-    def ARMverticalPos (self, position = UP_arm):
-        left = AmpVertiArm * position
-        right = AmpVertiArm * position
-        self.micro_pipe.send(ACTION, ARMPos, (left, right) )
 
     def set_arm_x(self, pos):
         self.micro_pipe.send(ACTION, set_arm_x, (pos - self.arm_pos_x.value) )
-
-    def PumpControll(self, byteMask):
-        self.micro_pipe.send(ACTION, actuatorControll, (byteMask, 0, 0) )
-
-    def Actuator2AControll(self, byteMask):
-        self.micro_pipe.send(ACTION,actuatorControll, (0, byteMask, 0))
-
-    def ValveControll(self, byteMask):
-        self.micro_pipe.send(ACTION, actuatorControll, (0, 0, byteMask))
 
     def stop(self):
         self.micro_pipe.send((MOVEMENT, stop, ()))
