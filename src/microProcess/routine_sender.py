@@ -102,8 +102,15 @@ class RoutineSender:
     def stop(self):
         self.micro_pipe.send((MOVEMENT, stop, ()))
 
-    def move_cake(self, src, dest):
-        pass
+    # src, destination: LEFT, MIDDLE or RIGHT
+    # def move_cake(self, src, destination):
+    #     to_src = src - self.arm_pos_x.value
+    #     self.arm_pos_x.value = src
+    #     down1 = len(self.rake_state[X_POSITIONS.index(self.arm_pos_x.value)]) * CAKE_HEIGHT + ONE_CAKE
+    #     to_des = destination - self.arm_pos_x.value
+    #     self.arm_pos_x.value = destination
+    #     down2 = len(self.rake_state[X_POSITIONS.index(self.arm_pos_x.value)]) * CAKE_HEIGHT + CAKE_HEIGHT + ONE_CAKE
+    #     self.micro_pipe.send(ACTION, move_cake, (to_src, down1, to_des, down2))
 
     def place_cherry(self, dest):
         pass
