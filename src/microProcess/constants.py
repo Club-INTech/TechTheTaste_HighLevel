@@ -74,5 +74,7 @@ MIN_T_MS, MAX_T_MS = 0, 65536  # valid range of time arguments in ms
 MAX_DISTANCE = 2 * math.pi * WHEEL_RADIUS * MAX_TICKS / TICKS_PER_REVOLUTION  # maximum distance covered by goto
 
 # facing the robot
+LEFT, MID, RIGHT = range(3)
 HORIZONTAL_POSITIONS = LEFT_SLOT, MID_SLOT, RIGHT_SLOT = 0, 705, 1410
-VERTICAL_POSITIONS = ONE_SLICE, TWO_SLICES, THREE_SLICES, TOP_MOST = -550, -470, -380, 0
+TOP = 0
+LOWEST_CAKE, CAKE_HEIGHT = -580, 80

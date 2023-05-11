@@ -10,13 +10,14 @@ def empty():
 
 
 class MicroProcess(MicroManager):
+    waiting = False
     axle_track = AXLE_TRACK_1A
     log_level = DEBUG
 
-    def __init__(self, lida_pipe, main_pipe, robot_x, robot_y, robot_heading, axle_track):
-        self.robot_x, self.robot_y, self.robot_heading = robot_x, robot_y, robot_heading
+    def __init__(self, lida_pipe, main_pipe, robot, use_odometry=False):
+        self.robot = robot
         self.main_pipe, self.lidar_pipe = main_pipe, lida_pipe
-        self.axle_track = axle_track
+        self.use_odometry = use_odometry
         MicroManager.__init__(self)
 
         self.last = [0, 0]
@@ -25,16 +26,19 @@ class MicroProcess(MicroManager):
 
     def send(self, port, id_, comp, arg):
         if port not in self.serials:
-            return print(f'{BOARDS[port]} is not connected')
+            return self.log_method(f'{type(self).__name__} : info : {self.micro_classes[port].__name__} is not connected')
         usb = self.serials[port]
         usb.send(usb.make_message(id_, comp, arg))
+        if id_ in (ROT, MOV) and self.use_odometry:
+            usb.send(usb.make_message(TRACK, 0, 0))
+        return True
 
     def scan_feedbacks(self):
         if self.lidar_pipe.poll():
             pass
         if self.main_pipe.poll():
             type_, gen, args = self.main_pipe.recv()
-            print(f"Received order from main: {type_}, {gen.__name__}, {args}")
+            self.log_method(f"Received order from main: {type_}, {gen.__name__}, {args}")
             self.routines[type_] = gen(*args)
             self.next(type_)
         MicroManager.scan_feedbacks(self)
@@ -45,17 +49,15 @@ class MicroProcess(MicroManager):
 
     def next(self, type_):
         if self.log_level > NOT_NECESSARY:
-            print(f'{type(self).__name__} : info : Next step of routine {self.routines[type_].__name__}({CATEGORIES[type_]})')
+            self.log_method(f'{type(self).__name__} : info : Next step of routine {self.routines[type_].__name__}({CATEGORIES[type_]})')
         # goes through the routine of the given type (MOVEMENT or ACTION)
         try:
             id_, comp, arg = next(self.routines[type_])
             self.last[type_] = id_
-            if DESTINATION[id_] in self.serials:
-                port = self.serials[DESTINATION[id_]]
-                port.last_type = type_
-                port.send(port.make_message(id_, comp, arg))
-            else:
-                self.log_method(f'{type(self).__name__} : info : {self.micro_classes[DESTINATION[id_]].__name__} is not connected')
+            if id_ in (MOV, ROT):
+                self.waiting = True
+            if self.send(DESTINATION[id_], id_, comp, arg):
+                self.serials[DESTINATION[id_]].last_type = type_
 
         # routine is finished
         except StopIteration:
@@ -74,7 +76,7 @@ class MicroProcess(MicroManager):
             while True:
                 self.scan_feedbacks()
         except KeyboardInterrupt:
-            if PICO1 in self.serials:
+            if PICO1 in self.serials and self.waiting:
                 usb: BaseMicro = self.serials[PICO1]
                 usb.send(usb.make_message(CAN, 0, 0))
             for usb in self.serials.values():
@@ -87,18 +89,28 @@ class MPGenericMicro(GenericMicro):
 
     def termination(self, message):
         order_id = message[0] & 0xf
+        if order_id in (ROT, MOV):
+            self.master.waiting = False
+            if self.master.use_odometry:
+                self.send(self.make_message(TRACK, 0, 0))
+                self.old_wheel = None
         self.master.terminate(order_id, self.last_type)
 
 
 class MPMovement(MovementMicro, MPGenericMicro):
-    old_wheel = 0, 0
+    old_wheel = None
 
     def wheel_update(self, message):
         # tick positions for each wheel
         left, right = message[1] * 256 + message[2], message[3] * 256 + message[4]
+
         # Two's complement
         left -= 0x10000 * (left >= 0x8000)
         right -= 0x10000 * (right >= 0x8000)
+
+        if self.old_wheel is None:
+            self.old_wheel = left, right
+            return
 
         d_left, d_right = left - self.old_wheel[0], right - self.old_wheel[1]
         self.old_wheel = left, right
@@ -110,17 +122,17 @@ class MPMovement(MovementMicro, MPGenericMicro):
 
         # straight movement
         if d_left == d_right:
-            self.master.robot_x.value += left_arc * math.cos(self.master.robot_heading)
-            self.master.robot_y.value += left_arc * math.sin(self.master.robot_heading)
+            self.master.robot.incr('x', left_arc * math.cos(self.master.robot.h))
+            self.master.robot.incr('y', left_arc * math.sin(self.master.robot.h))
             return
 
         # circular movement
-        radius = .5 * self.master.axle_track * (d_left + d_right) / (d_right - d_left)
-        angle = (right_arc - left_arc) / self.master.axle_track
-        a0, a1 = self.master.robot_heading - math.pi * .5, self.master.robot_heading - math.pi * .5 + angle
-        self.master.robot_x.value += radius * (math.cos(a1) - math.cos(a0))
-        self.master.robot_y.value += radius * (math.sin(a1) - math.sin(a0))
-        self.master.robot_heading.value += angle
+        radius = .5 * self.master.robot.axle_track * (d_left + d_right) / (d_right - d_left)
+        angle = (right_arc - left_arc) / self.master.robot.axle_track
+        a0, a1 = self.master.robot.h - math.pi * .5, self.master.robot.h - math.pi * .5 + angle
+        self.master.robot.incr('x', radius * (math.cos(a1) - math.cos(a0)))
+        self.master.robot.incr('y', radius * (math.sin(a1) - math.sin(a0)))
+        self.master.robot.incr('h', angle)
 
 
 class MPAction(ActionMicro, MPGenericMicro):
@@ -133,6 +145,6 @@ class MPArduinoMicro(ArduinoMicro, MPGenericMicro):
 
 MicroProcess.micro_classes = MPMovement, MPAction, MPArduinoMicro
 
-if __name__ == '__main__':
-    MP = MicroProcess(None, None, None, None, None, 1.)
-    print(MP.serials)
+# if __name__ == '__main__':
+#     MP = MicroProcess(None, None, None, None, None, 1.)
+#     print(MP.serials)
