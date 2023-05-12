@@ -89,16 +89,16 @@ class Launcher :
         
         
     def processLpastar(self, lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, Xrobot, Yrobot):
-        self.loggerLpa.info("INFO : lpastarProcess  : starting the process")
+        self.loggerLpa.info("INFO : lpastarProcess  : not started")
         
-        lpastar = LPAStarPathFinder()
-        
-        while True :
-            if lpastar_main_pipeLpastar.poll():
-                goal = lpastar_main_pipeLpastar.recv()
-                X = Xrobot.value
-                Y = Yrobot.value
-                lpastar.find_path(goal[1], CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar, X, Y) #lpastarProcess needs CamBotProcess and MainProcess
+        #lpastar = LPAStarPathFinder()
+        #
+        #while True :
+        #    if lpastar_main_pipeLpastar.poll():
+        #        goal = lpastar_main_pipeLpastar.recv()
+        #        X = Xrobot.value
+        #        Y = Yrobot.value
+        #        lpastar.find_path(goal[1], CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar, X, Y) #lpastarProcess needs CamBotProcess and MainProcess
                 
     
     def launch(self):

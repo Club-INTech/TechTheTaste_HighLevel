@@ -10,11 +10,6 @@ dmin = 200
 DMAX = 2000
 BORD = 20
 
-#laser=hokuyo.HokuyoLX()
-
-#data = laser.get_dist(grouping=group)
-#print(data)
-
 class Lili(object) :
     
     def __init__(self):
@@ -42,7 +37,7 @@ class Lili(object) :
                 elif minlr > dmin and self.state == 1 : #retart the processus
                     self.restart(conn)
                     self.state = 0
-            time.sleep(0.001)
+            time.sleep(1)
                 
     def stop(self,conn) -> None:
         '''Send a message to the main process to stop the Agent'''
