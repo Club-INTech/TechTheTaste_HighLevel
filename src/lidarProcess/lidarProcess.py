@@ -1,6 +1,7 @@
 import sys, os
 import time
 from hokuyolx import hokuyo
+import math
 
 group = 3
 dmin = 200
@@ -34,7 +35,56 @@ class Lili(object) :
                 elif minlr > dmin and self.state == 1 : #retart the processus
                     self.restart(conn)
                     self.state = 0
-            time.sleep(0.001)
+            time.sleep(1)
+            
+    def lidarstop2(self, conn, Xrobot, Yrobot, Hrobot, color) -> None:
+        '''Send a message to the main process if drobot < dmin'''
+        
+        if color == 1 :
+            Xlimit1, Xlimit2 = 0, 3  
+            Ylimit1, Ylimit2 = -2, 0
+        else : 
+            Xlimit1, Xlimit2 = 0, 3  
+            Ylimit1, Ylimit2 = 0, 2
+        
+        self.state = 0
+        while True : 
+            timestamp, data = self.laser.get_filtered_dist(dmax=DMAX)
+            
+            Lr = data[0][BORD:-BORD]
+            minlr = data[0][BORD]
+            minj = BORD
+            for i in range(len(Lr)):
+                if data[0][i] < minlr:
+                    minlr = data[0][i]
+                    minj = i
+            
+            Xobstacle = Lr[minj] * math.cos(data[1][minj])
+            Yobstacle = Lr[minj] * math.sin(data[1][minj])
+            
+            x,y = self.rotate((Xobstacle,Yobstacle), (Xrobot,Yrobot), Hrobot)
+            
+            if not Lr:
+                pass
+            
+            else :
+                if minlr < dmin and self.state == 0 : #stop the process
+                    if Xlimit1 < (x + Xrobot) and (x + Xrobot) < Xlimit2 :
+                        if Ylimit1 < (y + Yrobot) and (y + Yrobot) < Ylimit2 :
+                            self.stop(conn)
+                            self.state = 1
+                elif minlr > dmin and self.state == 1 : #retart the processus
+                    self.restart(conn)
+                    self.state = 0
+            time.sleep(1)
+
+    def rotate(M, O, angle):
+        xM, yM, x, y = M[0] - O[0], M[1] - O[1], 0, 0
+        angle *= math.pi / 180
+        x = xM * math.cos(angle) + yM * math.sin(angle) + O[0]
+        y = -xM * math.sin(angle) + yM * math.cos(angle) + O[1]
+        return x,y
+
                 
     def stop(self,conn) -> None:
         '''Send a message to the main process to stop the Agent'''
