@@ -88,7 +88,7 @@ def debugSimpleOrderCaptureCakeRight(pipeMainToMicro1, pipeMainToMicro2, pipeMai
     
     RIGHT, MID, LEFT = 1,2,3
     x, y = 1, 0
-    slot = RIGHT
+    slot = RIGHTs
     OrderManager.captureCake(x, y, slot)
     
     log.logMessage(2,"simulation finished", 0)
