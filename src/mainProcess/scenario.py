@@ -113,16 +113,16 @@ def debugActioneur2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMain
     log.logMessage(2, "scenario test simple order: activate actuator", 0)
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
 
-    while True :
-        OrderManager.VaccumActivate()
-        OrderManager.CanonActivate()
+    OrderManager.VaccumActivate()
+    time.sleep(10)
+    OrderManager.VaccumDesactivate()
+    time.sleep(5)
+    OrderManager.CanonActivate()
+    OrderManager.ServoOn()
+    time.sleep(5)
+    OrderManager.ServoOff()
+    OrderManager.ledOn()
 
-        time.sleep(10)
-
-        OrderManager.VaccumDesactivate()
-        OrderManager.CanonDesactivate()
-
-        time.sleep(10)
     
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------

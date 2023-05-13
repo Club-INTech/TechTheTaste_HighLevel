@@ -17,7 +17,7 @@ from launcher import Xrobot, Yrobot, Hrobot, Xarm, Yarm
 from routine_sender import RoutineSender
 from constants import *
 from params import *
-from orderActuator import onVAccum, offVAccum, onCanon, offCanon
+from orderActuator import onVAccum, offVAccum, onCanon, offCanon, ledActivate, servoOpen, servoClose
 import math
 
 # simple function to find the right angle
@@ -357,3 +357,13 @@ class OrderToMicroProcress(RoutineSender):
 
     def CanonDesactivate(self):
         offCanon(self.pipeToActuator2A)
+
+    def ServoOn(self):
+        servoOpen(self.pipeToActuator2A)
+
+    def ServoOff(self):
+        servoClose(self.pipeToActuator2A)
+
+    def ledOn(self):
+        ledActivate(self.pipeToActuator2A)
+
