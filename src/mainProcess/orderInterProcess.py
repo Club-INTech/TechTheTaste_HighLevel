@@ -5,7 +5,7 @@ import os
 import time
 from multiprocessing import Pipe, Process
 from math import sqrt, asin
-from RPi.GPIO import GPIO
+#from RPi.GPIO import GPIO
 # path managing
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'microProcess'))
@@ -17,7 +17,7 @@ from launcher import Xrobot, Yrobot, Hrobot, Xarm, Yarm
 from routine_sender import RoutineSender
 from constants import *
 from params import *
-from orderActuator import onVAccum, offVAccum, onCanon, offCanon
+from orderActuator import onVAccum, offVAccum, onCanon, offCanon, ledActivate, servoOpen, servoClose
 import math
 
 # simple function to find the right angle
@@ -329,12 +329,6 @@ class OrderToMicroProcress(RoutineSender):
         self.place_cherry(self,dest)
         print(f'a cherry was placed on cake {dest}')
     
-    def openCake(self, i):
-        pass
-    
-    def lockCake(self, i):
-        pass
-    
     def activateCanon():
         pass
 
@@ -363,3 +357,13 @@ class OrderToMicroProcress(RoutineSender):
 
     def CanonDesactivate(self):
         offCanon(self.pipeToActuator2A)
+
+    def ServoOn(self):
+        servoOpen(self.pipeToActuator2A)
+
+    def ServoOff(self):
+        servoClose(self.pipeToActuator2A)
+
+    def ledOn(self):
+        ledActivate(self.pipeToActuator2A)
+

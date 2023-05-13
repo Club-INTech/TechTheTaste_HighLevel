@@ -12,48 +12,10 @@ sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'utils'))
 import log
 import math
 
-def scenarioSimple(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
-    log.logMessage(2,"début du scenario!")
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
-
-    OrderManager.jumperState()
-    log.logMessage(1,"start of the match!!!")
-
-    OrderManager.moovForward(3000)
-    log.logMessage(1,"avancé de 3000 ticks")
-
-    time.sleep(2)
-    log.logMessage(1,"attendue 20 secondes")
-
-    OrderManager.moovForward(-3000)
-    log.logMessage(1,"reculé de 3000 ticks")
-
-    log.logMessage(1,"scenario terminé!")
-    return 1
-
-
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
-#------------------------------------------------------ debug part -----------------------------------------------------------------------------------
+#------------------------------------------------------ debugLidar part -----------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-def debugLidarProc(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
-    log.logMessage(2,"scenario debug of LPA*", 0)
-    
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
-    
-    log.logMessage(1, "orderManager created", 0)
-
-    OrderManager.askLPAprocess(1000, 1000)
-
-    log.logMessage(2, "asked for a small moov", 0) 
-
-    OrderManager.askLPAprocess(1999, 2999)
-
-    log.logMessage(2, "asked for a big moov", 0) 
-
-    time.sleep(2)
-
-    log.logMessage(2,"simulation finished", 0)
     
 def debugLidar(pipeMainToMicro1, pipeMainToMicro2, pipeMainToLPA, pipeLidarToMain):
     log.logMessage(2,"scenario debug of LIDAR", 0)
@@ -61,28 +23,9 @@ def debugLidar(pipeMainToMicro1, pipeMainToMicro2, pipeMainToLPA, pipeLidarToMai
         if pipeLidarToMain.poll():
             status = pipeLidarToMain.recv()
             print(status)
-            
-def debugRaspy(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
-    log.logMessage(2,"scenario debug of LPA*", 0)
-    
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
-    
-    log.logMessage(1, "orderManager created", 0)
-
-    OrderManager.askLPAprocess(1000, 1000)
-
-    log.logMessage(2, "asked for a small moov", 0) 
-
-    OrderManager.askLPAprocess(1999, 2999)
-
-    log.logMessage(2, "asked for a big moov", 0) 
-
-    time.sleep(2)
-
-    log.logMessage(2,"simulation finished", 0)
     
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
-#------------------------------------------------------ test movement --------------------------------------------------------------------------------
+#------------------------------------------------------ test simple movement --------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 
     
@@ -122,65 +65,66 @@ def debugSimpleOrderStraight4(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA,
     
     log.logMessage(2,"simulation finished", 0)
 
-def debugSimpleOrderTurn(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
-    log.logMessage(2,"scenario test simple order : Turn (pi/2)", 0)
-    
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
-   
-    OrderManager.turn(math.pi/2)
-    
-    log.logMessage(2,"simulation finished", 0)
-    
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------ debug Capture --------------------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 def debugSimpleOrderCaptureCakeMid(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
-    log.logMessage(2,"scenario test simple order : CaptureCake (1,1)", 0)
+    log.logMessage(2,"scenario test simple order : CaptureCakeMid (1,0)", 0)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
     
     RIGHT, MID, LEFT = 1,2,3
-    x, y = 0.2, 0
+    x, y = 1, 0
     slot = MID
     OrderManager.captureCake(x, y, slot)
     
     log.logMessage(2,"simulation finished", 0)
     
 def debugSimpleOrderCaptureCakeRight(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
-    log.logMessage(2,"scenario test simple order : CaptureCake (1,1)", 0)
+    log.logMessage(2,"scenario test simple order : CaptureCakeRight (1,0)", 0)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
     
     RIGHT, MID, LEFT = 1,2,3
-    x, y = 0.2, 0
-    slot = RIGHT
+    x, y = 1, 0
+    slot = RIGHTs
     OrderManager.captureCake(x, y, slot)
     
     log.logMessage(2,"simulation finished", 0)
 
 def debugSimpleOrderCaptureCakeLeft(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
-    log.logMessage(2,"scenario test simple order : CaptureCake (1,1)", 0)
+    log.logMessage(2,"scenario test simple order : CaptureCakeLeft (1,0) ", 0)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
     
     RIGHT, MID, LEFT = 1,2,3
-    x, y = 0.2, 0
+    x, y = 1, 0
     slot = LEFT
     OrderManager.captureCake(x, y, slot)
     
     log.logMessage(2,"simulation finished", 0)
+    
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------ debug Actionneur2A -----------------------------------------------------------------------
+#-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 def debugActioneur2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2, "scenario test simple order: activate actuator", 0)
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
 
-    while True :
-        OrderManager.VaccumActivate()
-        OrderManager.CanonActivate()
+    OrderManager.VaccumActivate()
+    time.sleep(10)
+    OrderManager.VaccumDesactivate()
+    time.sleep(5)
+    OrderManager.CanonActivate()
+    OrderManager.ServoOn()
+    time.sleep(5)
+    OrderManager.ServoOff()
+    time.sleep(2)
+    OrderManager.CanonDesactivate()
+    OrderManager.ledOn()
 
-        time.sleep(10)
-
-        OrderManager.VaccumDesactivate()
-        OrderManager.CanonDesactivate()
-
-        time.sleep(10)
     
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------

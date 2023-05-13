@@ -1,14 +1,19 @@
 from micro_process import MicroProcess
 from constants import *
 import multiprocessing as mp
-from routine_sender import RoutineSender
+import os, sys
 
 robot_x, robot_y, robot_h = mp.Value('f', 0.), mp.Value('f', 0.), mp.Value('f', 0.)
 
+sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lidarProcess'))
+from lidarProcess import lidarProcess
 
-def lidar_process():
-    while True:
-        continue
+
+def lidar_process(pipe):  
+    #while True:
+    #    continue
+    lidar=lidarProcess.Lili()
+    lidar.lidarstop(pipe)
 
 
 def move():
@@ -42,31 +47,27 @@ def arm():
     yield horiz(1400)
 
 
-lidar_pipe, _ = mp.Pipe()
-main_pipe0, main_pipe1 = mp.Pipe()
-r = RoutineSender(AXLE_TRACK_1A)
-
-
 def main_process(pipe):
-    action, movement = False, True
-    print(type(pipe))
-    r.micro_pipe = pipe
-    r.storage = ['R', '', '']
+    action, movement = True, False
     while True:
         if pipe.poll():
             x = pipe.recv()
             if not x and movement:
                 movement = False
-                r.goto(0, -.4)
+                pipe.send((0, move, ()))
             if x and action:
                 action = False
-                r.move_cake(LEFT, MID)
+                pipe.send((1, arm, ()))
+
+
+lidar_pipe1, lidar_pipe2 = mp.Pipe()
+main_pipe0, main_pipe1 = mp.Pipe()
 
 
 if __name__ == '__main__':
     main_ = mp.Process(target=main_process, args=(main_pipe0,))
-    lidar_ = mp.Process(target=lidar_process, args=())
-    micro_ = mp.Process(target=MicroProcess, args=(lidar_pipe, main_pipe1, r, False))
+    lidar_ = mp.Process(target=lidar_process, args=(lidar_pipe2))
+    micro_ = mp.Process(target=MicroProcess, args=(lidar_pipe1, main_pipe1, robot_x, robot_y, robot_h, AXLE_TRACK_1A))
 
     lidar_.start()
     main_.start()
@@ -78,4 +79,4 @@ if __name__ == '__main__':
         lidar_.terminate()
         main_.terminate()
         micro_.terminate()
-    # print(r.x, r.y)
+
