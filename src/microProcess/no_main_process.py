@@ -1,13 +1,19 @@
 from micro_process import MicroProcess
 from constants import *
 import multiprocessing as mp
+import os, sys
 
 robot_x, robot_y, robot_h = mp.Value('f', 0.), mp.Value('f', 0.), mp.Value('f', 0.)
 
+sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lidarProcess'))
+from lidarProcess import lidarProcess
 
-def lidar_process():
-    while True:
-        continue
+
+def lidar_process(pipe):  
+    #while True:
+    #    continue
+    lidar=lidarProcess.Lili()
+    lidar.lidarstop(pipe)
 
 
 def move():
@@ -54,14 +60,14 @@ def main_process(pipe):
                 pipe.send((1, arm, ()))
 
 
-lidar_pipe, _ = mp.Pipe()
+lidar_pipe1, lidar_pipe2 = mp.Pipe()
 main_pipe0, main_pipe1 = mp.Pipe()
 
 
 if __name__ == '__main__':
     main_ = mp.Process(target=main_process, args=(main_pipe0,))
-    lidar_ = mp.Process(target=lidar_process, args=())
-    micro_ = mp.Process(target=MicroProcess, args=(lidar_pipe, main_pipe1, robot_x, robot_y, robot_h, AXLE_TRACK_1A))
+    lidar_ = mp.Process(target=lidar_process, args=(lidar_pipe2))
+    micro_ = mp.Process(target=MicroProcess, args=(lidar_pipe1, main_pipe1, robot_x, robot_y, robot_h, AXLE_TRACK_1A))
 
     lidar_.start()
     main_.start()
