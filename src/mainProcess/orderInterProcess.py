@@ -329,12 +329,6 @@ class OrderToMicroProcress(RoutineSender):
         self.place_cherry(self,dest)
         print(f'a cherry was placed on cake {dest}')
     
-    def openCake(self, i):
-        pass
-    
-    def lockCake(self, i):
-        pass
-    
     def activateCanon():
         pass
 
