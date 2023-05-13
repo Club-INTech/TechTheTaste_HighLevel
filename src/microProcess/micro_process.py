@@ -11,10 +11,10 @@ def empty():
 
 class MicroProcess(MicroManager):
     waiting = False
-    axle_track = AXLE_TRACK_1A
     log_level = DEBUG
 
     def __init__(self, lida_pipe, main_pipe, robot, use_odometry=False):
+        # structure holding positions, heading, and slots (will be used for odometry)
         self.robot = robot
         self.main_pipe, self.lidar_pipe = main_pipe, lida_pipe
         self.use_odometry = use_odometry
@@ -24,14 +24,19 @@ class MicroProcess(MicroManager):
         self.routines = [empty(), empty()]
         self.run()
 
-    def send(self, port, id_, comp, arg):
+    def send(self, port, type_, id_, comp, arg):
         if port not in self.serials:
             return self.log_method(f'{type(self).__name__} : info : {self.micro_classes[port].__name__} is not connected')
         usb = self.serials[port]
+        self.last[type_] = id_
         usb.send(usb.make_message(id_, comp, arg))
-        if id_ in (ROT, MOV) and self.use_odometry:
-            usb.send(usb.make_message(TRACK, 0, 0))
-        return True
+        if id_ in (ROT, MOV):
+            # needs to cancel movement if interrupted
+            self.waiting = True
+            if self.use_odometry:
+                usb.old_wheel = 0, 0
+                usb.send(usb.make_message(TRACK, 0, 0))
+        usb.last_type = type_
 
     def scan_feedbacks(self):
         if self.lidar_pipe.poll():
@@ -45,6 +50,11 @@ class MicroProcess(MicroManager):
 
     def terminate(self, order_id, order_type):
         if order_id == self.last[order_type]:
+            if order_id in (MOV, ROT):
+                self.waiting = False
+                if self.use_odometry:
+                    usb = self.serials[DESTINATION[order_id]]
+                    usb.send(usb.make_message(TRACK, 0, 0))
             self.next(order_type)
 
     def next(self, type_):
@@ -53,11 +63,7 @@ class MicroProcess(MicroManager):
         # goes through the routine of the given type (MOVEMENT or ACTION)
         try:
             id_, comp, arg = next(self.routines[type_])
-            self.last[type_] = id_
-            if id_ in (MOV, ROT):
-                self.waiting = True
-            if self.send(DESTINATION[id_], id_, comp, arg):
-                self.serials[DESTINATION[id_]].last_type = type_
+            self.send(DESTINATION[id_], type_, id_, comp, arg)
 
         # routine is finished
         except StopIteration:
@@ -89,16 +95,11 @@ class MPGenericMicro(GenericMicro):
 
     def termination(self, message):
         order_id = message[0] & 0xf
-        if order_id in (ROT, MOV):
-            self.master.waiting = False
-            if self.master.use_odometry:
-                self.send(self.make_message(TRACK, 0, 0))
-                self.old_wheel = None
         self.master.terminate(order_id, self.last_type)
 
 
 class MPMovement(MovementMicro, MPGenericMicro):
-    old_wheel = None
+    old_wheel = 0, 0
 
     def wheel_update(self, message):
         # tick positions for each wheel
@@ -107,10 +108,6 @@ class MPMovement(MovementMicro, MPGenericMicro):
         # Two's complement
         left -= 0x10000 * (left >= 0x8000)
         right -= 0x10000 * (right >= 0x8000)
-
-        if self.old_wheel is None:
-            self.old_wheel = left, right
-            return
 
         d_left, d_right = left - self.old_wheel[0], right - self.old_wheel[1]
         self.old_wheel = left, right

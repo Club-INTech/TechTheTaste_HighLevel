@@ -152,7 +152,7 @@ class FallbackNode(BehaviourTreeNode):
             name (str): The name of the node.
             children (list): List of child nodes.
         """
-        super().__init__(name,"Fallback")
+        super().__init__(name, "Fallback")
         self.children = children
         self.node_type = "Fallback"
         self.logger = logging.getLogger(name)

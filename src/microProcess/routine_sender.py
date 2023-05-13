@@ -1,6 +1,5 @@
 from constants import *
-from Robot import Robot
-import multiprocessing as mp
+import multiprocessing.connection as mp
 import time
 
 
@@ -29,7 +28,6 @@ def move_cake(to_src, down1, to_des, down2):
     yield set_arm_x(to_src)
     yield set_arm_y(down1)
     yield PUM, 1, 1
-    time.sleep(.2)
     yield set_arm_y(-down1)
     yield set_arm_x(to_des)
     yield set_arm_y(down2)
@@ -45,11 +43,25 @@ def place_cherry():
     pass
 
 
+class Robot:
+
+    def __init__(self, slot_size, axle_track):
+        self.slot_size = slot_size
+        self.storage = ['', '', '']
+        self.x, self.y, self.h, self.arm_x = 0., 0., 0., 0
+        self.axle_track = axle_track
+
+    def move_cake(self, src, destination):
+        cake = self.storage[src][-1]
+        self.storage[src] = self.storage[src][:-1]
+        self.storage[destination] += cake
+
+
 class RoutineSender(Robot):
+    micro_pipe: mp.PipeConnection
 
     def __init__(self, axle_track):
-        Robot.__init__(self, 5)
-        self.axle_track = axle_track
+        Robot.__init__(self, 5, axle_track)
 
     def goto(self, x, y, reverse=False):
         dx, dy = x - self.x, y - self.y
@@ -65,11 +77,18 @@ class RoutineSender(Robot):
 
     # src, destination: LEFT, MIDDLE or RIGHT (integers: 0 | 1 | 2)
     def move_cake(self, src, destination):
+        # go to the source slot to grab the cake
         to_src = HORIZONTAL_POSITIONS[src] - self.arm_x
-        self.arm_x = src
+        self.arm_x = HORIZONTAL_POSITIONS[src]
+
+        # go down to grab the cake and back up
         down1 = len(self.storage[src]) * CAKE_HEIGHT + LOWEST_CAKE
+
+        # go to the destination slot to release the cake
         to_des = HORIZONTAL_POSITIONS[destination] - self.arm_x
-        self.arm_x = destination
+        self.arm_x = HORIZONTAL_POSITIONS[destination]
+
+        # go down to release the cake and back up
         down2 = len(self.storage[destination]) * CAKE_HEIGHT + CAKE_HEIGHT + LOWEST_CAKE
         Robot.move_cake(self, src, destination)
         self.micro_pipe.send((ACTION, move_cake, (to_src, down1, to_des, down2)))
@@ -81,7 +100,8 @@ class RoutineSender(Robot):
 if __name__ == '__main__':
     import multiprocessing as mp
     p, truc = mp.Pipe()
-    r = RoutineSender(p, AXLE_TRACK_1A)
+    r = RoutineSender(AXLE_TRACK_1A)
+    r.micro_pipe = p
     r.storage = ['RRR', 'JJJ', 'MMM']
     r.move_cake(0, 1)
     print(r.storage)

@@ -49,6 +49,7 @@ r = RoutineSender(AXLE_TRACK_1A)
 
 def main_process(pipe):
     action, movement = False, True
+    print(type(pipe))
     r.micro_pipe = pipe
     r.storage = ['R', '', '']
     while True:
