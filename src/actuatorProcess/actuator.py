@@ -63,6 +63,21 @@ class actuatorProcess :
             self.servo.ChangeDutyCycle(openState)
         else : 
             self.servo.ChangeDutyCycle(closedState)
+
+    def orderManager(self):
+        while True : 
+            if self.pipeMain.poll() :
+                order = self.pipeMain.recv()
+                order_id = order[0]
+                if order_id == 0:
+                    GPIO.output(order[1], order[2])
+                elif order_id == 1:
+                    self.openCloseServo(order[1])
+                elif order_id == 2:
+                    self.ledLoop()
+            sleep(0.1)
+                    
+
             
 
 if __name__ == "__main__":
