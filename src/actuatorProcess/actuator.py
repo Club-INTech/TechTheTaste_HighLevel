@@ -38,12 +38,7 @@ class actuatorProcess :
 
 
 
-    def run(self):
-        while True :
-            if self.pipeMain.poll() :
-                order = self.pipeMain.recv()
-                GPIO.output(order[0], order[1])
-                sleep(0.1)
+
 
     def ledLoop(self):
         while True:
@@ -58,7 +53,7 @@ class actuatorProcess :
         else : 
             self.servo.ChangeDutyCycle(closedState)
 
-    def orderManager(self):
+    def run(self):
         while True : 
             if self.pipeMain.poll() :
                 order = self.pipeMain.recv()

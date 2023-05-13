@@ -121,6 +121,8 @@ def debugActioneur2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMain
     OrderManager.ServoOn()
     time.sleep(5)
     OrderManager.ServoOff()
+    time.sleep(2)
+    OrderManager.CanonDesactivate()
     OrderManager.ledOn()
 
     
