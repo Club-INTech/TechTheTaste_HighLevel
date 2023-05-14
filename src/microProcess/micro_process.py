@@ -133,6 +133,7 @@ class MPMovement(MovementMicro, MPGenericMicro):
         self.master.robot.x += radius * (math.cos(a1) - math.cos(a0))
         self.master.robot.y += radius * (math.sin(a1) - math.sin(a0))
         self.master.robot.h += angle
+        print(self.master.robot.x, self.master.robot.y, self.master.robot.h)
 
 
 class MPAction(ActionMicro, MPGenericMicro):
