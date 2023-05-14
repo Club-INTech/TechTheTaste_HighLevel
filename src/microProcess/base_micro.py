@@ -40,7 +40,7 @@ class BaseMicro:
 
     def receive(self) -> bytes:
         res = self.serial.read(FEEDBACK_LENGTH)
-        if self.log_level > NECESSARY and res[0] >> 5 !=  WHE:
+        if self.log_level > NECESSARY and res[0] >> 4 != WHE:
             self.log_method(f'{type(self).__name__} : info : Received 0x{res.hex()}')
         return res
 
