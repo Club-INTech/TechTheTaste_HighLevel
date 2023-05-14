@@ -133,7 +133,7 @@ class MPMovement(MovementMicro, MPGenericMicro):
         a0, a1 = self.master.robot.h - math.pi * .5, self.master.robot.h - math.pi * .5 + angle
         self.master.robot.x += radius * (math.cos(a1) - math.cos(a0))
         self.master.robot.y += radius * (math.sin(a1) - math.sin(a0))
-        self.master.robot.h += angle
+        self.master.robot.h -= angle
 
         print(f'\rOdometry: {self.master.robot.x} {self.master.robot.y} {self.master.robot.h}', end='')
 
