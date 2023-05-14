@@ -21,8 +21,10 @@ class Lili(object) :
         while True : 
             timestamp, data = self.laser.get_filtered_dist(dmax=DMAX)
             Lr = []
-            for i in range(len(data)//3, len(data)-len(data)//3):
-                Lr.append(data[i][1])
+            for i in range(BORD, len(data)-BORD):
+                d = data[i][0]
+                if -1.175 < d  and d < 1.175 :
+                    Lr.append(data[i][1])
             
             if not Lr:
                 pass
