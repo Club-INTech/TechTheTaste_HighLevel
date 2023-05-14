@@ -11,7 +11,7 @@ def empty():
 
 class MicroProcess(MicroManager):
     waiting, lidar_state, timeout_date = False, False, 0.
-    log_level = DEBUG
+    log_level = NOTHING
 
     def __init__(self, lida_pipe, main_pipe, robot, use_odometry=False):
         # structure holding positions, heading, and slots (will be used for odometry)
