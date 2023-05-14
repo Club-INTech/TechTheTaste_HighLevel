@@ -41,7 +41,9 @@ class MicroProcess(MicroManager):
     def scan_feedbacks(self):
         if self.lidar_pipe.poll():
             self.log_method(f"Received from Lidar: {self.lidar_pipe.recv()}")
-            self.send(PICO1, MOVEMENT, LID, 0, 0)
+            if PICO1 in self.serials:
+                usb = self.serials[PICO1]
+                usb.send(usb.make_message(LID, 0, 0))
         if self.main_pipe.poll():
             type_, gen, args = self.main_pipe.recv()
             self.log_method(f"Received order from main: {type_}, {gen.__name__}, {args}")

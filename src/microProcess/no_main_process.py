@@ -22,10 +22,70 @@ r = RoutineSender(AXLE_TRACK_1A)
 GREEN, BLUE = 0, 1
 
 
+class Node:
+    def tick(self, ready):
+        pass
+
+
+class SequenceNode(Node):
+    def __init__(self):
+        self.sequence: list[Node] = []
+        self.current_index = 0
+
+    def tick(self, ready):
+        if self.current_index >= len(self.sequence):
+            return True
+        self.current_index += self.sequence[self.current_index].tick(ready)
+        return self.current_index >= len(self.sequence)
+
+    def append(self, node: Node):
+        self.sequence.append(node)
+
+
+class ParallelNode(Node):
+    def __init__(self, *sequences: SequenceNode):
+        self.sequences = sequences
+
+    def tick(self, ready):
+        res = False
+        for seq in self.sequences:
+            res &= seq.tick(ready)
+        return res
+
+
+class Action(Node):
+    running = False
+
+    def __init__(self, robot, type_, func_name, *args):
+        self.robot, self.type_, self.func_name, self.args = robot, type_, func_name, args
+
+    def tick(self, ready):
+        if not self.running and ready[self.type_]:
+            self.running = True
+            ready[self.type_] = False
+            getattr(self.robot, self.func_name)(*self.args)
+        return ready[self.type_]
+
+
+class Scenario:
+    def __init__(self, robot, pipe, node):
+        self.ready = [False, False]
+        self.robot, self.pipe = robot, pipe
+        robot.pipe = pipe
+        self.node: Node = node
+
+    def main_loop(self):
+        while True:
+            if self.pipe.poll():
+                self.ready[self.pipe.recv()] = True
+            self.node.tick(self.ready)
+
+
 def main_process(pipe):
     action, movement = False, True
     r.micro_pipe = pipe
     r.storage = ['R', '', '']
+
     while True:
         if pipe.poll():
             x = pipe.recv()
