@@ -87,6 +87,7 @@ class MicroProcess(MicroManager):
         except KeyboardInterrupt:
             print(self.waiting)
             if PICO1 in self.serials and self.waiting:
+                print("PLEASE CANCEL")
                 usb: BaseMicro = self.serials[PICO1]
                 usb.send(usb.make_message(CAN, 0, 0))
             for usb in self.serials.values():
