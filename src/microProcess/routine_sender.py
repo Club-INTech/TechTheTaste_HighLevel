@@ -73,6 +73,7 @@ class RoutineSender(Robot):
         print('Goto: difference vector', dx, dy)
         magnitude = (dx * dx + dy * dy) ** .5
         d_theta = math.acos((1, -1)[reverse] * dx / magnitude) * (-1, 1)[(dy >= 0) ^ reverse] - self.h
+        print(f'D theta = {d_theta / math.pi * 180}')
         self.micro_pipe.send((MOVEMENT, goto, (
             int(-TICKS_PER_REVOLUTION * d_theta * self.axle_track / (4 * math.pi * WHEEL_RADIUS)),
             int(TICKS_PER_REVOLUTION * magnitude / (2 * math.pi * WHEEL_RADIUS) * (1, -1)[reverse]),
