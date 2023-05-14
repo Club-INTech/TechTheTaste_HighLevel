@@ -124,6 +124,7 @@ class MPMovement(MovementMicro, MPGenericMicro):
         if d_left == d_right:
             self.master.robot.x += left_arc * math.cos(self.master.robot.h)
             self.master.robot.y += left_arc * math.sin(self.master.robot.h)
+            print(f'\rOdometry: {self.master.robot.x} {self.master.robot.y} {self.master.robot.h}', end='')
             return
 
         # circular movement
@@ -133,6 +134,8 @@ class MPMovement(MovementMicro, MPGenericMicro):
         self.master.robot.x += radius * (math.cos(a1) - math.cos(a0))
         self.master.robot.y += radius * (math.sin(a1) - math.sin(a0))
         self.master.robot.h += angle
+
+        print(f'\rOdometry: {self.master.robot.x} {self.master.robot.y} {self.master.robot.h}', end='')
 
 
 class MPAction(ActionMicro, MPGenericMicro):
