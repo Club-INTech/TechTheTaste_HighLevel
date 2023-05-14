@@ -1,4 +1,5 @@
 from constants import *
+from multiprocessing import Value
 import time
 
 
@@ -48,8 +49,12 @@ class Robot:
         self.micro_pie = None
         self.slot_size = slot_size
         self.storage = ['', '', '']
-        self.x, self.y, self.h, self.arm_x = 0., 0., 0., 0
+        self._x, self._y, self._h, self.arm_x = Value('f'), Value('f'), Value('f'), 0
         self.axle_track = axle_track
+
+    x = property((lambda self: self._x.value), (lambda self, value: setattr(self._x, 'value', value)))
+    y = property((lambda self: self._y.value), (lambda self, value: setattr(self._y, 'value', value)))
+    h = property((lambda self: self._h.value), (lambda self, value: setattr(self._h, 'value', value)))
 
     def move_cake(self, src, destination):
         cake = self.storage[src][-1]
