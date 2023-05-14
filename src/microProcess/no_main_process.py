@@ -7,14 +7,13 @@ import os, sys
 robot_x, robot_y, robot_h = mp.Value('f', 0.), mp.Value('f', 0.), mp.Value('f', 0.)
 
 sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lidarProcess'))
-from lidarProcess import lidarProcess
+import lidarProcess
 
 
 def lidar_process(pipe, r, color):
     lidar=lidarProcess.Lili()
     lidar.lidarstop(pipe)                           #simple lidar
     #lidar.lidarstop2(pipe, r.x, r.y, r.h, start)   #with track limitation
-    
 
 
 def move():
@@ -51,7 +50,7 @@ def arm():
 lidar_pipe0, lidar_pipe1 = mp.Pipe()
 main_pipe0, main_pipe1 = mp.Pipe()
 r = RoutineSender(AXLE_TRACK_1A)
-GREEN, BLUE = 0,1
+GREEN, BLUE = 0, 1
 
 
 def main_process(pipe):
