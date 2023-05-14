@@ -7,7 +7,7 @@ import os, sys
 robot_x, robot_y, robot_h = mp.Value('f', 0.), mp.Value('f', 0.), mp.Value('f', 0.)
 
 sys.path.insert(1,os.path.join(os.path.dirname(__file__), '..', 'lidarProcess'))
-from lidarProcess import lidarProcess
+import lidarProcess
 
 
 def lidar_process(pipe, r, color):
