@@ -102,8 +102,6 @@ def main_process(pipe):
     s = SequenceNode()
     s.append(RobotAction(r, MOVEMENT, 'goto', .4, 0.))
     s.append(Action(lambda: print(r.x, r.y)))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .4, 0.))
-    s.append(Action(lambda: print(r.x, r.y)))
     s.append(RobotAction(r, MOVEMENT, 'goto', .4, -.4))
     s.append(Action(lambda: print(r.x, r.y)))
     # s.append(Action(r, MOVEMENT, 'goto', .4, 0.))
