@@ -71,7 +71,7 @@ class Scenario:
     def __init__(self, robot, pipe, node):
         self.ready = [False, False]
         self.robot, self.pipe = robot, pipe
-        robot.pipe = pipe
+        robot.micro_pipe = pipe
         self.node: Node = node
 
     def main_loop(self):
@@ -82,19 +82,9 @@ class Scenario:
 
 
 def main_process(pipe):
-    action, movement = False, True
-    r.micro_pipe = pipe
     r.storage = ['R', '', '']
-
-    while True:
-        if pipe.poll():
-            x = pipe.recv()
-            if not x and movement:
-                movement = False
-                r.goto(.4, 0, reverse=True)
-            if x and action:
-                action = False
-                r.move_cake(LEFT, MID)
+    sc = Scenario(r, pipe, Action(r, MOVEMENT, 'goto', .4, 0.))
+    sc.main_loop()
 
 
 if __name__ == '__main__':

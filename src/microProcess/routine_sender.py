@@ -58,6 +58,8 @@ class Robot:
 
 
 class RoutineSender(Robot):
+    micro_pipe = None
+
     def __init__(self, axle_track):
         Robot.__init__(self, 5, axle_track)
 
