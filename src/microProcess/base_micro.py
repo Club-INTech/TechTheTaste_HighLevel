@@ -40,7 +40,7 @@ class BaseMicro:
 
     def receive(self) -> bytes:
         res = self.serial.read(FEEDBACK_LENGTH)
-        if self.log_level > NECESSARY:
+        if self.log_level > NECESSARY and res[0] >> 5 !=  WHE:
             self.log_method(f'{type(self).__name__} : info : Received 0x{res.hex()}')
         return res
 
@@ -89,7 +89,7 @@ class BaseMicro:
             print('hey')
             return self.synchronise()
         attr = self.manage_feedback[message[0] >> 4]
-        if self.log_level > NOT_NECESSARY and (message[0] >> 4) != 5:
+        if self.log_level > NOT_NECESSARY and (message[0] >> 4) != WHE:
             self.log_method(f'{type(self).__name__} : info : Processing feedback {attr.upper()}')
         getattr(self, attr)(message)
 
