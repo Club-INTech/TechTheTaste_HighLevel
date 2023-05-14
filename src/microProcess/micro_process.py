@@ -130,9 +130,9 @@ class MPMovement(MovementMicro, MPGenericMicro):
         radius = .5 * self.master.robot.axle_track * (d_left + d_right) / (d_right - d_left)
         angle = (right_arc - left_arc) / self.master.robot.axle_track
         a0, a1 = self.master.robot.h - math.pi * .5, self.master.robot.h - math.pi * .5 + angle
-        self.master.robot.incr('x', radius * (math.cos(a1) - math.cos(a0)))
-        self.master.robot.incr('y', radius * (math.sin(a1) - math.sin(a0)))
-        self.master.robot.incr('h', angle)
+        self.master.robot.x += radius * (math.cos(a1) - math.cos(a0))
+        self.master.robot.y += radius * (math.sin(a1) - math.sin(a0))
+        self.master.robot.h += angle
 
 
 class MPAction(ActionMicro, MPGenericMicro):
