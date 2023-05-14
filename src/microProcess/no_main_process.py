@@ -12,6 +12,7 @@ import lidarProcess
 
 def lidar_process(pipe, r, color):
     lidar = lidarProcess.Lili()
+    lidar.log = False
     lidar.lidarstop(pipe)                           #simple lidar
     #lidar.lidarstop2(pipe, r.x, r.y, r.h, start)   #with track limitation
 
@@ -53,7 +54,7 @@ class ParallelNode(Node):
         return res
 
 
-class Action(Node):
+class RobotAction(Node):
     running = False
 
     def __init__(self, robot, type_, func_name, *args):
@@ -65,6 +66,19 @@ class Action(Node):
             ready[self.type_] = False
             getattr(self.robot, self.func_name)(*self.args)
         return ready[self.type_]
+
+
+class Action(Node):
+    done = False
+
+    def __init__(self, func):
+        self.func = func
+
+    def tick(self, ready):
+        if not self.done:
+            self.done = True
+            self.func()
+        return True
 
 
 class Scenario:
@@ -84,8 +98,9 @@ class Scenario:
 def main_process(pipe):
     r.storage = ['R', '', '']
     s = SequenceNode()
-    s.append(Action(r, MOVEMENT, 'goto', .4, 0.))
-    s.append(Action(r, MOVEMENT, 'goto', .4, 0.))
+    s.append(RobotAction(r, MOVEMENT, 'goto', .4, 0.))
+    s.append(Action(lambda: print(r.x, r.y)))
+    # s.append(Action(r, MOVEMENT, 'goto', .4, 0.))
     sc = Scenario(r, pipe, s)
     sc.main_loop()
 
@@ -95,7 +110,7 @@ if __name__ == '__main__':
     
     main_ = mp.Process(target=main_process, args=(main_pipe0,))
     lidar_ = mp.Process(target=lidar_process, args=(lidar_pipe1, r, color))
-    micro_ = mp.Process(target=MicroProcess, args=(lidar_pipe0, main_pipe1, r, False))
+    micro_ = mp.Process(target=MicroProcess, args=(lidar_pipe0, main_pipe1, r, True))
 
     lidar_.start()
     main_.start()
