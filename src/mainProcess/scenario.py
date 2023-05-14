@@ -33,6 +33,8 @@ def debugSimpleOrderStraight1(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA,
     log.logMessage(2,"scenario test simple order : Straight (1,0)", 0)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
+    
+    OrderManager.waitingJumper(1)
    
     OrderManager.moovToSimple(0.5,0)
     

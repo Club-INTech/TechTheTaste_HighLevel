@@ -78,10 +78,9 @@ class Launcher :
 
     # TODO, remove the comment
     def processLIDAR(self,lidar_main_pipeLidar):
-        log.logMessage(2, "start the lidar processus", 1)
-        #TODO 
-        #lidar=lidarProcess.Lili()
-        #lidar.lidarstop(lidar_main_pipeLidar)
+        log.logMessage(2, "start the lidar processus", 1) 
+        lidar=lidarProcess.Lili()
+        lidar.lidarstop(lidar_main_pipeLidar)
 
         
     def processMicro1(self, port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track, logg):
@@ -91,25 +90,25 @@ class Launcher :
 
     def processCamMat(self, CamMat_Lpastar_pipeCamMat):
         log.logMessage(2, "start the camMat processus", 5)
-        obstacles = generate_obstacles()
-        while True :
-            if CamMat_Lpastar_pipeCamMat.poll():
-                if CamMat_Lpastar_pipeCamMat.recv() == 0 :
-                    CamMat_Lpastar_pipeCamMat.send(obstacles)
-                    #RxPipe(CamMat_Lpastar_pipeCamMat)
+        #obstacles = generate_obstacles()
+        #while True :
+        #    if CamMat_Lpastar_pipeCamMat.poll():
+        #        if CamMat_Lpastar_pipeCamMat.recv() == 0 :
+        #            CamMat_Lpastar_pipeCamMat.send(obstacles)
+        #            #RxPipe(CamMat_Lpastar_pipeCamMat)
         
         
     def processLpastar(self, lpastar_main_pipeLpastar, CamMat_Lpastar_pipeLpastar, Xrobot, Yrobot):
         log.logMessage(2, "start the lpastar processus", 6)
         
-        lpastar = LPAStarPathFinder()
-        
-        while True :
-            if lpastar_main_pipeLpastar.poll():
-                goal = lpastar_main_pipeLpastar.recv()
-                X = Xrobot.value
-                Y = Yrobot.value
-                lpastar.find_path(goal[1], CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar, X, Y) #lpastarProcess needs CamBotProcess and MainProcess
+        #lpastar = LPAStarPathFinder()
+        #
+        #while True :
+        #    if lpastar_main_pipeLpastar.poll():
+        #        goal = lpastar_main_pipeLpastar.recv()
+        #        X = Xrobot.value
+        #        Y = Yrobot.value
+        #        lpastar.find_path(goal[1], CamMat_Lpastar_pipeLpastar, lpastar_main_pipeLpastar, X, Y) #lpastarProcess needs CamBotProcess and MainProcess
                 
     
     
