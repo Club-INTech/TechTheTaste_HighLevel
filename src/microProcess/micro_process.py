@@ -122,17 +122,17 @@ class MPMovement(MovementMicro, MPGenericMicro):
 
         # straight movement
         if d_left == d_right:
-            self.master.robot.incr('x', left_arc * math.cos(self.master.robot.h))
-            self.master.robot.incr('y', left_arc * math.sin(self.master.robot.h))
+            self.master.robot.x += left_arc * math.cos(self.master.robot.h)
+            self.master.robot.y += left_arc * math.sin(self.master.robot.h)
             return
 
         # circular movement
         radius = .5 * self.master.robot.axle_track * (d_left + d_right) / (d_right - d_left)
         angle = (right_arc - left_arc) / self.master.robot.axle_track
         a0, a1 = self.master.robot.h - math.pi * .5, self.master.robot.h - math.pi * .5 + angle
-        self.master.robot.incr('x', radius * (math.cos(a1) - math.cos(a0)))
-        self.master.robot.incr('y', radius * (math.sin(a1) - math.sin(a0)))
-        self.master.robot.incr('h', angle)
+        self.master.robot.x += radius * (math.cos(a1) - math.cos(a0))
+        self.master.robot.y += radius * (math.sin(a1) - math.sin(a0))
+        self.master.robot.h += angle
 
 
 class MPAction(ActionMicro, MPGenericMicro):
