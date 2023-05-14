@@ -23,7 +23,7 @@ class mainProcess:
         #scenario.scenarioSimple(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
         #scenario.debugLidarProc(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
 
-        scenario.debugLidar(self, self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA, self.pipeLidarToMain)
+        #scenario.debugLidar(self, self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA, self.pipeLidarToMain)
         #scenario.debugRaspy(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
         
         #scenario.debugSimpleOrderStraight1(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
@@ -32,7 +32,7 @@ class mainProcess:
         #scenario.debugSimpleOrderCaptureCakeRight(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
         #scenario.debugSimpleOrderCaptureCakeLeft(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
         
-        #scenario.scenarioApproval(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
+        scenario.scenarioApproval(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
         #scenario.scenarioGreenStartPushingCake(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
         #scenario.scenarioBlueStartPushingCake(self.pipeMainToMicro1, self.pipeMainToMicro2, self.pipeMainToLPA)
         
