@@ -58,8 +58,8 @@ class MicroProcess(MicroManager):
                 self.timeout_date = time.perf_counter()
             if time.perf_counter() - self.timeout_date > 5.:
                 print("TIMED OUT")
-                usb = self.serials[PICO1]
-                usb.send(usb.make_message(CAN, 0, 0))
+                # usb = self.serials[PICO1]
+                # usb.send(usb.make_message(CAN, 0, 0))
                 self.terminate(self.last[MOVEMENT], MOVEMENT)
 
     def terminate(self, order_id, order_type):
