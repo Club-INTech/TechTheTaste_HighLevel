@@ -9,7 +9,8 @@ DMAX = 2000
 BORD = 25
 
 class Lili(object) :
-    
+    log = True
+
     def __init__(self):
         self.state = 0
         self.laser = hokuyo.HokuyoLX()
@@ -27,7 +28,8 @@ class Lili(object) :
                 pass
             else :
                 minlr = min(Lr)
-                print(f'Limite {dmin} : distance = ', minlr)
+                if self.log:
+                    print(f'Limite {dmin} : distance = ', minlr)
                 if minlr < dmin and self.state == 0 : #stop the process
                     self.stop(conn)
                     self.state = 1
