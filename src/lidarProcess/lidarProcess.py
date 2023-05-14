@@ -4,7 +4,7 @@ from hokuyolx import hokuyo
 import math
 
 group = 3
-dmin = 200
+dmin = 400
 DMAX = 2000
 BORD = 25
 
