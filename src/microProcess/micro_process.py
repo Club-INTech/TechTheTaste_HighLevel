@@ -119,7 +119,7 @@ class MPMovement(MovementMicro, MPGenericMicro):
 
     def wheel_update(self, message):
         # tick positions for each wheel
-        left, right = message[3] * 256 + message[4], message[1] * 256 + message[2]
+        left, right = message[1] * 256 + message[2], message[3] * 256 + message[4]
 
         # Two's complement
         left -= 0x10000 * (left >= 0x8000)
