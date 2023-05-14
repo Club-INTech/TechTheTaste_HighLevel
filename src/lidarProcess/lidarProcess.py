@@ -6,7 +6,7 @@ import math
 group = 3
 dmin = 200
 DMAX = 2000
-BORD = 20
+BORD = 25
 
 class Lili(object) :
     
@@ -20,15 +20,15 @@ class Lili(object) :
         while True : 
             timestamp, data = self.laser.get_filtered_dist(dmax=DMAX)
             Lr = []
-            for i in range(len(data[1])):
-                Lr.append(data[1][i])
+            for i in range(len(data)):
+                Lr.append(data[i][1])
             Lr = Lr[BORD:-BORD]
             
             if not Lr:
                 pass
             else :
                 minlr = min(Lr)
-                print('distance =', minlr)
+                print('Limite 200 : distance = ', minlr)
                 if minlr < dmin and self.state == 0 : #stop the process
                     self.stop(conn)
                     self.state = 1
