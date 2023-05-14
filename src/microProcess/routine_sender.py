@@ -1,5 +1,4 @@
 from constants import *
-import multiprocessing.connection as mp
 import time
 
 
@@ -46,6 +45,7 @@ def place_cherry():
 class Robot:
 
     def __init__(self, slot_size, axle_track):
+        self.micro_pie = None
         self.slot_size = slot_size
         self.storage = ['', '', '']
         self.x, self.y, self.h, self.arm_x = 0., 0., 0., 0
@@ -58,8 +58,6 @@ class Robot:
 
 
 class RoutineSender(Robot):
-    micro_pipe: mp.PipeConnection
-
     def __init__(self, axle_track):
         Robot.__init__(self, 5, axle_track)
 
