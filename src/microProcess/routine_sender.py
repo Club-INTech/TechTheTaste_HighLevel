@@ -70,7 +70,7 @@ class RoutineSender(Robot):
 
     def goto(self, x, y, reverse=False):
         dx, dy = x - self.x, y - self.y
-        print(dx, dy)
+        print('Goto: difference vector', dx, dy)
         magnitude = (dx * dx + dy * dy) ** .5
         d_theta = math.acos((1, -1)[reverse] * dx / magnitude) * (-1, 1)[(dy >= 0) ^ reverse] - self.h
         self.micro_pipe.send((MOVEMENT, goto, (
