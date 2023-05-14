@@ -23,7 +23,7 @@ from processManager import config1
 from testing import generate_obstacles
 from micro_process import MicroProcess
 from actuator import actuatorProcess
-# TODO change lidar on lidarProcess import lidarProcess 
+import lidarProcess 
 
 from multiprocessing import Process, Pipe, Value, current_process
 
