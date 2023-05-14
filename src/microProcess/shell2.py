@@ -278,13 +278,13 @@ def rotate(self: BaseShell, ticks: str):
     if ranged_int('ticks', ticks, MIN_TICKS, MAX_TICKS):
         return
     ticks = int(ticks)
-    if self.track and self.send(PICO1, MOV, 0, self.twos_complement(ticks)):
+    if self.track and self.send(PICO1, ROT, 0, self.twos_complement(ticks)):
         self.send(PICO1, TRACK, 0, 0)
         self.plot_movement(-ticks, ticks)
         self.send(PICO1, TRACK, 0, 0)
         return
-    if self.send(PICO1, MOV, 0, self.twos_complement(ticks)):
-        self.wait(MOV)
+    if self.send(PICO1, ROT, 0, self.twos_complement(ticks)):
+        self.wait(ROT)
 
 
 @command
