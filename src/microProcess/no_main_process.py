@@ -83,7 +83,10 @@ class Scenario:
 
 def main_process(pipe):
     r.storage = ['R', '', '']
-    sc = Scenario(r, pipe, Action(r, MOVEMENT, 'goto', .4, 0.))
+    s = SequenceNode()
+    s.append(Action(r, MOVEMENT, 'goto', .4, 0.))
+    s.append(Action(r, MOVEMENT, 'goto', .4, 0.))
+    sc = Scenario(r, pipe, s)
     sc.main_loop()
 
 
