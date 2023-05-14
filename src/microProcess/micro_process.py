@@ -56,7 +56,7 @@ class MicroProcess(MicroManager):
         if self.waiting:
             if self.lidar_state:
                 self.timeout_date = time.perf_counter()
-            if time.perf_counter() - self.timeout_date > 5.:
+            if time.perf_counter() - self.timeout_date > 1.:
                 print("TIMED OUT")
                 # usb = self.serials[PICO1]
                 # usb.send(usb.make_message(CAN, 0, 0))
