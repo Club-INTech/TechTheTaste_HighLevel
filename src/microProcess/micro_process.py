@@ -100,6 +100,8 @@ class MicroProcess(MicroManager):
             if self.waiting:
                 print("PLEASE CANCEL")
                 usb: BaseMicro = self.serials[PICO1]
+                if self.use_odometry:
+                    usb.send(usb.make_message(TRACK, 0, 0))
                 usb.send(usb.make_message(CAN, 0, 0))
             for usb in self.serials.values():
                 usb.serial.close()
