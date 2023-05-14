@@ -114,7 +114,7 @@ if __name__ == '__main__':
     
     main_ = mp.Process(target=main_process, args=(main_pipe0,))
     lidar_ = mp.Process(target=lidar_process, args=(lidar_pipe1, r, color))
-    micro_ = mp.Process(target=MicroProcess, args=(lidar_pipe0, main_pipe1, r, True))
+    micro_ = mp.Process(target=MicroProcess, args=(lidar_pipe0, main_pipe1, r, False))
 
     lidar_.start()
     main_.start()
