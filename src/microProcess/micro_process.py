@@ -122,8 +122,8 @@ class MPMovement(MovementMicro, MPGenericMicro):
 
         # straight movement
         if d_left == d_right:
-            self.master.robot.incr('x', left_arc * math.cos(self.master.robot.h))
-            self.master.robot.incr('y', left_arc * math.sin(self.master.robot.h))
+            self.master.robot.x += left_arc * math.cos(self.master.robot.h)
+            self.master.robot.y += left_arc * math.sin(self.master.robot.h)
             return
 
         # circular movement
