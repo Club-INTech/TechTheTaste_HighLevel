@@ -20,22 +20,21 @@ class Lili(object) :
         while True : 
             timestamp, data = self.laser.get_filtered_dist(dmax=DMAX)
             Lr = []
-            for i in range(len(data)):
+            for i in range(BORD, len(data)-BORD):
                 Lr.append(data[i][1])
-            Lr = Lr[BORD:-BORD]
             
             if not Lr:
                 pass
             else :
                 minlr = min(Lr)
-                print('Limite 200 : distance = ', minlr)
+                print(f'Limite {dmin} : distance = ', minlr)
                 if minlr < dmin and self.state == 0 : #stop the process
                     self.stop(conn)
                     self.state = 1
                 elif minlr > dmin and self.state == 1 : #retart the processus
                     self.restart(conn)
                     self.state = 0
-            time.sleep(1)
+            time.sleep(0.1)
             
     def lidarstop2(self, conn, Xrobot, Yrobot, Hrobot, color) -> None:
         '''Send a message to the main process if drobot < dmin'''
