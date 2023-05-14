@@ -57,10 +57,9 @@ class MicroProcess(MicroManager):
             if self.lidar_state:
                 self.timeout_date = time.perf_counter()
             if time.perf_counter() - self.timeout_date > 1.:
-                self.waiting = False
                 usb = self.serials[PICO1]
                 usb.send(usb.make_message(CAN, 0, 0))
-                self.next(MOVEMENT)
+                self.terminate(self.last[MOVEMENT], MOVEMENT)
 
     def terminate(self, order_id, order_type):
         if order_id == self.last[order_type]:
