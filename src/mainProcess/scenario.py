@@ -225,7 +225,7 @@ def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
 
 def scenarioApproval(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA):
     
-    log.logMessage(2,"scenario DavinciBot approval : leaving and going back to the depart zone ", 0)
+    log.logMessage(2,"scenario approval ", 0)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA)
     

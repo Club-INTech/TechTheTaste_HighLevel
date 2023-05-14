@@ -79,7 +79,7 @@ class Launcher :
         
 
     def processCamMat(self, CamMat_Lpastar_pipeCamMat):
-        self.loggerCam1.info("INFO : CamMatProcess   : starting the process")
+        self.loggerCam1.info("INFO : CamMatProcess   : not started")
         #obstacles = generate_obstacles()
         #while True :
         #    if CamMat_Lpastar_pipeCamMat.poll():

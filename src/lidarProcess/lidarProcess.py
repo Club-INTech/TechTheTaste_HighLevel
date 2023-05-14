@@ -30,7 +30,7 @@ class Lili(object) :
                 pass
             else :
                 minlr = min(Lr)
-                print('distance =', minlr)
+                #print('distance =', minlr)
                 if minlr < dmin and self.state == 0 : #stop the process
                     self.stop(conn)
                     self.state = 1
