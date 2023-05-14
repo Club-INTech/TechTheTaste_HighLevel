@@ -14,7 +14,7 @@ LOG_MODES = 'nothing', 'minimal', 'debug'
 NECESSARY, NOT_NECESSARY = range(2)
 
 # Feedbacks
-ACK, TER, VAR, TRA, ERR,  WHE, DEB, ID_F = range(7)
+ACK, TER, VAR, TRA, ERR,  WHE, DEB, ID_F = range(8)
 FEEDBACKS = 'ACKNOWLEDGEMENT', 'TERMINATION', 'VAR_GET', 'TRACKED', 'ERROR', 'WHEEL_UPDATE', 'DEBUG', 'IDENTIFY'
 
 # orders
