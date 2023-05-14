@@ -11,7 +11,7 @@ def empty():
 
 class MicroProcess(MicroManager):
     waiting = False
-    log_level = DEBUG
+    log_level = NOTHING
 
     def __init__(self, lida_pipe, main_pipe, robot, use_odometry=False):
         # structure holding positions, heading, and slots (will be used for odometry)
@@ -133,7 +133,6 @@ class MPMovement(MovementMicro, MPGenericMicro):
         self.master.robot.x += radius * (math.cos(a1) - math.cos(a0))
         self.master.robot.y += radius * (math.sin(a1) - math.sin(a0))
         self.master.robot.h += angle
-        print(self.master.robot.x, self.master.robot.y, self.master.robot.h)
 
 
 class MPAction(ActionMicro, MPGenericMicro):
