@@ -62,7 +62,7 @@ def main_process(pipe):
             x = pipe.recv()
             if not x and movement:
                 movement = False
-                r.goto(0, -.4)
+                r.goto(.4, 0, reverse=True)
             if x and action:
                 action = False
                 r.move_cake(LEFT, MID)
