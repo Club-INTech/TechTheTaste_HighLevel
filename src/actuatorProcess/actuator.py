@@ -16,7 +16,7 @@ pinLedGreen = 23
 #servo management
 pinServo = 17
 openState = 12.5
-closedState = 7.5
+closedState = 5
 
 class actuatorProcess :
 
