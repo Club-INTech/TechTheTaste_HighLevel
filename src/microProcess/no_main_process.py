@@ -122,7 +122,7 @@ def main_process(pipe):
     s.append(RobotAction(r, MOVEMENT, 'goto', 1., -.4))
     s.append(RobotAction(r, MOVEMENT, 'goto', 1.35, -.4))
     s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.4))
-    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.0))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.1))
     # s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
     # s.append(Action(r, MOVEMENT, 'goto', .4, 0.))
 
