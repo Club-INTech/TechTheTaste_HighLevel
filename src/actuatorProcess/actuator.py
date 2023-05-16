@@ -2,6 +2,8 @@ import RPi.GPIO as GPIO
 from multiprocessing import Pipe, Process
 from time import sleep
 import logging
+#------ jumper           ------
+pinVccJumper = 25
 
 #------ cherry managment ------
 FREQ = 10000
@@ -16,7 +18,23 @@ pinLedGreen = 23
 #servo management
 pinServo = 17
 openState = 12.5
-closedState = 7.5
+closedState = 5.2
+
+#------ stepper --------
+pinIn1 = 2
+pinIn2 = 3
+pinIn3 = 5 
+pinIn4 = 6
+
+pinStepper = [pinIn1, pinIn2, pinIn3, pinIn4]
+
+step_sequences= [[1,0,0,0],
+                 [0,1,0,0],
+                 [0,0,1,0],
+                 [0,0,0,1]]
+
+
+step_total = 450
 
 class actuatorProcess :
 
@@ -26,15 +44,27 @@ class actuatorProcess :
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(pinCanon, GPIO.OUT)
         GPIO.setup(pinVaccum, GPIO.OUT)
+        GPIO.setup(pinVccJumper, GPIO.OUT)
+        GPIO.output(pinVccJumper, 1) #used for data of the pin
         GPIO.output(pinCanon, 0)
         GPIO.output(pinVaccum, 0)
 
         GPIO.setup(pinLedGreen, GPIO.OUT)
+
+        for pin in pinStepper :
+            GPIO.setup(pin, GPIO.OUT)
+            GPIO.output(pin, 0)
+
         GPIO.output(pinLedGreen, 1)
 
         GPIO.setup(pinServo, GPIO.OUT)
+
+
+
         self.servo = GPIO.PWM(pinServo, 50)
-        self.servo.start(7.5)
+        self.servo.start(closedState)
+
+        self.openStepper()
 
 
 
@@ -65,6 +95,20 @@ class actuatorProcess :
                 elif order_id == 2:
                     self.ledLoop()
             sleep(0.1)
+        
+    def closeStepper(self):
+        for step in range(step_total):
+            for step_seq in step_sequences :
+                for i in range(len(pinStepper)) :
+                    GPIO.output(pinStepper[i],step_seq[i])
+                sleep(0.01)
+
+    def openStepper(self):
+        for step in range(step_total):
+            for step_seq in reversed(step_sequences) :
+                for i in range(len(pinStepper)) :
+                    GPIO.output(pinStepper[i],step_seq[i])
+                sleep(0.01)
                     
 
             

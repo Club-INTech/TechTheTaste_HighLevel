@@ -85,7 +85,8 @@ class Launcher :
         
     def processMicro1(self, port, pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track, logg):
         log.logMessage(2, "start the micro1 processus", 2)
-        microProcss = MicroProcess( pipeLiDAR, pipeMain, robot_x, robot_y, robot_heading, axle_track)
+        robot = Robot(.274, .274)
+        microProcss = MicroProcess( pipeLiDAR, pipeMain, robot)
         microProcss.run()
 
     def processCamMat(self, CamMat_Lpastar_pipeCamMat):
@@ -118,7 +119,23 @@ class Launcher :
             return config1(self, self.processActuator2A ,self.processCamMat, self.processMicro1, self.processLpastar, self.processMain, self.processLIDAR, Xrobot, Yrobot, XYinitialised)
         
 
+class Robot:
 
+    def __init__(self, slot_size, axle_track):
+        self.micro_pie = None
+        self.slot_size = slot_size
+        self.storage = ['', '', '']
+        self._x, self._y, self._h, self.arm_x = Value('f'), Value('f'), Value('f'), 0
+        self.axle_track = axle_track
+
+    x = property((lambda self: self._x.value), (lambda self, value: setattr(self._x, 'value', value)))
+    y = property((lambda self: self._y.value), (lambda self, value: setattr(self._y, 'value', value)))
+    h = property((lambda self: self._h.value), (lambda self, value: setattr(self._h, 'value', value)))
+
+    def move_cake(self, src, destination):
+        cake = self.storage[src][-1]
+        self.storage[src] = self.storage[src][:-1]
+        self.storage[destination] += cake
 
 if __name__ == "__main__" :
     starter = Launcher(1)

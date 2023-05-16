@@ -127,7 +127,50 @@ def debugActioneur2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMain
     OrderManager.CanonDesactivate()
     OrderManager.ledOn()
 
+def simpleScenar2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
+    log.logMessage(2, "scenario test simple order: activate actuator", 0)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
     
+    #put the cherries
+    OrderManager.moovToSimple(0.5,1.5)
+    OrderManager.moovToSimple(0.5, 2.5)
+    time.sleep(5)
+    OrderManager.CanonActivate()
+    OrderManager.ServoOn()
+    time.sleep(5)
+    OrderManager.ServoOff()
+    OrderManager.CanonDesactivate()
+
+    #come back to position
+    OrderManager.moovToSimple(0.25, 2)
+    OrderManager.ledOn()
+
+def ambiScenar2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
+    log.logMessage(2, "scenario test simple order: activate actuator", 0)
+    
+    #get new cherry
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
+    OrderManager.moovToSimple(0.5,0.5)
+    OrderManager.VaccumActivate()
+    OrderManager.moovToSimple(0.5,1.5)
+    time.sleep(10)
+    OrderManager.VaccumDesactivate()
+
+
+    #put the cherries
+    OrderManager.moovToSimple(0.5, 2.5)
+    time.sleep(5)
+    OrderManager.CanonActivate()
+    OrderManager.ServoOn()
+    time.sleep(5)
+    OrderManager.ServoOff()
+    OrderManager.CanonDesactivate()
+
+    #come back to position
+    OrderManager.moovToSimple(0.25, 2)
+    OrderManager.ledOn()
+
+
 
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------ scenario part --------------------------------------------------------------------------------
