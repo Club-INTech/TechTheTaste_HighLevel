@@ -118,15 +118,9 @@ def main_process(pipe):
     s = SequenceNode()
     s.append(RobotAction(r, MOVEMENT, 'goto', .4, 0.))
     s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .4, .4))
-    s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .8, .4))
-    s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
     s.append(RobotAction(r, MOVEMENT, 'goto', .8, .0))
     s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .4, .0))
-    s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .0, .0))
+
     # s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
     # s.append(Action(r, MOVEMENT, 'goto', .4, 0.))
 
