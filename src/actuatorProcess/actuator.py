@@ -18,6 +18,26 @@ pinServo = 17
 openState = 12.5
 closedState = 5
 
+#------ stepper --------
+pinIn1 = 2
+pinIn2 = 3
+pinIn3 = 5 
+pinIn4 = 6
+
+pinStepper = [pinIn1, pinIn2, pinIn3, pinIn4]
+
+step_sequences= [[1,0,0,1],
+                 [1,0,0,0],
+                 [1,1,0,0],
+                 [0,1,0,0],
+                 [0,1,1,0],
+                 [0,0,1,0],
+                 [0,0,1,1],
+                 [0,0,0,1]]
+
+
+step_total = 4000
+
 class actuatorProcess :
 
     def __init__(self, connPipeMain, logger):
@@ -30,9 +50,17 @@ class actuatorProcess :
         GPIO.output(pinVaccum, 0)
 
         GPIO.setup(pinLedGreen, GPIO.OUT)
+
+        for pin in pinStepper :
+            GPIO.setup(pin, GPIO.OUT)
+            GPIO.output(pin, 0)
+            
         GPIO.output(pinLedGreen, 1)
 
         GPIO.setup(pinServo, GPIO.OUT)
+
+
+
         self.servo = GPIO.PWM(pinServo, 50)
         self.servo.start(7.5)
 
@@ -65,6 +93,20 @@ class actuatorProcess :
                 elif order_id == 2:
                     self.ledLoop()
             sleep(0.1)
+        
+    def openStepper(self):
+        for step in range(step_total):
+            for step_seq in step_sequences :
+                for i in range(len(pinStepper)) :
+                    GPIO.output(pinStepper[i],step_seq[i])
+                    sleep(0.1)
+
+    def closeStepper(self):
+        for step in range(step_total):
+            for step_seq in reversed(step_sequences) :
+                for i in range(len(pinStepper)) :
+                    GPIO.output(pinStepper[i],step_seq[i])
+                    sleep(0.1)
                     
 
             
