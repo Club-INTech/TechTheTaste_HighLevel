@@ -13,11 +13,11 @@ import lidarProcess
 
 
 def lidar_process(pipe, r, color):
-    # lidar = lidarProcess.Lili()
-    # lidar.log = False
-    # lidar.lidarstop(pipe)                           #simple lidar
-    while True:
-        continue
+    lidar = lidarProcess.Lili()
+    lidar.log = False
+    lidar.lidarstop(pipe)                           #simple lidar
+    # while True:
+    #     continue
     #lidar.lidarstop2(pipe, r.x, r.y, r.h, start)   #with track limitation
 
 
