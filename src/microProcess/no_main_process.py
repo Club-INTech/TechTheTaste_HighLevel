@@ -116,7 +116,7 @@ class Scenario:
 def main_process(pipe):
     r.storage = ['R', '', '']
     s = SequenceNode()
-    s.append(RobotAction(r, MOVEMENT, 'move', .30, 0.))
+    s.append(RobotAction(r, MOVEMENT, 'goto', .30, 0.))
     s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
     s.append(RobotAction(r, MOVEMENT, 'goto', .60, .0))
     s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
