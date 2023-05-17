@@ -1,3 +1,5 @@
+import time
+
 from micro_process import MicroProcess
 from constants import *
 import multiprocessing as mp
@@ -13,9 +15,9 @@ import lidarProcess
 def lidar_process(pipe, r, color):
     lidar = lidarProcess.Lili()
     lidar.log = False
-    # lidar.lidarstop(pipe)                           #simple lidar
-    while True:
-        continue
+    lidar.lidarstop(pipe)                           #simple lidar
+    # while True:
+    #     continue
     #lidar.lidarstop2(pipe, r.x, r.y, r.h, start)   #with track limitation
 
 
@@ -31,8 +33,8 @@ class Node:
 
 
 class SequenceNode(Node):
-    def __init__(self):
-        self.sequence: list[Node] = []
+    def __init__(self, *nodes: Node):
+        self.sequence: list[Node] = list(nodes)
         self.current_index = 0
 
     def tick(self, ready):
@@ -43,14 +45,15 @@ class SequenceNode(Node):
 
     def append(self, node: Node):
         self.sequence.append(node)
+        return self
 
 
 class ParallelNode(Node):
-    def __init__(self, *sequences: SequenceNode):
+    def __init__(self, *sequences: Node):
         self.sequences = sequences
 
     def tick(self, ready):
-        res = False
+        res = True
         for seq in self.sequences:
             res &= seq.tick(ready)
         return res
@@ -83,6 +86,18 @@ class Action(Node):
         return True
 
 
+class TestWaiter(Node):
+    def __init__(self, delay):
+        self.date, self.delay = None, delay
+
+    def tick(self, ready):
+        if self.date is None:
+            self.date = time.perf_counter()
+        elapsed = time.perf_counter() - self.date
+        print(f'Test waiter: {elapsed:.2f}/{self.delay} s ({elapsed > self.delay})', end=' ')
+        return elapsed > self.delay
+
+
 class Scenario:
     def __init__(self, robot, pipe, node):
         self.ready = [False, False]
@@ -94,25 +109,43 @@ class Scenario:
         while True:
             if self.pipe.poll():
                 self.ready[self.pipe.recv()] = True
+            print('\r', end='')
             self.node.tick(self.ready)
 
 
 def main_process(pipe):
     r.storage = ['R', '', '']
     s = SequenceNode()
-    s.append(RobotAction(r, MOVEMENT, 'goto', .4, 0.))
+    s.append(RobotAction(r, MOVEMENT, 'goto', .30, 0.))
+    s.append(RobotAction(r, MOVEMENT, 'goto', .60, .0))
+    s.append(RobotAction(r, MOVEMENT, 'goto', .70, -.3))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1., -.4))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.35, -.4))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.4))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.1))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.3, True))
     s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .4, .4))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.3, -.25))
     s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .8, .4))
+    s.append(RobotAction(r, MOVEMENT, 'goto', .85, -.18))
     s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .8, .0))
-    s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .4, .0))
-    s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .0, .0))
-    s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
+    s.append(RobotAction(r, MOVEMENT, 'goto', .5, -.1))
+    s.append(RobotAction(r, MOVEMENT, 'goto', .1, -.05))
+
+
+    # s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
     # s.append(Action(r, MOVEMENT, 'goto', .4, 0.))
+
+    # w1 = TestWaiter(5.)
+    # w2 = TestWaiter(15.)
+    #
+    # p = ParallelNode(w1, w2)
+    # s = SequenceNode()
+    # s.append(p)
+    s.append(Action(lambda: print('\nFinished')))
+
+    # sc = Scenario(r, pipe, s)
+    # sc = Scenario(r, pipe, RobotAction(r, ACTION, 'move_cake', LEFT, RIGHT))
     sc = Scenario(r, pipe, s)
     sc.main_loop()
 

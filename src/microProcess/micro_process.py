@@ -10,7 +10,7 @@ def empty():
 
 
 class MicroProcess(MicroManager):
-    waiting, lidar_state, timeout_date = False, False, 0.
+    moving, lidar_state, timeout_date = False, False, 0.
     log_level = DEBUG
 
     def __init__(self, lida_pipe, main_pipe, robot, use_odometry=False):
@@ -32,7 +32,7 @@ class MicroProcess(MicroManager):
         usb.send(usb.make_message(id_, comp, arg))
         if id_ in (ROT, MOV):
             # needs to cancel movement if interrupted
-            self.waiting = True
+            self.moving = True
             self.timeout_date = time.perf_counter()
             if self.use_odometry:
                 usb.old_wheel = 0, 0
@@ -53,7 +53,7 @@ class MicroProcess(MicroManager):
             self.routines[type_] = gen(*args)
             self.next(type_)
         MicroManager.scan_feedbacks(self)
-        if self.waiting:
+        if self.moving:
             if self.lidar_state:
                 self.timeout_date = time.perf_counter()
             if time.perf_counter() - self.timeout_date > 1.5:
@@ -65,7 +65,7 @@ class MicroProcess(MicroManager):
     def terminate(self, order_id, order_type):
         if order_id == self.last[order_type]:
             if order_id in (MOV, ROT):
-                self.waiting = False
+                self.moving = False
                 if self.use_odometry:
                     usb = self.serials[DESTINATION[order_id]]
                     usb.send(usb.make_message(TRACK, 0, 0))
@@ -96,8 +96,8 @@ class MicroProcess(MicroManager):
             while True:
                 self.scan_feedbacks()
         except KeyboardInterrupt:
-            print(self.waiting)
-            if self.waiting:
+            print(self.moving)
+            if self.moving:
                 print("PLEASE CANCEL")
                 usb: BaseMicro = self.serials[PICO1]
                 if self.use_odometry:

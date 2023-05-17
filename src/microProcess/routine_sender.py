@@ -11,6 +11,13 @@ def goto(angle, magnitude):
     if magnitude:
         yield MOV, 0, magnitude + 0x10000 * (magnitude < 0)
 
+def rot(angle):
+    yield ROT, 0, angle + 0x10000 * (angle < 0)
+
+
+def move(mag):
+    yield MOV, 0, mag + 0x10000 * (mag < 0)
+
 
 def set_arm_x(dx):
     dx = dx + 0x10000 * (dx < 0)
@@ -78,6 +85,12 @@ class RoutineSender(Robot):
             int(-TICKS_PER_REVOLUTION * d_theta * self.axle_track / (4 * math.pi * WHEEL_RADIUS)),
             int(TICKS_PER_REVOLUTION * magnitude / (2 * math.pi * WHEEL_RADIUS) * (1, -1)[reverse]),
         )))
+
+    def move(self, mag):
+        self.micro_pipe.send((MOVEMENT, move, int(TICKS_PER_REVOLUTION * mag / (2 * math.pi * WHEEL_RADIUS))))
+
+    def rotate(self, angle):
+        self.micro_pipe.send((MOVEMENT, rot, int(-TICKS_PER_REVOLUTION * angle * self.axle_track / (4 * math.pi * WHEEL_RADIUS))))
 
     def stop(self):
         self.micro_pipe.send((MOVEMENT, stop, ()))
