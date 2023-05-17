@@ -125,55 +125,53 @@ def scenario_sort_no_blue(pipe):
     
     
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
-#------------------------------------------------------ niveau 1  ------------------------------------------------------------------------------
+#------------------------------------------------------ départ 4 ------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-
+#avec odomètre
+def scenario_green_2(pipe): 
     
+    r.storage = ['R', '', '']
+    s = SequenceNode()
+    s.append(RobotAction(r, MOVEMENT, 'goto', .30, 0.))
+    s.append(RobotAction(r, MOVEMENT, 'goto', .60, .0))
+    s.append(RobotAction(r, MOVEMENT, 'goto', .70, -.3))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1., -.4))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.35, -.4))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.4))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.1))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.3, True))
 
-################################### SORT ###########################################
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.5, -.75))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 2, -1.25))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 2.5, -1.75))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 2.9, -1.75))
+
+    s.append(Action(lambda: print('\nFinished')))
+
+    sc = Scenario(r, pipe, s)
+    sc.main_loop()
 
 
-def sortCakePhase1(s: SequenceNode, genoise, creme, glacage):
-    left = genoise
-    mid = creme
-    right = glacage
-        
-    s.append(RobotAction(r, ACTION, 'move_cake', right, left))
-        
-    s.append(RobotAction(r, ACTION, 'move_cake', mid, left))
-    s.append(RobotAction(r, ACTION, 'move_cake', mid, left))     
-        
-    s.append(RobotAction(r, ACTION, 'move_cake', right, mid))
-    s.append(RobotAction(r, ACTION, 'move_cake', right, mid))  
-        
-    s.append(RobotAction(r, ACTION, 'move_cake', left, right))
-    s.append(RobotAction(r, ACTION, 'move_cake', left, right))
-        
-    s.append(RobotAction(r, ACTION, 'move_cake', left, mid))
-        
-    s.append(RobotAction(r, ACTION, 'move_cake', left, right))
-        
-    s.append(RobotAction(r, ACTION, 'move_cake', mid, right))
-        
-    s.append(RobotAction(r, ACTION, 'move_cake', left, right))
+def scenario_blue_2(pipe): 
     
-def sortCakePhase2(s: SequenceNode, genoise, creme, glacage):
-    left = genoise
-    mid = creme
-    right = glacage
-        
-    s.append(RobotAction(r, ACTION, 'move_cake', right, left))
-    s.append(RobotAction(r, ACTION, 'move_cake', right, left))
-    s.append(RobotAction(r, ACTION, 'move_cake', right, left))
-        
-def sortCakePhase3(s: SequenceNode, genoise, creme, glacage):
-    left = genoise
-    mid = creme
-    right = glacage
-        
-    s.append(RobotAction(r, ACTION, 'move_cake', mid, left))
-    s.append(RobotAction(r, ACTION, 'move_cake', mid, left))
-    s.append(RobotAction(r, ACTION, 'move_cake', right, left))
+    r.storage = ['R', '', '']
+    s = SequenceNode()
+    s.append(RobotAction(r, MOVEMENT, 'goto', .30, 0.))
+    s.append(RobotAction(r, MOVEMENT, 'goto', .60, .0))
+    s.append(RobotAction(r, MOVEMENT, 'goto', .70, .3))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1., .4))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.35, .4))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, .4))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, .1))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, .3, True))
 
+    s.append(RobotAction(r, MOVEMENT, 'goto', 1.5, .75))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 2, 1.25))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 2.5, 1.75))
+    s.append(RobotAction(r, MOVEMENT, 'goto', 2.9, 1.75))
 
+    s.append(Action(lambda: print('\nFinished')))
+
+    sc = Scenario(r, pipe, s)
+    sc.main_loop()
