@@ -127,6 +127,11 @@ def debugActioneur2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMain
     OrderManager.CanonDesactivate()
     OrderManager.ledOn()
 
+def homolog2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
+    log.logMessage(2, "scenario test simple order: activate actuator", 0)
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)   
+    OrderManager.waitingJumper(1) 
+
 def simpleScenar2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2, "scenario test simple order: activate actuator", 0)
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
