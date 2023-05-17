@@ -124,6 +124,7 @@ class JumperNode(Node):
 
         import RPi.GPIO as GPIO  # noqa
         self.edge = (not edge, edge)
+        GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.jumper, GPIO.IN)
         self.gpio = GPIO.input
 
