@@ -342,9 +342,9 @@ class OrderToMicroProcress(RoutineSender):
 
         GPIO.setup(jumper, GPIO.IN)
         ctn = True
+        log.logMessage(3, "waiting jumper", 0) 
         while ctn:
-            ctn = EDGE[ GPIO.input(jumper)]
-            log.logMessage(3, "waiting jumper", 0)  
+            ctn = EDGE[GPIO.input(jumper)]  
 
     def VaccumActivate(self):
         onVAccum(self.pipeToActuator2A)
