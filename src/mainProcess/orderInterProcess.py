@@ -367,4 +367,11 @@ class OrderToMicroProcress(RoutineSender):
 
     def ledOn(self):
         ledActivate(self.pipeToActuator2A)
+        
+    def waiting(self, pipe, info):
+        while pipe.recv() != info :
+            time.sleep(0.01)
+            continue
+        
+        
 

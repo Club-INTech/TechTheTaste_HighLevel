@@ -90,8 +90,10 @@ def debugActioneur2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMain
 
 def homolog2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2, "scenario test simple order: activate actuator", 0)
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)   
-    OrderManager.waitingJumper(1) 
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
+       
+    OrderManager.waitingJumper(1)
+ 
 
 def simpleScenar2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     log.logMessage(2, "scenario test simple order: activate actuator", 0)
@@ -141,6 +143,26 @@ def ambiScenar2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToAc
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------ scenario part --------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+def scenario_simple_green(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
+    
+    log.logMessage(2, "scenario green simple", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
+    
+    OrderManager.waiting(0)
+    OrderManager.moovToSimple(0.40,0)
+    
+    OrderManager.waiting(0)
+    OrderManager.moovToSimple(0,0.40)
+    
+    OrderManager.waiting(0)
+    OrderManager.moovToSimple(0,0.40)
+    
+    OrderManager.waiting(0)
+    OrderManager.moovToSimple(0,0.40)
+    
+    
 
 def scenario_green_1(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     
@@ -230,7 +252,57 @@ def scenario_blue_1(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainT
     #Allumage des leds
     OrderManager.ledOn()
     
-
+def scenario_green_no_1(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
+    
+    log.logMessage(2, "scenario green 1", 0)
+    
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
+    
+    
+    #Dépôt des cerises
+    OrderManager.waiting(1)
+    OrderManager.CanonActivate()
+    OrderManager.waiting(1)
+    OrderManager.ServoOn()
+    OrderManager.waiting(1)
+    OrderManager.ServoOff()
+    OrderManager.waiting(1)
+    OrderManager.CanonDesactivate()
+    
+    #Poussage de 2 piles de génoises
+    OrderManager.waiting(0)
+    OrderManager.moovToSimple(-0.45,0)
+    OrderManager.waiting(0)
+    OrderManager.moovToSimple(-1.65,0)
+    OrderManager.waiting(0)
+    
+    #Récupération des cerises
+    OrderManager.moovToSimple(-1.125,0,True)
+    OrderManager.waiting(0)
+    
+    OrderManager.moovToSimple(-1.125,-0.1)
+    OrderManager.waiting(1)
+    OrderManager.VaccumActivate()
+    OrderManager.waiting(0)
+    
+    OrderManager.moovToSimple(-1.165,-0.1)
+    OrderManager.waiting(0)
+    
+    OrderManager.moovToSimple(0,0)
+    OrderManager.waiting(1)
+    
+    #Dépot des cerises
+    OrderManager.CanonActivate()
+    OrderManager.waiting(1)
+    OrderManager.ServoOn()
+    OrderManager.waiting(1)
+    OrderManager.ServoOff()
+    OrderManager.waiting(1)
+    OrderManager.CanonDesactivate()
+    
+    #Allumage des leds
+    OrderManager.waiting(1)
+    OrderManager.ledOn()
 
 if __name__ == "__main__":
     def readEsay(pipe1, pipe2):
