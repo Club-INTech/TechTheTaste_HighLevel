@@ -67,45 +67,6 @@ def debugSimpleOrderStraight4(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA,
     
     log.logMessage(2,"simulation finished", 0)
 
-#-----------------------------------------------------------------------------------------------------------------------------------------------------
-#------------------------------------------------------ debug Capture --------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------------------------------------------------------------------------------
-
-def debugSimpleOrderCaptureCakeMid(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
-    log.logMessage(2,"scenario test simple order : CaptureCakeMid (1,0)", 0)
-    
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
-    
-    RIGHT, MID, LEFT = 1,2,3
-    x, y = 1, 0
-    slot = MID
-    OrderManager.captureCake(x, y, slot)
-    
-    log.logMessage(2,"simulation finished", 0)
-    
-def debugSimpleOrderCaptureCakeRight(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
-    log.logMessage(2,"scenario test simple order : CaptureCakeRight (1,0)", 0)
-    
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
-    
-    RIGHT, MID, LEFT = 1,2,3
-    x, y = 1, 0
-    slot = RIGHTs
-    OrderManager.captureCake(x, y, slot)
-    
-    log.logMessage(2,"simulation finished", 0)
-
-def debugSimpleOrderCaptureCakeLeft(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
-    log.logMessage(2,"scenario test simple order : CaptureCakeLeft (1,0) ", 0)
-    
-    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
-    
-    RIGHT, MID, LEFT = 1,2,3
-    x, y = 1, 0
-    slot = LEFT
-    OrderManager.captureCake(x, y, slot)
-    
-    log.logMessage(2,"simulation finished", 0)
     
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------ debug Actionneur2A -----------------------------------------------------------------------
@@ -181,119 +142,94 @@ def ambiScenar2A(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToAc
 #------------------------------------------------------ scenario part --------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------------------------------------------------------------
 
-def scenarioSimpleGreen(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
-    log.logMessage(2,"scenario simple", 0)
+def scenario_green_1(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
+    
+    log.logMessage(2, "scenario green 1", 0)
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
     
-    positionGlacage1, positionCreme1, positionGenoise1 = (0,0), (0,0), (0,0)
-    positionGlacage2, positionCreme2, positionGenoise2 = (0,0), (0,0), (0,0)
-    positionDeposit1, positionDeposit2 = (0,0), (0,0)
-    positionEnd = (0,0)
+    #Dépôt des cerises
+    OrderManager.CanonActivate()
+    OrderManager.ServoOn()
+    time.sleep(5)
+    OrderManager.ServoOff()
+    OrderManager.CanonDesactivate()
     
-    RIGHT, MID, LEFT = 1, 2, 3
-
+    #Poussage de 2 piles de génoises
+    OrderManager.moovToSimple(-0.45,0)
+    time.sleep(5)
+    OrderManager.moovToSimple(-1.65,0)
+    time.sleep(5)
     
+    #Récupération des cerises
+    OrderManager.moovToSimple(-1.125,0,True)
+    time.sleep(5)
     
-    ########## First wave ############
+    OrderManager.moovToSimple(-1.125,-0.1)
+    time.sleep(5)
+    OrderManager.VaccumActivate()
+    time.sleep(1)
     
-    OrderManager.openCake(LEFT)
-    OrderManager.openCake(MID)
-    OrderManager.openCake(RIGHT)
-   
-    OrderManager.moovToSimple(positionGlacage1)
-    OrderManager.captureCake(positionGlacage1,MID)
-    OrderManager.lockCake(MID)
+    OrderManager.moovToSimple(-1.165,-0.1)
+    time.sleep(5)
     
-    OrderManager.moovToSimple(positionCreme1)
-    OrderManager.captureCake(positionCreme1,LEFT)
-    OrderManager.lockCake(LEFT)
+    OrderManager.moovToSimple(0,0)
+    time.sleep(5)
     
-    OrderManager.moovToSimple(positionGenoise1)
-    OrderManager.captureCake(positionGenoise1,RIGHT)
-    OrderManager.lockCake(RIGHT)
+    #Dépot des cerises
+    OrderManager.CanonActivate()
+    OrderManager.ServoOn()
+    time.sleep(5)
+    OrderManager.ServoOff()
+    OrderManager.CanonDesactivate()
     
-    #Phase 1
+    #Allumage des leds
+    OrderManager.ledOn()
     
-    OrderManager.moovToSimple(positionDeposit1)
+def scenario_blue_1(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator):
     
-    OrderManager.sortCakePhase1(genoise=RIGHT,creme=LEFT,glacage=MID)
+    log.logMessage(2, "scenario green 1", 0)
     
-    OrderManager.putCherry()
-    OrderManager.openCake(RIGHT)
-    OrderManager.releaseCake()
+    OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
     
-    #Phase 2
+    #Dépôt des cerises
+    OrderManager.CanonActivate()
+    OrderManager.ServoOn()
+    time.sleep(5)
+    OrderManager.ServoOff()
+    OrderManager.CanonDesactivate()
     
-    OrderManager.moovToSimple(positionDeposit1) #a bit different
+    #Poussage de 2 piles de génoises
+    OrderManager.moovToSimple(-0.45,0)
+    time.sleep(5)
+    OrderManager.moovToSimple(-1.65,0)
+    time.sleep(5)
     
-    OrderManager.sortCakePhase2(genoise=RIGHT,creme=LEFT,glacage=MID)
+    #Récupération des cerises
+    OrderManager.moovToSimple(-1.125,0,True)
+    time.sleep(5)
     
-    OrderManager.putCherry()
-    OrderManager.openCake(RIGHT)
-    OrderManager.releaseCake()
+    OrderManager.moovToSimple(-1.125,0.1)
+    time.sleep(5)
+    OrderManager.VaccumActivate()
+    time.sleep(1)
     
-    #Phase 3
+    OrderManager.moovToSimple(-1.165,0.1)
+    time.sleep(5)
     
-    OrderManager.moovToSimple(positionDeposit1) #a bit different
+    OrderManager.moovToSimple(0,0)
+    time.sleep(5)
     
-    OrderManager.sortCakePhase3(genoise=RIGHT,creme=LEFT,glacage=MID)
+    #Dépot des cerises
+    OrderManager.CanonActivate()
+    OrderManager.ServoOn()
+    time.sleep(5)
+    OrderManager.ServoOff()
+    OrderManager.CanonDesactivate()
     
-    OrderManager.putCherry()
-    OrderManager.openCake(RIGHT)
-    OrderManager.releaseCake()
+    #Allumage des leds
+    OrderManager.ledOn()
     
-    ########## Second wave ############
-    
-    OrderManager.openCake(LEFT)
-    OrderManager.openCake(MID)
-    OrderManager.openCake(RIGHT)
-    
-    OrderManager.moovToSimple(positionGenoise2)
-    OrderManager.captureCake(positionGenoise2,RIGHT)
-    OrderManager.lockCake(RIGHT)
-    
-    OrderManager.moovToSimple(positionCreme2)
-    OrderManager.captureCake(positionCreme2,LEFT)
-    OrderManager.lockCake(LEFT)
-    
-    OrderManager.moovToSimple(positionGlacage2)
-    OrderManager.captureCake(positionGlacage2, MID)
-    OrderManager.lockCake(MID)
-    
-    #Phase 1
-    
-    OrderManager.moovToSimple(positionDeposit2)
-    
-    OrderManager.sortCakePhase1(genoise=RIGHT,creme=LEFT,glacage=MID)
-    
-    OrderManager.putCherry()
-    OrderManager.openCake(RIGHT)
-    OrderManager.releaseCake()
-    
-    #Phase 2
-    
-    OrderManager.moovToSimple(positionDeposit2) #a bit different
-    
-    OrderManager.sortCakePhase2(genoise=RIGHT,creme=LEFT,glacage=MID)
-    
-    OrderManager.putCherry()
-    OrderManager.openCake(RIGHT)
-    OrderManager.releaseCake()
-    
-    #Phase 3
-    
-    OrderManager.moovToSimple(positionDeposit2) #a bit different
-    
-    OrderManager.sortCakePhase3(genoise=RIGHT,creme=LEFT,glacage=MID)
-    
-    OrderManager.putCherry()
-    OrderManager.openCake(RIGHT)
-    OrderManager.releaseCake()
-    
-    OrderManager.moovToSimple(positionEnd)
-    
-    log.logMessage(2,"simulation finished", 0)
 
 
 if __name__ == "__main__":
