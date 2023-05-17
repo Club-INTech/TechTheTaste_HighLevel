@@ -5,7 +5,7 @@ import os
 import time
 from multiprocessing import Pipe, Process
 from math import sqrt, asin
-#from RPi.GPIO import GPIO
+import RPi.GPIO as GPIO
 # path managing
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'utils'))
 sys.path.insert(1, os.path.join(os.path.dirname(__file__), '..', 'microProcess'))
