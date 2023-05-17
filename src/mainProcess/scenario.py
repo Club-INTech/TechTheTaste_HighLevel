@@ -152,16 +152,16 @@ def scenario_simple_green(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pip
     
     OrderManager.waitingJumper(1)
     
-    OrderManager.waiting(0)
+    OrderManager.waiting(pipeMainToMicro1,0)
     OrderManager.moovToSimple(0.40,0)
     
-    OrderManager.waiting(0)
+    OrderManager.waiting(pipeMainToMicro1,0)
     OrderManager.moovToSimple(0,0.40)
     
-    OrderManager.waiting(0)
+    OrderManager.waiting(pipeMainToMicro1,0)
     OrderManager.moovToSimple(0,0.40)
     
-    OrderManager.waiting(0)
+    OrderManager.waiting(pipeMainToMicro1,0)
     OrderManager.moovToSimple(0,0.40)
     
     
