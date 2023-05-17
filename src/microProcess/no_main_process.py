@@ -128,7 +128,7 @@ class JumperNode(Node):
         GPIO.setup(self.jumper, GPIO.IN)
         self.gpio = GPIO.input
 
-    def update(self, ready):
+    def tick(self, ready):
         self.waiting = self.edge[self.gpio(self.jumper)]
         print(f"Waiting: {self.waiting}", end='')
         return not self.waiting
