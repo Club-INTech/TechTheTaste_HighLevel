@@ -150,6 +150,8 @@ def scenario_simple_green(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pip
     
     OrderManager = ord.OrderToMicroProcress(pipeMainToMicro1, pipeMainToMicro2, pipeMaintoLPA, pipeMainToActuator)
     
+    OrderManager.waitingJumper(1)
+    
     OrderManager.waiting(0)
     OrderManager.moovToSimple(0.40,0)
     
