@@ -9,7 +9,7 @@ DMAX = 2000
 BORD = 25
 
 class Lili(object) :
-    log = True
+    log = False
 
     def __init__(self):
         self.state = 0
