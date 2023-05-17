@@ -142,11 +142,14 @@ class Scenario:
         self.node: Node = node
 
     def main_loop(self):
-        while True:
+        date = time.perf_counter()
+        while time.perf_counter() - date < 100.:
             if self.pipe.poll():
                 self.ready[self.pipe.recv()] = True
             print('\r', end='')
             self.node.tick(self.ready)
+        self.robot.stop()
+        print('STOPPED')
 
     def reset(self):
         self.node.reset()
