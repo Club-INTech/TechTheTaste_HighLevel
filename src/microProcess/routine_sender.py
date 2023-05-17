@@ -4,12 +4,37 @@ import time
 
 
 def goto(angle, magnitude):
-    print(angle, magnitude
-          )
+    print(angle, magnitude)
     if angle:
         yield ROT, 0, angle + 0x10000 * (angle < 0)
     if magnitude:
         yield MOV, 0, magnitude + 0x10000 * (magnitude < 0)
+
+
+
+
+def angle_to_ticks(angle, robot):
+    return int(-TICKS_PER_REVOLUTION * angle * robot.axle_track / (4 * math.pi * WHEEL_RADIUS))
+
+
+def twos_complement(x):
+    return x + 0x10000 * (x < 0)
+
+
+def new_rot(robot, target):
+    diff = ((robot.h - target + math.pi) % (2 * math.pi)) - math.pi
+    while abs(diff) > 1 * math.pi / 180:
+        yield ROT, 0, max(-200, min(200, twos_complement(angle_to_ticks(target - robot.h, robot))))
+        diff = ((robot.h - target + math.pi) % (2 * math.pi)) - math.pi
+
+
+def new_goto(robot, x, y, reverse=False):
+    dx, dy = x - robot.x, y - robot.y
+    mag = (dx * dx + dy * dy) ** .5
+    while mag > 0.04:
+        pass
+
+
 
 def rot(angle):
     yield ROT, 0, angle + 0x10000 * (angle < 0)
@@ -40,6 +65,7 @@ def move_cake(to_src, down1, to_des, down2):
     yield set_arm_y(down2)
     yield PUM, 1, 0
     yield set_arm_y(-down2)
+
 
 
 def stop():

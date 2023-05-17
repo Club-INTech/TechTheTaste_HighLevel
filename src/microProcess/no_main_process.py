@@ -31,6 +31,9 @@ class Node:
     def tick(self, ready):
         pass
 
+    def reset(self):
+        pass
+
 
 class SequenceNode(Node):
     def __init__(self, *nodes: Node):
@@ -47,6 +50,11 @@ class SequenceNode(Node):
         self.sequence.append(node)
         return self
 
+    def reset(self):
+        for node in self.sequence:
+            node.reset()
+        self.current_index = 0
+
 
 class ParallelNode(Node):
     def __init__(self, *sequences: Node):
@@ -57,6 +65,10 @@ class ParallelNode(Node):
         for seq in self.sequences:
             res &= seq.tick(ready)
         return res
+
+    def reset(self):
+        for node in self.sequences:
+            node.reset()
 
 
 class RobotAction(Node):
@@ -72,6 +84,9 @@ class RobotAction(Node):
             getattr(self.robot, self.func_name)(*self.args)
         return ready[self.type_]
 
+    def reset(self):
+        self.running = False
+
 
 class Action(Node):
     done = False
@@ -85,6 +100,9 @@ class Action(Node):
             self.func()
         return True
 
+    def reset(self):
+        self.done = False
+
 
 class TestWaiter(Node):
     def __init__(self, delay):
@@ -96,6 +114,23 @@ class TestWaiter(Node):
         elapsed = time.perf_counter() - self.date
         print(f'Test waiter: {elapsed:.2f}/{self.delay} s ({elapsed > self.delay})', end=' ')
         return elapsed > self.delay
+
+
+class JumperNode(Node):
+    waiting, jumper = True, 24
+
+    def __init__(self, edge=True):
+        # edge True->front montant, False: Front descendant
+
+        import RPi.GPIO as GPIO  # noqa
+        self.edge = (not edge, edge)
+        GPIO.setup(self.jumper, GPIO.IN)
+        self.gpio = GPIO.input
+
+    def update(self, ready):
+        self.waiting = self.edge[self.gpio(self.jumper)]
+        print(f"Waiting: {self.waiting}", end='')
+        return not self.waiting
 
 
 class Scenario:
@@ -112,26 +147,32 @@ class Scenario:
             print('\r', end='')
             self.node.tick(self.ready)
 
+    def reset(self):
+        self.node.reset()
+
 
 def main_process(pipe):
     r.storage = ['R', '', '']
     s = SequenceNode()
-    s.append(RobotAction(r, MOVEMENT, 'goto', .30, 0.))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .60, .0))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .70, -.3))
-    s.append(RobotAction(r, MOVEMENT, 'goto', 1., -.4))
-    s.append(RobotAction(r, MOVEMENT, 'goto', 1.35, -.4))
-    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.4))
-    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.1))
-    s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.3, True))
-    s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    s.append(RobotAction(r, MOVEMENT, 'goto', 1.3, -.25))
-    s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .85, -.18))
-    s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .5, -.1))
-    s.append(RobotAction(r, MOVEMENT, 'goto', .1, -.05))
+    # s.append(RobotAction(r, MOVEMENT, 'goto'))
 
+    # s.append(RobotAction(r, MOVEMENT, 'goto', .30, 0.))
+    # s.append(RobotAction(r, MOVEMENT, 'goto', .60, .0))
+    # s.append(RobotAction(r, MOVEMENT, 'goto', .70, -.3))
+    # s.append(RobotAction(r, MOVEMENT, 'goto', 1., -.4))
+    # s.append(RobotAction(r, MOVEMENT, 'goto', 1.35, -.4))
+    # s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.4))
+    # s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.1))
+    # s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.3, True))
+    # s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
+    # s.append(RobotAction(r, MOVEMENT, 'goto', 1.3, -.25))
+    # s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
+    # s.append(RobotAction(r, MOVEMENT, 'goto', .85, -.18))
+    # s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
+    # s.append(RobotAction(r, MOVEMENT, 'goto', .5, -.1))
+    # s.append(RobotAction(r, MOVEMENT, 'goto', .1, -.05))
+
+    # ParallelNode(RobotAction(r, MOVEMENT, 'goto', 0.4, 0), RobotAction(r, ACTION, 'move_arm', 3000, 3000))
 
     # s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
     # s.append(Action(r, MOVEMENT, 'goto', .4, 0.))
@@ -142,11 +183,11 @@ def main_process(pipe):
     # p = ParallelNode(w1, w2)
     # s = SequenceNode()
     # s.append(p)
-    s.append(Action(lambda: print('\nFinished')))
+    # s.append(Action(lambda: print('\nFinished')))
 
     # sc = Scenario(r, pipe, s)
     # sc = Scenario(r, pipe, RobotAction(r, ACTION, 'move_cake', LEFT, RIGHT))
-    sc = Scenario(r, pipe, s)
+    sc = Scenario(r, pipe, s.append(JumperNode()))
     sc.main_loop()
 
 
