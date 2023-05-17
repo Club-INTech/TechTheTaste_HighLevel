@@ -143,10 +143,10 @@ class Scenario:
 
     def main_loop(self):
         date = time.perf_counter()
-        while time.perf_counter() - date < 100.:
+        while (delay := time.perf_counter() - date) < 100.:
             if self.pipe.poll():
                 self.ready[self.pipe.recv()] = True
-            print('\r', end='')
+            print('\r', delay, ' ', end='')
             self.node.tick(self.ready)
         self.robot.stop()
         print('STOPPED')
