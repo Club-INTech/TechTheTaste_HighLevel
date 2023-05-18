@@ -284,10 +284,10 @@ def main_process(pipe):
     )
 
     s_panik = SequenceNode()
-    sc_panik = Scenario(r, pipe, s_panik
-        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-        .append(RobotAction(r, MOVEMENT, 'goto', -.2, 0., True))
-    )
+    # sc_panik = Scenario(r, pipe, s_panik
+    #     .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+    #     .append(RobotAction(r, MOVEMENT, 'goto', -.2, 0., True))
+    # )
 
     print('Main Process')
     sc_vert.main_loop()
