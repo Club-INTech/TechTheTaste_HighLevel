@@ -45,7 +45,7 @@ class MicroProcess(MicroManager):
         if self.lidar_pipe.poll():
             old_lidar = self.lidar_state
             self.lidar_state = self.lidar_pipe.recv()
-            self.log_method(f"Received from Lidar: {self.lidar_state}")
+            self.log_method(f"Received from Lidar: {self.lidar_state}", ' ' * 90)
             if old_lidar != self.lidar_state:
                 print('Sending LIDAR order\n')
             if PICO1 in self.serials and old_lidar != self.lidar_state:
