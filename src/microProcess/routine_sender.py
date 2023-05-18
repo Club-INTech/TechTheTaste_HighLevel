@@ -58,8 +58,8 @@ def set_arm_y(dy):
 
 def move_cake(to_src, down1, to_des, down2):
     yield set_arm_x(to_src)
-    yield set_arm_y(down1)
     yield PUM, 1, 1
+    yield set_arm_y(down1)
     yield set_arm_y(-down1)
     yield set_arm_x(to_des)
     yield set_arm_y(down2)
