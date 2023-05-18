@@ -64,7 +64,7 @@ class Lili:
                 last = len(string)
                 time.sleep(0.1)
         except KeyboardInterrupt:
-            print()
+            print('\nLidar process terminated')
 
 
     def display_vision(self, value):
