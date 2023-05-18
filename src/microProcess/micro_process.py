@@ -47,6 +47,7 @@ class MicroProcess(MicroManager):
             self.lidar_state = self.lidar_pipe.recv()
             self.log_method(f"Received from Lidar: {self.lidar_state}")
             if PICO1 in self.serials and old_lidar != self.lidar_state:
+                print('Sending LIDAR order\n')
                 usb = self.serials[PICO1]
                 usb.send(usb.make_message(LID, 0, 0))
         if self.main_pipe.poll():
