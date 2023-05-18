@@ -235,8 +235,8 @@ def main_process(pipe):
         .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
         .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
         .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-        # .append(Action(lambda: setattr(r, 'storage', ['MMM', 'RRR', 'JJJ'])))
-        # .append(get_tri(r, ['MMM', 'RRR', 'JJJ']))
+        .append(Action(lambda: setattr(r, 'storage', ['MMM', 'RRR', 'JJJ'])))
+        .append(get_tri(r, ['MMM', 'RRR', 'JJJ']))
         .append(RobotAction(r, MOVEMENT, 'goto', -.08, 0., True))
         .append(RobotAction(r, MOVEMENT, 'goto', -.08, 0., True))
         .append(RobotAction(r, MOVEMENT, 'goto', -.08, 0., True))
@@ -291,7 +291,7 @@ def main_process(pipe):
     )
 
     print('Main Process')
-    sc_panik.main_loop()
+    sc_bleu.main_loop()
     # sc_vert.main_loop()
 
 
