@@ -172,7 +172,8 @@ class Scenario:
 
 def main_process(pipe):
     r.storage = ['R', '', '']
-    s = SequenceNode()
+    s_blue = SequenceNode()
+    s_vert = SequenceNode()
     # s.append(RobotAction(r, MOVEMENT, 'goto'))
 
     # s.append(RobotAction(r, MOVEMENT, 'goto', .30, 0.))
@@ -207,7 +208,7 @@ def main_process(pipe):
     # sc = Scenario(r, pipe, s)
     # sc = Scenario(r, pipe, RobotAction(r, ACTION, 'move_cake', LEFT, RIGHT))
 
-    sc_bleu = Scenario(r, pipe, s
+    sc_bleu = Scenario(r, pipe, s_blue
                   .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
                   .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
                   .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 8))
@@ -226,7 +227,7 @@ def main_process(pipe):
     )
     # sc = Scenario.test(r, pipe)
 
-    sc_vert = Scenario(r, pipe, s
+    sc_vert = Scenario(r, pipe, s_vert
                   .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
                   .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
                   .append(RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8))
