@@ -55,25 +55,42 @@ class Lili:
 
     def lidar_stop3(self, conn):
         '''Send a message to the main process if drobot < dmin'''
-        self.state = 0
-        last = 0
+        self.state, last = 0, 0
         try:
             while True:
+
+                # boundaries
                 start = int(linera_interpolate(-90, -135, 135, 0, 1080))
                 end = int(linera_interpolate(90, -135, 135, 0, 1080))
-                timestamp, data = self.laser.get_filtered_dist(start=start, end=end, grouping=1)
+
+                # reading data (do not care about time stamps)
+                _, data = self.laser.get_filtered_dist(start=start)
                 dists = data[:, 1]
-                div = 5 if len(dists) // 5 < 100 else 6
-                string = ''.join(self.display_vision(v) for v in dists[:dists.shape[0] // div * div].reshape((dists.shape[0] // div, div)).min(axis=1))
-                print('\r', string, sep='', end=' ' * max(0, last - len(string)))
-                last = len(string)
+
+                if self.log:
+                    # show lidar in <100 characters
+                    div = len(dists) // 100
+                    string = ''.join(
+                        self.display_vision(v) for v in dists[:dists.shape[0] // div * div]
+                        .reshape((dists.shape[0] // div, div))
+                        .min(axis=1)
+                    )
+                    print('\r', string, sep='', end=' ' * max(0, last - len(string)))
+
+                    # to get rid of exceeding characters
+                    last = len(string)
+
+                old_state, self.state = self.state, dists.min() < dmin
+                if old_state != self.state:
+                    conn.send(self.state)
+
                 time.sleep(0.1)
         except KeyboardInterrupt:
             print('\nLidar process terminated')
 
     def display_vision(self, value):
         char_range = 50, 100, 150, 200, 500, 1000, 2000, float('inf')
-        proximity ='█■*÷×•º '
+        proximity = '█■*÷×•º '
         for char, r in zip(proximity, char_range):
             if value < r:
                 if value < dmin:
