@@ -207,7 +207,7 @@ def main_process(pipe):
     # sc = Scenario(r, pipe, s)
     # sc = Scenario(r, pipe, RobotAction(r, ACTION, 'move_cake', LEFT, RIGHT))
 
-    sc = Scenario(r, pipe, s.append(RobotAction(r, MOVEMENT, 'goto', .2, 0.)).append(RobotAction(r, MOVEMENT, 'goto', .2, 0.)).append(RobotAction(r, MOVEMENT, 'goto', .2, 0.)).append(RobotAction(r, MOVEMENT, 'goto', .2, 0.)))
+    sc = Scenario(r, pipe, s.append(RobotAction(r, MOVEMENT, 'goto', .2, 0.)).append(RobotAction(r, MOVEMENT, 'goto', .2, 0.)).append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 8)).append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 8)).append(RobotAction(r, MOVEMENT, 'goto', .2, 0.)))
 
     # sc = Scenario.test(r, pipe)
     sc.main_loop()
