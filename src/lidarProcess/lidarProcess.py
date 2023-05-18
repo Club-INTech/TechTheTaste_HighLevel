@@ -49,7 +49,7 @@ class Lili:
                     self.state = 0
             time.sleep(0.1)
 
-    def lidar_stop3(self, conn, chars=45):
+    def lidar_stop3(self, conn, chars=90):
         '''Send a message to the main process if drobot < dmin'''
         self.state = 0
         while True:
