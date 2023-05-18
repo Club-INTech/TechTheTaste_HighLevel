@@ -67,8 +67,8 @@ def move_cake(to_src, down1, to_des, down2):
 
 
 def stop():
-    yield MOV, 0, 0
-    # yield ARM, 0, 0
+    yield CAN, 0, 0
+    yield ARM, 0, 0x00010001
     yield PUM, 1, 0
 
 
