@@ -20,7 +20,7 @@ class MicroProcess(MicroManager):
         self.use_odometry = use_odometry
         MicroManager.__init__(self)
 
-        self.last = [0, 0]
+        self.last = [-1, -1]
         self.routines = [empty(), empty()]
         self.run()
 
