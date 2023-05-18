@@ -22,11 +22,8 @@ class Lili:
 
     def __init__(self):
         self.state = 0
-        try:
-            self.laser = hokuyo.HokuyoLX()
-        except hokuyolx.exceptions.HokuyoException as e:
-            print(f'\033[91m{e}\033[0m')
-            return
+        self.laser = hokuyo.HokuyoLX()
+
         print(self.laser.amin, self.laser.amax, 'points')
         print(self.laser.get_angles(grouping=self.laser.amax) * 180 / math.pi, 'full range in degrees')
 
@@ -55,7 +52,7 @@ class Lili:
                     self.state = 0
             time.sleep(0.1)
 
-    def lidar_stop3(self, conn, chars=90):
+    def lidar_stop3(self, conn):
         '''Send a message to the main process if drobot < dmin'''
         self.state = 0
         last = 0
@@ -63,17 +60,13 @@ class Lili:
             while True:
                 start = int(linera_interpolate(-90, -135, 135, 0, 1080))
                 end = int(linera_interpolate(90, -135, 135, 0, 1080))
-                timestamp, data = self.laser.get_filtered_dist(start=start, end=end, grouping=5)
-                # print(data[:, 0] * 180 / math.pi)
-                string = ''.join(self.display_vision(v) for v in data[:, 1])
+                timestamp, data = self.laser.get_filtered_dist(start=start, end=end, grouping=1)
+                string = ''.join(self.display_vision(v) for v in data[:, 1::5])
                 print('\r', string, sep='', end=' ' * max(0, last - len(string)))
                 last = len(string)
                 time.sleep(0.1)
         except KeyboardInterrupt:
             print('\nLidar process terminated')
-        except hokuyolx.exceptions.HokuyoException as e:
-            print(f'\033[91m{e}\033[0m')
-            return
 
     def display_vision(self, value):
         char_range = 50, 100, 150, 200, 500, 1000, 2000, float('inf')
@@ -86,6 +79,7 @@ class Lili:
                 else:
                     # green
                     return f'\033[92m{char}\033[0m'
+
     def lidarstop2(self, conn, Xrobot, Yrobot, Hrobot, color) -> None:
         '''Send a message to the main process if drobot < dmin'''
         
