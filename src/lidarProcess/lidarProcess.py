@@ -49,7 +49,7 @@ class Lili:
                     self.state = 0
             time.sleep(0.1)
 
-    def lidar_stop2(self, conn):
+    def lidar_stop3(self, conn):
         '''Send a message to the main process if drobot < dmin'''
         self.state = 0
         while True:
@@ -79,7 +79,7 @@ class Lili:
         proximity = ' ░▒▓█'
         proximity2 = ' º•°×÷*■█'
 
-    def lidarstop3(self, conn, Xrobot, Yrobot, Hrobot, color) -> None:
+    def lidarstop2(self, conn, Xrobot, Yrobot, Hrobot, color) -> None:
         '''Send a message to the main process if drobot < dmin'''
         
         if color == 1 :
@@ -142,6 +142,6 @@ if __name__ == "__main__":
     conn1, conn2 = Pipe()
     lidar = Lili()
     lidar.log = True
-    lidar.lidarstop3(conn1)
+    lidar.lidar_stop3(conn1)
     
 
