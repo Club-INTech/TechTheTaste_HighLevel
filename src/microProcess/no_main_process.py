@@ -290,7 +290,7 @@ def main_process(pipe):
     )
 
     print('Main Process')
-    sc_vert.main_loop()
+    sc_panik.main_loop()
     # sc_vert.main_loop()
 
 
