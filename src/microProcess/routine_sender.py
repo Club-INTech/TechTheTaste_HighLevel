@@ -1,6 +1,7 @@
 from constants import *
 from multiprocessing import Value
-import time
+from shell2 import BaseShell
+
 
 
 def goto(angle, magnitude):
@@ -71,6 +72,8 @@ def stop():
     yield ARM, 0, 0x00010001
     yield PUM, 1, 0
 
+def set_var(value):
+    yield VAR_SET, VAR_DICT['vitesse'], value
 
 def place_cherry():
     pass
@@ -79,7 +82,7 @@ def place_cherry():
 class Robot:
 
     def __init__(self, slot_size, axle_track):
-        self.micro_pie = None
+        self.micro_pipe = None
         self.slot_size = slot_size
         self.storage = ['', '', '']
         self._x, self._y, self._h, self.arm_x = Value('f'), Value('f'), Value('f'), 0
@@ -141,6 +144,9 @@ class RoutineSender(Robot):
 
     def place_cherry(self, destination):
         pass
+
+    def set_speed(self, speed):
+        self.micro_pipe.send((ACTION, set_var, (BaseShell.float_to_int(speed),)))
 
 
 if __name__ == '__main__':

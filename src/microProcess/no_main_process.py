@@ -5,6 +5,7 @@ from constants import *
 import multiprocessing as mp
 from routine_sender import RoutineSender
 import os, sys
+import json
 
 robot_x, robot_y, robot_h = mp.Value('f', 0.), mp.Value('f', 0.), mp.Value('f', 0.)
 
@@ -147,12 +148,23 @@ class JumperNode(Node):
         return not self.waiting
 
 
+def get_tri(robot):
+    with open('tri.json') as f:
+        data = json.load(f)
+    isomorphism = tuple(robot.storage.index(x) for x in data['start'])
+    steps = (map(lambda t: isomorphism[int(t)], x.split('->')) for x in data['steps'])
+    return SequenceNode(*(RobotAction(robot, ACTION, 'move_cake', *x) for x in steps))
+
+
 class Scenario:
     def __init__(self, robot, pipe, node, party_time=100.):
         self.ready = [False, False]
         self.robot, self.pipe = robot, pipe
         robot.micro_pipe = pipe
-        self.node: Node = SequenceNode(JumperNode(), PartyTimer(node, party_time), Action(lambda: print("\nFINI\n")), RobotAction(robot, MOVEMENT, 'stop'))
+        self.node: Node = SequenceNode(
+            RobotAction(r, ACTION, 'set_speed', 90.),
+            JumperNode(),
+            PartyTimer(node, party_time), Action(lambda: print("\nFINI\n")), RobotAction(robot, MOVEMENT, 'stop'))
 
     def main_loop(self):
         while True:
@@ -171,7 +183,6 @@ class Scenario:
 
 
 def main_process(pipe):
-    r.storage = ['R', '', '']
     s_blue = SequenceNode()
     s_vert = SequenceNode()
     # s.append(RobotAction(r, MOVEMENT, 'goto'))
@@ -222,25 +233,25 @@ def main_process(pipe):
         .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
         .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
         .append(RobotAction(r, MOVEMENT, 'goto', .1, 0.))
+        .append(Action(lambda: setattr(r, 'storage', ['MMM', 'RRR', 'JJJ'])))
+        .append(get_tri(r))
     )
     # sc = Scenario.test(r, pipe)
 
     sc_vert = Scenario(r, pipe, s_vert
-          .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-          .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-          .append(RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8))
-          .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-          .append(RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8))
-          .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-          .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-          .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 8))
-          .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-          .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 8))
-          .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-          .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 8))
-          .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 12))
-          .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-          .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8))
+        .append(RobotAction(r, MOVEMENT, 'goto', .3, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .3, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .3, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .3, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 10))
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .1, 0.))
     )
 
     sc_bleu.main_loop()
