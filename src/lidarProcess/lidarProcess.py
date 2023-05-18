@@ -97,10 +97,12 @@ class Lili(object) :
         '''Send a message to the main process to restart the Agent'''
         conn.send(0)
 
+
 if __name__ == "__main__":
     from multiprocessing import Pipe
     conn1, conn2 = Pipe()
     lidar = Lili()
+    lidar.log = True
     lidar.lidarstop(conn1)
     
 
