@@ -210,20 +210,9 @@ def main_process(pipe):
 
     sc_bleu = Scenario(r, pipe, s_blue
                   .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-                  .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-                  .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 8))
-                  .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-                  .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 8))
-                  .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-                  .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
                   .append(RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8))
-                  .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
                   .append(RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8))
-                  .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-                  .append(RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8))
-                  .append(RobotAction(r, MOVEMENT, 'rotate', -math.pi / 12))
-                  .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-                  .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+
     )
     # sc = Scenario.test(r, pipe)
 
@@ -245,8 +234,8 @@ def main_process(pipe):
                   .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
     )
 
-    # sc_bleu.main_loop()
-    sc_vert.main_loop()
+    sc_bleu.main_loop()
+    # sc_vert.main_loop()
 
 
 if __name__ == '__main__':
