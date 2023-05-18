@@ -67,6 +67,10 @@ class Lili:
                 _, data = self.laser.get_filtered_dist(start=start, end=end)
                 dists = data[:, 1]
 
+                old_state, self.state = self.state, dists.min() < dmin
+                if old_state != self.state:
+                    conn.send(self.state)
+
                 if self.log:
                     # show lidar in <90 characters
                     div = len(dists) // 90
@@ -75,14 +79,10 @@ class Lili:
                         .reshape((dists.shape[0] // div, div))
                         .min(axis=1)
                     )
-                    print('\r', string, sep='', end=' ' * max(0, last - len(string)))
+                    print('\r', f'{self.state:^8s}', string, sep='', end=' ' * max(0, last - len(string)))
 
                     # to get rid of exceeding characters
                     last = len(string)
-
-                old_state, self.state = self.state, dists.min() < dmin
-                if old_state != self.state:
-                    conn.send(self.state)
 
                 time.sleep(0.1)
         except KeyboardInterrupt:
