@@ -79,7 +79,7 @@ class Lili:
                         .reshape((dists.shape[0] // div, div))
                         .min(axis=1)
                     )
-                    print('\r', f'{self.state:^8s}', string, sep='', end=' ' * max(0, last - len(string)))
+                    print('\r', f'{str(self.state):^8s}', string, sep='', end=' ' * max(0, last - len(string)))
 
                     # to get rid of exceeding characters
                     last = len(string)
