@@ -66,8 +66,12 @@ class Lili:
         proximity ='█■*÷×•º '
         for char, r in zip(proximity, char_range):
             if value < r:
-                return char
-
+                if value < dmin:
+                    # red
+                    return f'\033[91m{char}\033[0m'
+                else:
+                    # green
+                    return f'\033[92m{char}\033[0m'
     def lidarstop2(self, conn, Xrobot, Yrobot, Hrobot, color) -> None:
         '''Send a message to the main process if drobot < dmin'''
         
