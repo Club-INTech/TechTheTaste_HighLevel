@@ -265,11 +265,32 @@ def main_process(pipe):
         .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
         .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
         .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        # .append(Action(lambda: setattr(r, 'storage', ['MMM', 'RRR', 'JJJ'])))
+        # .append(get_tri(r, ['MMM', 'RRR', 'JJJ']))
+        .append(RobotAction(r, MOVEMENT, 'goto', -.08, 0., True))
+        .append(RobotAction(r, MOVEMENT, 'goto', -.08, 0., True))
+        .append(RobotAction(r, MOVEMENT, 'goto', -.08, 0., True))
+        .append(RobotAction(r, MOVEMENT, 'goto', -.08, 0., True))
+        .append(RobotAction(r, MOVEMENT, 'goto', -.08, 0., True))
+        .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 6))
+        .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 6))
+        .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 6))
+        .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 6))
+        .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 6))
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
         .append(RobotAction(r, MOVEMENT, 'goto', .1, 0.))
     )
 
+    s_panik = SequenceNode
+    sc_panik = Scenario(r, pipe, s_panik
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', -.2, 0., True))
+    )
+
     print('Main Process')
-    sc_bleu.main_loop()
+    sc_vert.main_loop()
     # sc_vert.main_loop()
 
 
