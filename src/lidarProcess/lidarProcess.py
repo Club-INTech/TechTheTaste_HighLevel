@@ -64,7 +64,7 @@ class Lili:
                 end = int(linera_interpolate(90, -135, 135, 0, 1080))
 
                 # reading data (do not care about time stamps)
-                _, data = self.laser.get_filtered_dist(start=start)
+                _, data = self.laser.get_filtered_dist(start=start, end=end)
                 dists = data[:, 1]
 
                 if self.log:
