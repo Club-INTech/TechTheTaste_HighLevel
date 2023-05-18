@@ -283,7 +283,7 @@ def main_process(pipe):
         .append(RobotAction(r, MOVEMENT, 'goto', .1, 0.))
     )
 
-    s_panik = SequenceNode
+    s_panik = SequenceNode()
     sc_panik = Scenario(r, pipe, s_panik
         .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
         .append(RobotAction(r, MOVEMENT, 'goto', -.2, 0., True))
