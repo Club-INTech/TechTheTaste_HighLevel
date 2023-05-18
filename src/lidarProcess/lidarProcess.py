@@ -1,5 +1,7 @@
 import sys, os
 import time
+
+import hokuyolx.exceptions
 from hokuyolx import hokuyo
 import math
 
@@ -20,9 +22,13 @@ class Lili:
 
     def __init__(self):
         self.state = 0
-        self.laser = hokuyo.HokuyoLX()
+        try:
+            self.laser = hokuyo.HokuyoLX()
+        except hokuyolx.exceptions.HokuyoException as e:
+            print(f'\033[91m{e}\033[0m')
+            return
         print(self.laser.amin, self.laser.amax, 'points')
-        print(self.laser.get_angles(grouping=1080) * 180 / math.pi, 'range in degrees')
+        print(self.laser.get_angles(grouping=self.laser.amax) * 180 / math.pi, 'full range in degrees')
 
     def lidarstop(self, conn) -> None:
         '''Send a message to the main process if drobot < dmin'''
@@ -65,7 +71,9 @@ class Lili:
                 time.sleep(0.1)
         except KeyboardInterrupt:
             print('\nLidar process terminated')
-
+        except hokuyolx.exceptions.HokuyoException as e:
+            print(f'\033[91m{e}\033[0m')
+            return
 
     def display_vision(self, value):
         char_range = 50, 100, 150, 200, 500, 1000, 2000, float('inf')
