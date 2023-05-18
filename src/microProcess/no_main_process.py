@@ -255,6 +255,7 @@ def main_process(pipe):
         .append(RobotAction(r, MOVEMENT, 'goto', .1, 0.))
     )
 
+    print('Main Process')
     sc_bleu.main_loop()
     # sc_vert.main_loop()
 
