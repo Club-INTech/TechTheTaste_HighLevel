@@ -210,10 +210,10 @@ def main_process(pipe):
 
     sc_bleu = Scenario(r, pipe, s_blue
                   .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
-                  .append(RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8))
-                  .append(RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8))
-
-    )
+                  .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 8))
+                  .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 8))
+                  .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 8))
+   )
     # sc = Scenario.test(r, pipe)
 
     sc_vert = Scenario(r, pipe, s_vert
