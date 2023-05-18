@@ -15,6 +15,7 @@ class Lili(object) :
         self.state = 0
         self.laser = hokuyo.HokuyoLX()
         print(self.laser.amin, self.laser.amax)
+        print(self.laser.get_angles())
 
     def lidarstop(self, conn) -> None:
         '''Send a message to the main process if drobot < dmin'''
