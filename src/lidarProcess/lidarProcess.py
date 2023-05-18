@@ -59,9 +59,8 @@ class Lili:
             timestamp, data = self.laser.get_filtered_dist(start=start, end=end, grouping=2)
             # print(data[:, 0] * 180 / math.pi)
             string = ''.join(self.display_vision(v) for v in data[:, 1])
-            print('\r' + ' ' * last, end='')
+            print('\r', string, sep='', end=' ' * max(0, last - len(string)))
             last = len(string)
-            print('\r', string, sep='', end='')
             time.sleep(0.1)
 
 
