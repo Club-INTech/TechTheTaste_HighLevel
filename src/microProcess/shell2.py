@@ -296,6 +296,7 @@ def arm(self: BaseShell, left, right):
     if self.send(PICO2, ARM, 0, (self.twos_complement(left) << 16) | self.twos_complement(right)):
         self.wait(ARM)
 
+
 @command
 @arg_number(0)
 def lockers(self: BaseShell):
@@ -312,6 +313,14 @@ def pumps(self: BaseShell, line):
     pump_ids = set(int(x) for x in args)
     if self.send(PICO2, PUM, 1, sum(1 << pump_id for pump_id in pump_ids)):
         self.wait(PUM)
+
+
+@command
+@arg_number(0)
+def drawer(self: BaseShell):
+    if self.send(PICO2, DRA, 0, 0):
+        self.wait(DRA)
+
 
 
 @command
