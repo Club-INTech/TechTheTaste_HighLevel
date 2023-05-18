@@ -165,7 +165,8 @@ class Scenario:
 
     @classmethod
     def test(cls, robot, pipe):
-        return cls(robot, pipe, Timer(10.), delay=5.)
+        return cls(robot, pipe, Timer(10.), party_time=5.)
+
 
 def main_process(pipe):
     r.storage = ['R', '', '']
