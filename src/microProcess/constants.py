@@ -19,9 +19,9 @@ FEEDBACKS = 'ACKNOWLEDGEMENT', 'TERMINATION', 'VAR_GET', 'TRACKED', 'ERROR', 'WH
 
 # orders
 # c.f. https://docs.google.com/spreadsheets/d/1NDprMKYs9L7S2TkqgACDOh6OKDJRHhz_LrTCKmEuD-k/edit#gid=0
-LID, MOV, ROT, CAN, ARM, _, PUM, _, _, VAR_SET, VAR_GET, TRACK, _, _, LATCH, ID = range(16)
+LID, MOV, ROT, CAN, ARM, LOK, PUM, _, _, VAR_SET, VAR_GET, TRACK, _, _, LATCH, ID = range(16)
 ORDERS = (
-    'LIDAR', 'MOVE', 'ROT', 'CANCEL', 'ARM', '', 'PUMPS', '', '', 'VAR_SET', 'VAR_GET', 'TRACK',
+    'LIDAR', 'MOVE', 'ROT', 'CANCEL', 'ARM', 'LOCKERS', 'PUMPS', '', '', 'VAR_SET', 'VAR_GET', 'TRACK',
     '', '', 'LATCH', 'ID'
 )
 
@@ -32,7 +32,7 @@ CATEGORIES = 'MOVEMENT', 'ACTION', 'OTHER'
 
 # correspondence of an order type to each order
 TYPES = (
-    OTHER, MOVEMENT, MOVEMENT, MOVEMENT, ACTION, None, ACTION, None, None, MOVEMENT, MOVEMENT, MOVEMENT, None, None, OTHER,
+    OTHER, MOVEMENT, MOVEMENT, MOVEMENT, ACTION, ACTION, ACTION, None, None, MOVEMENT, MOVEMENT, MOVEMENT, None, None, OTHER,
     OTHER
 )
 
@@ -42,7 +42,7 @@ PICO1, PICO2, ARDUINO, WHO_CARES = range(4)
 BOARDS = 'MovementPico', 'ActionPico', 'Arduino'
 # correspondence of a controller to each order
 DESTINATION = (
-    PICO1, PICO1, PICO1, PICO1, PICO2, WHO_CARES, PICO2, WHO_CARES, WHO_CARES, PICO1, PICO1, PICO1, WHO_CARES,
+    PICO1, PICO1, PICO1, PICO1, PICO2, PICO2, PICO2, WHO_CARES, WHO_CARES, PICO1, PICO1, PICO1, WHO_CARES,
     WHO_CARES, ARDUINO, WHO_CARES
 )
 

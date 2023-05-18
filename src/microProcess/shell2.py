@@ -296,6 +296,13 @@ def arm(self: BaseShell, left, right):
     if self.send(PICO2, ARM, 0, (self.twos_complement(left) << 16) | self.twos_complement(right)):
         self.wait(ARM)
 
+@command
+@arg_number(0)
+def lockers(self: BaseShell):
+    if self.send(PICO2, LOK, 0, 0):
+        self.wait(LOK)
+
+
 
 @command
 def pumps(self: BaseShell, line):
