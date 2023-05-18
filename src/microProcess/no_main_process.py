@@ -149,10 +149,10 @@ class JumperNode(Node):
         return not self.waiting
 
 
-def get_tri(robot):
+def get_tri(robot, storage):
     with open('tri.json') as f:
         data = json.load(f)
-    isomorphism = tuple(robot.storage.index(x) for x in data['start'])
+    isomorphism = tuple(storage.index(x) for x in data['start'])
     steps = (map(lambda t: isomorphism[int(t)], x.split('->')) for x in data['steps'])
     return SequenceNode(*(RobotAction(robot, ACTION, 'move_cake', *x) for x in steps))
 
@@ -235,7 +235,7 @@ def main_process(pipe):
         .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
         .append(RobotAction(r, MOVEMENT, 'goto', .1, 0.))
         .append(Action(lambda: setattr(r, 'storage', ['MMM', 'RRR', 'JJJ'])))
-        .append(get_tri(r))
+        .append(get_tri(r, ['MMM', 'RRR', 'JJJ']))
     )
     # sc = Scenario.test(r, pipe)
 
