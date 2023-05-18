@@ -8,7 +8,14 @@ dmin = 500
 DMAX = 2000
 BORD = 25
 
-class Lili(object) :
+
+def linera_interpolate(t, a, b, x, y):
+    """t is between a and b, result is between x and y"""
+    return (t - a) / (b - a) * (y - x) + x
+
+class Lili:
+    # champs de vision: [ -235 °, 235 ° ]
+
     log = False
 
     def __init__(self):
@@ -20,13 +27,14 @@ class Lili(object) :
     def lidarstop(self, conn) -> None:
         '''Send a message to the main process if drobot < dmin'''
         self.state = 0
-        while True : 
-            timestamp, data = self.laser.get_filtered_dist(dmax=DMAX)
+        while True:
+            timestamp, data = self.laser.get_filtered_dist(start=int(linera_interpolate(-90, -235, 235, 0, 1080)), end=int(linera_interpolate(90, -235, 235, 0, 1080)), dmax=DMAX)
             Lr = []
+            print(data)
             for i in range(BORD, len(data)-BORD):
                 d = data[i][0]
-                if -1.175 < d  and d < 1.175 :
-                    Lr.append(data[i][1])
+                # if -1.175 < d  and d < 1.175 :
+                Lr.append(data[i][1])
             
             if not Lr:
                 pass
@@ -41,7 +49,11 @@ class Lili(object) :
                     self.restart(conn)
                     self.state = 0
             time.sleep(0.1)
-            
+
+    def display_vision(self, chars=30):
+        proximity = ' ░▒▓█'
+        proximity2 = ' º•°×÷*■█'
+
     def lidarstop2(self, conn, Xrobot, Yrobot, Hrobot, color) -> None:
         '''Send a message to the main process if drobot < dmin'''
         
