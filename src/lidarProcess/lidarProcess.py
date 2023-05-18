@@ -68,8 +68,8 @@ class Lili:
                 dists = data[:, 1]
 
                 if self.log:
-                    # show lidar in <100 characters
-                    div = len(dists) // 100
+                    # show lidar in <90 characters
+                    div = len(dists) // 90
                     string = ''.join(
                         self.display_vision(v) for v in dists[:dists.shape[0] // div * div]
                         .reshape((dists.shape[0] // div, div))
