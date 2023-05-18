@@ -80,6 +80,7 @@ class RobotAction(Node):
         self.robot, self.type_, self.func_name, self.args = robot, type_, func_name, args
 
     def tick(self, ready):
+        print(self.func_name, ' ', end='')
         if not self.running and ready[self.type_]:
             self.running = True
             ready[self.type_] = False
