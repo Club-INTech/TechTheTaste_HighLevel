@@ -28,13 +28,12 @@ class Lili:
         '''Send a message to the main process if drobot < dmin'''
         self.state = 0
         while True:
-            timestamp, data = self.laser.get_filtered_dist(start=int(linera_interpolate(-90, -135, 135, 0, 1080)), end=int(linera_interpolate(90, -135, 135, 0, 1080)), dmax=DMAX)
+            timestamp, data = self.laser.get_filtered_dist(dmax=DMAX)
             Lr = []
-            print(data[:, 0] * 180 / math.pi)
             for i in range(BORD, len(data)-BORD):
                 d = data[i][0]
-                # if -1.175 < d  and d < 1.175 :
-                Lr.append(data[i][1])
+                if -1.175 < d  and d < 1.175 :
+                    Lr.append(data[i][1])
             
             if not Lr:
                 pass
@@ -50,11 +49,37 @@ class Lili:
                     self.state = 0
             time.sleep(0.1)
 
+    def lidar_stop2(self, conn):
+        '''Send a message to the main process if drobot < dmin'''
+        self.state = 0
+        while True:
+            timestamp, data = self.laser.get_dist(start=int(linera_interpolate(-90, -135, 135, 0, 1080)),
+                                                  end=int(linera_interpolate(90, -135, 135, 0, 1080)),)
+            Lr = []
+            print(data[:, 0] * 180 / math.pi)
+            for i in range(BORD, len(data) - BORD):
+                d = data[i][0]
+                # if -1.175 < d  and d < 1.175 :
+                Lr.append(data[i][1])
+
+            if not Lr:
+                pass
+            else:
+                minlr = min(Lr)
+                if self.log:
+                    print(f'Limite {dmin} : distance = ', minlr)
+                if minlr < dmin and self.state == 0:  # stop the process
+                    self.stop(conn)
+                    self.state = 1
+                elif minlr > dmin and self.state == 1:  # retart the processus
+                    self.restart(conn)
+                    self.state = 0
+            time.sleep(0.1)
     def display_vision(self, chars=30):
         proximity = ' ░▒▓█'
         proximity2 = ' º•°×÷*■█'
 
-    def lidarstop2(self, conn, Xrobot, Yrobot, Hrobot, color) -> None:
+    def lidarstop3(self, conn, Xrobot, Yrobot, Hrobot, color) -> None:
         '''Send a message to the main process if drobot < dmin'''
         
         if color == 1 :
@@ -117,6 +142,6 @@ if __name__ == "__main__":
     conn1, conn2 = Pipe()
     lidar = Lili()
     lidar.log = True
-    lidar.lidarstop(conn1)
+    lidar.lidarstop3(conn1)
     
 
