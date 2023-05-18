@@ -36,6 +36,7 @@ class Node:
 
 
 class SequenceNode(Node):
+
     def __init__(self, *nodes: Node):
         self.sequence: list[Node] = list(nodes)
         self.current_index = 0
@@ -104,7 +105,19 @@ class Action(Node):
         self.done = False
 
 
-class TestWaiter(Node):
+class PartyTimer(Node):
+    def __init__(self, node: Node, delay):
+        self.date, self.delay, self.node = None, delay, node
+
+    def tick(self, ready):
+        if self.date is None:
+            self.date = time.perf_counter()
+        elapsed = time.perf_counter() - self.date
+        print(f'Test Party Timer: {elapsed:.2f}/{self.delay} s ({elapsed > self.delay})', end=' ')
+        return elapsed > self.delay or self.node.tick(ready)
+
+
+class Timer(Node):
     def __init__(self, delay):
         self.date, self.delay = None, delay
 
@@ -112,7 +125,7 @@ class TestWaiter(Node):
         if self.date is None:
             self.date = time.perf_counter()
         elapsed = time.perf_counter() - self.date
-        print(f'Test waiter: {elapsed:.2f}/{self.delay} s ({elapsed > self.delay})', end=' ')
+        print(f'Test Timer: {elapsed:.2f}/{self.delay} s ({elapsed > self.delay})', end=' ')
         return elapsed > self.delay
 
 
@@ -135,25 +148,24 @@ class JumperNode(Node):
 
 
 class Scenario:
-    def __init__(self, robot, pipe, node):
+    def __init__(self, robot, pipe, node, party_time=100.):
         self.ready = [False, False]
         self.robot, self.pipe = robot, pipe
         robot.micro_pipe = pipe
-        self.node: Node = node
+        self.node: Node = SequenceNode(JumperNode(), PartyTimer(node, party_time), Action(lambda: print("FINI")), RobotAction(robot, MOVEMENT, 'stop'))
 
     def main_loop(self):
-        date = time.perf_counter()
-        while (delay := time.perf_counter() - date) < 100.:
+        while True:
             if self.pipe.poll():
                 self.ready[self.pipe.recv()] = True
-            print('\r', delay, ' ', end='')
             self.node.tick(self.ready)
-        self.robot.stop()
-        print('STOPPED')
 
     def reset(self):
         self.node.reset()
 
+    @classmethod
+    def test(cls, robot, pipe):
+        return cls(robot, pipe, Timer(10.), delay=5.)
 
 def main_process(pipe):
     r.storage = ['R', '', '']

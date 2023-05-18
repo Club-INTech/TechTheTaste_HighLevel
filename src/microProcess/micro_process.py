@@ -25,6 +25,7 @@ class MicroProcess(MicroManager):
         self.run()
 
     def send(self, port, type_, id_, comp, arg):
+        port = port if id_ not in (VAR_SET, VAR_GET) else VAR_DESTINATION[comp]
         if port not in self.serials:
             return self.log_method(f'{type(self).__name__} : info : {self.micro_classes[port].__name__} is not connected')
         usb = self.serials[port]

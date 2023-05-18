@@ -35,7 +35,6 @@ def new_goto(robot, x, y, reverse=False):
         pass
 
 
-
 def rot(angle):
     yield ROT, 0, angle + 0x10000 * (angle < 0)
 
@@ -67,9 +66,10 @@ def move_cake(to_src, down1, to_des, down2):
     yield set_arm_y(-down2)
 
 
-
 def stop():
-    yield CAN, 0, 0
+    yield MOV, 0, 0
+    yield ARM, 0, 0
+    yield PUM, 1, 0
 
 
 def place_cherry():
