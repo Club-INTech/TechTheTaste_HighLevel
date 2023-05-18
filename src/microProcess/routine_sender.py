@@ -116,7 +116,7 @@ class RoutineSender(Robot):
         self.micro_pipe.send((MOVEMENT, move, int(TICKS_PER_REVOLUTION * mag / (2 * math.pi * WHEEL_RADIUS))))
 
     def rotate(self, angle):
-        self.micro_pipe.send((MOVEMENT, rot, int(-TICKS_PER_REVOLUTION * angle * self.axle_track / (4 * math.pi * WHEEL_RADIUS))))
+        self.micro_pipe.send((MOVEMENT, rot, (int(-TICKS_PER_REVOLUTION * angle * self.axle_track / (4 * math.pi * WHEEL_RADIUS)),)))
 
     def stop(self):
         self.micro_pipe.send((MOVEMENT, stop, ()))
