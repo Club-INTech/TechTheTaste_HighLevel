@@ -234,8 +234,8 @@ def main_process(pipe):
         .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
         .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
         .append(RobotAction(r, MOVEMENT, 'goto', .1, 0.))
-        .append(Action(lambda: setattr(r, 'storage', ['MMM', 'RRR', 'JJJ'])))
-        .append(get_tri(r, ['MMM', 'RRR', 'JJJ']))
+        # .append(Action(lambda: setattr(r, 'storage', ['MMM', 'RRR', 'JJJ'])))
+        # .append(get_tri(r, ['MMM', 'RRR', 'JJJ']))
     )
     # sc = Scenario.test(r, pipe)
 
