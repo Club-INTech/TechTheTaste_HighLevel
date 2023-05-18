@@ -28,7 +28,7 @@ class Lili:
         '''Send a message to the main process if drobot < dmin'''
         self.state = 0
         while True:
-            timestamp, data = self.laser.get_filtered_dist(start=int(linera_interpolate(-90, -235, 235, 0, 1080)), end=int(linera_interpolate(90, -235, 235, 0, 1080)), dmax=DMAX)
+            timestamp, data = self.laser.get_filtered_dist(start=int(linera_interpolate(-235, -235, 235, 0, 1080)), end=int(linera_interpolate(235, -235, 235, 0, 1080)), dmax=DMAX)
             Lr = []
             print(data)
             for i in range(BORD, len(data)-BORD):
