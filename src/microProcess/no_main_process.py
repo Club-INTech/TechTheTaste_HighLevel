@@ -247,6 +247,7 @@ def main_process(pipe):
     # sc_bleu.main_loop()
     sc_vert.main_loop()
 
+
 if __name__ == '__main__':
     color = GREEN
     
