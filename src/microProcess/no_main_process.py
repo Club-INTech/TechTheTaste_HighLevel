@@ -160,6 +160,7 @@ class Scenario:
                 self.ready[self.pipe.recv()] = True
             print('\r', end='')
             self.node.tick(self.ready)
+            time.sleep(.05)
 
     def reset(self):
         self.node.reset()
