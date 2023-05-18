@@ -53,15 +53,18 @@ class Lili:
         '''Send a message to the main process if drobot < dmin'''
         self.state = 0
         last = 0
-        while True:
-            start = int(linera_interpolate(-90, -135, 135, 0, 1080))
-            end = int(linera_interpolate(90, -135, 135, 0, 1080))
-            timestamp, data = self.laser.get_filtered_dist(start=start, end=end, grouping=5)
-            # print(data[:, 0] * 180 / math.pi)
-            string = ''.join(self.display_vision(v) for v in data[:, 1])
-            print('\r', string, sep='', end=' ' * max(0, last - len(string)))
-            last = len(string)
-            time.sleep(0.1)
+        try:
+            while True:
+                start = int(linera_interpolate(-90, -135, 135, 0, 1080))
+                end = int(linera_interpolate(90, -135, 135, 0, 1080))
+                timestamp, data = self.laser.get_filtered_dist(start=start, end=end, grouping=5)
+                # print(data[:, 0] * 180 / math.pi)
+                string = ''.join(self.display_vision(v) for v in data[:, 1])
+                print('\r', string, sep='', end=' ' * max(0, last - len(string)))
+                last = len(string)
+                time.sleep(0.1)
+        except KeyboardInterrupt:
+            print()
 
 
     def display_vision(self, value):
