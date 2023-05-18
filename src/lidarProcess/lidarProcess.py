@@ -21,8 +21,8 @@ class Lili:
     def __init__(self):
         self.state = 0
         self.laser = hokuyo.HokuyoLX()
-        print(self.laser.amin, self.laser.amax)
-        print(self.laser.get_angles(grouping=1080) * 180 / math.pi)
+        print(self.laser.amin, self.laser.amax, 'points')
+        print(self.laser.get_angles(grouping=1080) * 180 / math.pi, 'range in degrees')
 
     def lidarstop(self, conn) -> None:
         '''Send a message to the main process if drobot < dmin'''
@@ -57,7 +57,7 @@ class Lili:
             end = int(linera_interpolate(90, -135, 135, 0, 1080))
             timestamp, data = self.laser.get_filtered_dist(start=start, end=end, grouping=(end - start)//chars)
             # print(data[:, 0] * 180 / math.pi)
-            print('\r', *(self.display_vision(v) for v in data[:, 1]), sep='', end='')
+            print('\r', *(self.display_vision(v) for v in data[:, 1]), sep='', end=' ' * chars)
             time.sleep(0.1)
 
 
