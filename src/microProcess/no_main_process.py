@@ -217,8 +217,11 @@ def main_process(pipe):
         .append(RobotAction(r, MOVEMENT, 'goto', .3, 0.))
         .append(RobotAction(r, MOVEMENT, 'goto', .3, 0.))
         .append(RobotAction(r, MOVEMENT, 'rotate', math.pi / 10))
-        .append(RobotAction(r, MOVEMENT, 'goto', .3, 0.))
-        .append(RobotAction(r, MOVEMENT, 'goto', .3, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .2, 0.))
+        .append(RobotAction(r, MOVEMENT, 'goto', .1, 0.))
     )
     # sc = Scenario.test(r, pipe)
 
