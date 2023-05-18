@@ -52,12 +52,16 @@ class Lili:
     def lidar_stop3(self, conn, chars=90):
         '''Send a message to the main process if drobot < dmin'''
         self.state = 0
+        last = 0
         while True:
             start = int(linera_interpolate(-90, -135, 135, 0, 1080))
             end = int(linera_interpolate(90, -135, 135, 0, 1080))
             timestamp, data = self.laser.get_filtered_dist(start=start, end=end, grouping=2)
             # print(data[:, 0] * 180 / math.pi)
-            print('\r', *(self.display_vision(v) for v in data[:, 1]), sep='', end='')
+            string = ''.join(self.display_vision(v) for v in data[:, 1])
+            print('\r' + ' ' * last, end='')
+            last = len(string)
+            print('\r', string, sep='', end='')
             time.sleep(0.05)
 
 
