@@ -62,7 +62,7 @@ class Lili:
             print('\r' + ' ' * last, end='')
             last = len(string)
             print('\r', string, sep='', end='')
-            time.sleep(0.05)
+            time.sleep(0.1)
 
 
     def display_vision(self, value):
