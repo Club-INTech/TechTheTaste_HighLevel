@@ -57,8 +57,8 @@ class Lili:
             end = int(linera_interpolate(90, -135, 135, 0, 1080))
             timestamp, data = self.laser.get_filtered_dist(start=start, end=end, grouping=1)
             # print(data[:, 0] * 180 / math.pi)
-            print('\r', *(self.display_vision(v) for v in data[:, 1]), sep='', end=' ' * chars)
-            time.sleep(0.1)
+            print('\r', *(self.display_vision(v) for v in data[:, 1]), sep='', end='')
+            time.sleep(0.2)
 
 
     def display_vision(self, value):
