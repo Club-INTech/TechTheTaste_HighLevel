@@ -53,14 +53,20 @@ class Lili:
         '''Send a message to the main process if drobot < dmin'''
         self.state = 0
         while True:
-            timestamp, data = self.laser.get_filtered_dist(start=int(linera_interpolate(-90, -135, 135, 0, 1080)),
-                                                  end=int(linera_interpolate(90, -135, 135, 0, 1080)), grouping=1080 // chars)
-            print(data[:, 0] * 180 / math.pi)
+            start = int(linera_interpolate(-90, -135, 135, 0, 1080))
+            end = int(linera_interpolate(90, -135, 135, 0, 1080))
+            timestamp, data = self.laser.get_filtered_dist(start=start, end=end, grouping=(end - start)//chars)
+            # print(data[:, 0] * 180 / math.pi)
+            print('\r', *(self.display_vision(v) for v in data[:, 1]), sep='', end='')
             time.sleep(0.1)
 
-    def display_vision(self, chars=30):
-        proximity = ' ░▒▓█'
-        proximity2 = ' º•°×÷*■█'
+
+    def display_vision(self, value):
+        char_range = 50, 100, 150, 200, 500, 1000, 2000, float('inf')
+        proximity ='█■*÷×•º '
+        for char, r in zip(proximity, char_range):
+            if value < r:
+                return char
 
     def lidarstop2(self, conn, Xrobot, Yrobot, Hrobot, color) -> None:
         '''Send a message to the main process if drobot < dmin'''
