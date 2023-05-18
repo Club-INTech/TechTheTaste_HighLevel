@@ -61,7 +61,7 @@ class Lili:
                 start = int(linera_interpolate(-90, -135, 135, 0, 1080))
                 end = int(linera_interpolate(90, -135, 135, 0, 1080))
                 timestamp, data = self.laser.get_filtered_dist(start=start, end=end, grouping=1)
-                string = ''.join(self.display_vision(v) for v in data[:, 1::5])
+                string = ''.join(self.display_vision(v) for v in data[::5, 1])
                 print('\r', string, sep='', end=' ' * max(0, last - len(string)))
                 last = len(string)
                 time.sleep(0.1)
