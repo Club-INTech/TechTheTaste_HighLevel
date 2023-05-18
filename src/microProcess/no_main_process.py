@@ -146,7 +146,7 @@ class JumperNode(Node):
 
     def tick(self, ready):
         self.waiting = self.edge[self.gpio(self.jumper)]
-        print(f"Waiting: {self.waiting}", end='')
+        # print(f"Waiting: {self.waiting}", end='')
         return not self.waiting
 
 
