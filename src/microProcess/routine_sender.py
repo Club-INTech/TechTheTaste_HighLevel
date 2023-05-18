@@ -138,7 +138,7 @@ class RoutineSender(Robot):
         self.arm_x = HORIZONTAL_POSITIONS[destination]
 
         # go down to release the cake and back up
-        down2 = len(self.storage[destination]) * CAKE_HEIGHT + CAKE_HEIGHT + LOWEST_CAKE
+        down2 = len(self.storage[destination]) * CAKE_HEIGHT - CAKE_HEIGHT + LOWEST_CAKE
         Robot.move_cake(self, src, destination)
         self.micro_pipe.send((ACTION, move_cake, (to_src, down1, to_des, down2)))
 
