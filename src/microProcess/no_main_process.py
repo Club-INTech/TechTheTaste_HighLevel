@@ -158,6 +158,7 @@ class Scenario:
         while True:
             if self.pipe.poll():
                 self.ready[self.pipe.recv()] = True
+            print('\r', end='')
             self.node.tick(self.ready)
 
     def reset(self):
