@@ -152,7 +152,7 @@ class Scenario:
         self.ready = [False, False]
         self.robot, self.pipe = robot, pipe
         robot.micro_pipe = pipe
-        self.node: Node = SequenceNode(JumperNode(), PartyTimer(node, party_time), Action(lambda: print("FINI")), RobotAction(robot, MOVEMENT, 'stop'))
+        self.node: Node = SequenceNode(Timer(20.), PartyTimer(node, party_time), Action(lambda: print("FINI")), RobotAction(robot, MOVEMENT, 'stop'))
 
     def main_loop(self):
         while True:
@@ -207,7 +207,7 @@ def main_process(pipe):
     # sc = Scenario(r, pipe, s)
     # sc = Scenario(r, pipe, RobotAction(r, ACTION, 'move_cake', LEFT, RIGHT))
 
-    sc = Scenario(r, pipe, s.append(RobotAction(r, MOVEMENT, 'goto', .4, 0.)).append(RobotAction(r, MOVEMENT, 'goto', .4, 0.)).append(RobotAction(r, MOVEMENT, 'goto', .4, 0.)))
+    sc = Scenario(r, pipe, s.append(RobotAction(r, MOVEMENT, 'goto', .4, 0.)).append(RobotAction(r, MOVEMENT, 'goto', .4, 0.)).append(RobotAction(r, MOVEMENT, 'goto', .4, 0.)), party_time=60.)
 
     # sc = Scenario.test(r, pipe)
     sc.main_loop()
