@@ -159,9 +159,9 @@ class RoutineSender(Robot):
     def send_var(self, var, value):
         self.micro_pipe.send((MOVEMENT, set_var, (var, value)))
 
-    def deactivate_pump(self):
+    def pump(self, value=True):
         def f():
-            yield PUM, 1, 0
+            yield PUM, 1, value
         self.micro_pipe.send((ACTION, f, ()))
 
 

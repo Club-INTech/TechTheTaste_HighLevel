@@ -298,10 +298,35 @@ def main_process(pipe):
         RobotAction(r, MOVEMENT, 'goto', -.4, 0., True)
     ))
 
-    sc_test_speed = Scenario(r, pipe, SequenceNode(
-        # RobotAction(r, MOVEMENT, 'send_var', VAR_DICT['Kd_trans'], .0),
-        Action(lambda: setattr(r, 'timeout_delay', .7)),
-        *(RobotAction(r, MOVEMENT, 'goto', .4, .0) for _ in range(40))
+    sc_test = Scenario(r, pipe, SequenceNode(
+            RobotAction(r, ACTION, 'pump', True),
+            Action(lambda: setattr(r, 'timeout_delay', 1.5)),
+            RobotAction(r, MOVEMENT, 'goto', .2, 0.),
+            RobotAction(r, MOVEMENT, 'rotate', math.pi / 8),
+            RobotAction(r, MOVEMENT, 'goto', .3, 0.),
+            RobotAction(r, MOVEMENT, 'goto', .3, 0.),
+            RobotAction(r, MOVEMENT, 'goto', .3, 0.),
+            RobotAction(r, MOVEMENT, 'goto', .3, 0.),
+            RobotAction(r, MOVEMENT, 'goto', .1, 0.),
+            RobotAction(r, MOVEMENT, 'rotate', -math.pi / 7),
+            RobotAction(r, MOVEMENT, 'goto', .3, 0.),
+            RobotAction(r, MOVEMENT, 'goto', .3, 0.),
+            RobotAction(r, MOVEMENT, 'goto', .2, 0.),
+            RobotAction(r, MOVEMENT, 'goto', .2, 0.),
+            Action(lambda: setattr(r, 'storage', ['MMM', 'RRR', 'JJJ'])),
+            PartyTimer(get_tri(r, ['MMM', 'RRR', 'JJJ']), 60.),
+            RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
+            RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
+            RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
+            RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
+            RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+            RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+            RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+            RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+            RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+            RobotAction(r, MOVEMENT, 'goto', .2, 0.),
+            RobotAction(r, MOVEMENT, 'goto', .2, 0.),
+            RobotAction(r, MOVEMENT, 'goto', .1, 0.)
     ))
 
     print('Main Process')
@@ -310,7 +335,7 @@ def main_process(pipe):
         'vert': sc_vert,
         'panik': sc_panik,
         'bleu': sc_bleu,
-        'test': sc_test_speed
+        'test': sc_test
     }
     scenarios[sys.argv[1]].main_loop()
     # sc_vert.main_loop()
