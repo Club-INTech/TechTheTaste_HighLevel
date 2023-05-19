@@ -157,7 +157,7 @@ class RoutineSender(Robot):
         self.micro_pipe.send((ACTION, set_speed, (BaseShell.float_to_int(speed),)))
 
     def send_var(self, var, value):
-        self.micro_pipe.send(MOVEMENT, set_var, (var, value))
+        self.micro_pipe.send((MOVEMENT, set_var, (var, value)))
 
 
 if __name__ == '__main__':
