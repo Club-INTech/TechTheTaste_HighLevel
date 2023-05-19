@@ -274,7 +274,7 @@ def main_process(pipe):
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
         Action(lambda: setattr(r, 'storage', ['MMM', 'RRR', 'JJJ'])),
-        get_tri(r, ['MMM', 'RRR', 'JJJ']),
+        PartyTimer(get_tri(r, ['MMM', 'RRR', 'JJJ']), 60.),
         RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
         RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
         RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
