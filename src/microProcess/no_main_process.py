@@ -260,6 +260,7 @@ def main_process(pipe):
     # sc = Scenario(r, pipe, RobotAction(r, ACTION, 'move_cake', LEFT, RIGHT))
 
     sc_bleu = Scenario(r, pipe, SequenceNode(
+        Action(lambda: setattr(r, 'timeout_delay', 1.5)),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
         RobotAction(r, MOVEMENT, 'rotate', math.pi / 8),
         RobotAction(r, MOVEMENT, 'goto', .3, 0.),
@@ -292,8 +293,14 @@ def main_process(pipe):
     sc_vert = sc_bleu.symetry()
 
     sc_panik = Scenario(r, pipe, SequenceNode(
+        Action(lambda: setattr(r, 'timeout_delay', 1.5)),
         RobotAction(r, MOVEMENT, 'goto', .4, 0.),
         RobotAction(r, MOVEMENT, 'goto', -.4, 0., True)
+    ))
+
+    sc_test_speed = Scenario(r, pipe, SequenceNode(
+        Action(lambda: setattr(r, 'timeout_delay', .2)),
+        *(RobotAction(r, MOVEMENT, 'goto', .5, .0) for _ in range(20))
     ))
 
     print('Main Process')
@@ -301,7 +308,8 @@ def main_process(pipe):
     scenarios = {
         'vert': sc_vert,
         'panik': sc_panik,
-        'bleu': sc_bleu
+        'bleu': sc_bleu,
+        'test': sc_test_speed
     }
     scenarios[sys.argv[1]].main_loop()
     # sc_vert.main_loop()

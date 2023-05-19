@@ -86,11 +86,16 @@ class Robot:
         self.slot_size = slot_size
         self.storage = ['', '', '']
         self._x, self._y, self._h, self.arm_x = Value('f'), Value('f'), Value('f'), 0
+        self._timeout_delay = Value('f')
         self.axle_track = axle_track
 
     x = property((lambda self: self._x.value), (lambda self, value: setattr(self._x, 'value', value)))
     y = property((lambda self: self._y.value), (lambda self, value: setattr(self._y, 'value', value)))
     h = property((lambda self: self._h.value), (lambda self, value: setattr(self._h, 'value', value)))
+    timeout_delay = property(
+        (lambda self: self._timeout_delay.value),
+        (lambda self, value: setattr(self._timeout_delay, 'value', value))
+    )
 
     def move_cake(self, src, destination):
         cake = self.storage[src][-1]

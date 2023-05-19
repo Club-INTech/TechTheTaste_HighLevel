@@ -60,7 +60,7 @@ class MicroProcess(MicroManager):
         if self.moving:
             if self.lidar_state:
                 self.timeout_date = time.perf_counter()
-            if time.perf_counter() - self.timeout_date > 1.5:
+            if time.perf_counter() - self.timeout_date > self.robot.timeout_delay:
                 print("TIMED OUT")
                 # usb = self.serials[PICO1]
                 # usb.send(usb.make_message(CAN, 0, 0))
