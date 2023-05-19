@@ -60,8 +60,8 @@ class Lili:
             while True:
 
                 # boundaries
-                start = int(linera_interpolate(-90, -135, 135, 0, 1080))
-                end = int(linera_interpolate(90, -135, 135, 0, 1080))
+                start = int(linera_interpolate(-75, -135, 135, 0, 1080))
+                end = int(linera_interpolate(75, -135, 135, 0, 1080))
 
                 # reading data (do not care about time stamps)
                 _, data = self.laser.get_filtered_dist(start=start, end=end)
