@@ -72,11 +72,14 @@ def stop():
     yield ARM, 0, 0x00010001
     yield PUM, 1, 0
 
-def set_var(value):
+def set_speed(value):
     yield VAR_SET, VAR_DICT['vitesse'], value
 
 def place_cherry():
     pass
+
+def set_var(var, value):
+    yield VAR_SET, var, BaseShell.float_to_int(valur)
 
 
 class Robot:
@@ -151,7 +154,10 @@ class RoutineSender(Robot):
         pass
 
     def set_speed(self, speed):
-        self.micro_pipe.send((ACTION, set_var, (BaseShell.float_to_int(speed),)))
+        self.micro_pipe.send((ACTION, set_speed, (BaseShell.float_to_int(speed),)))
+
+    def send_var(self, var, value):
+        self.micro_pipe.send(MOVEMENT, set_var, (var, value))
 
 
 if __name__ == '__main__':

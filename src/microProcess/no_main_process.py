@@ -299,6 +299,7 @@ def main_process(pipe):
     ))
 
     sc_test_speed = Scenario(r, pipe, SequenceNode(
+        RobotAction(r, MOVEMENT, 'set_var', VAR_DICT['Kd_trans'], .0),
         Action(lambda: setattr(r, 'timeout_delay', .05)),
         *(RobotAction(r, MOVEMENT, 'goto', .5, .0) for _ in range(40))
     ))
