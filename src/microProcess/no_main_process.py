@@ -37,6 +37,9 @@ class Node:
     def reset(self):
         pass
 
+    def symetry(self):
+        return Node()
+
 
 class SequenceNode(Node):
 
@@ -59,6 +62,9 @@ class SequenceNode(Node):
             node.reset()
         self.current_index = 0
 
+    def symetry(self):
+        return SequenceNode(*(n.symetry() for n in self.sequence))
+
 
 class ParallelNode(Node):
     def __init__(self, *sequences: Node):
@@ -73,6 +79,9 @@ class ParallelNode(Node):
     def reset(self):
         for node in self.sequences:
             node.reset()
+
+    def symetry(self):
+        return ParallelNode(*(n.symetry() for n in self.sequences))
 
 
 class RobotAction(Node):
@@ -92,6 +101,21 @@ class RobotAction(Node):
     def reset(self):
         self.running = False
 
+    def _goto(self):
+        return (self.args[0], -self.args[1]) + self.args[1:]
+
+    def _rotate(self):
+        return -self.args[0],
+
+    def _move_cake(self):
+        return (2 - a for a in self.args)
+
+    managed = 'goto', 'rotate', 'move_cake'
+
+    def symetry(self):
+        sym_args = getattr(self, f'_{self.func_name}')() if self.func_name in self.managed else self.args
+        return RobotAction(self.robot, self.type_, self.func_name, sym_args)
+
 
 class Action(Node):
     done = False
@@ -108,6 +132,9 @@ class Action(Node):
     def reset(self):
         self.done = False
 
+    def symetry(self):
+        return Action(self.func)
+
 
 class PartyTimer(Node):
     def __init__(self, node: Node, delay):
@@ -120,6 +147,9 @@ class PartyTimer(Node):
         print(f'Test Party Timer: {elapsed:.2f}/{self.delay} s ({elapsed > self.delay})', end=' ')
         return elapsed > self.delay or self.node.tick(ready)
 
+    def symetry(self):
+        return PartyTimer(self.node.symetry(), self.delay)
+
 
 class Timer(Node):
     def __init__(self, delay):
@@ -131,6 +161,9 @@ class Timer(Node):
         elapsed = time.perf_counter() - self.date
         print(f'Test Timer: {elapsed:.2f}/{self.delay} s ({elapsed > self.delay})', end=' ')
         return elapsed > self.delay
+
+    def symetry(self):
+        return Timer(self.delay)
 
 
 class JumperNode(Node):
@@ -150,6 +183,9 @@ class JumperNode(Node):
         # print(f"Waiting: {self.waiting}", end='')
         return not self.waiting
 
+    def symetry(self):
+        return JumperNode(self.edge[1])
+
 
 def get_tri(robot, storage):
     with open('tri.json') as f:
@@ -162,7 +198,7 @@ def get_tri(robot, storage):
 class Scenario:
     def __init__(self, robot, pipe, node, party_time=100.):
         self.ready = [False, False]
-        self.robot, self.pipe = robot, pipe
+        self.robot, self.pipe, self.party_time = robot, pipe, party_time
         robot.micro_pipe = pipe
         self.node: Node = SequenceNode(
             RobotAction(r, ACTION, 'set_speed', 90.),
@@ -183,6 +219,9 @@ class Scenario:
     @classmethod
     def test(cls, robot, pipe):
         return cls(robot, pipe, Timer(10.), party_time=5.)
+
+    def symetry(self):
+        return Scenario(self.robot, self.pipe, self.node.symetry(), self.party_time)
 
 
 def main_process(pipe):
@@ -250,36 +289,7 @@ def main_process(pipe):
     ))
     # sc = Scenario.test(r, pipe)
 
-    sc_vert = Scenario(r, pipe, SequenceNode(
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
-        RobotAction(r, MOVEMENT, 'goto', .3, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .3, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .3, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .3, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .15, 0.),
-        RobotAction(r, MOVEMENT, 'rotate', math.pi / 10),
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        # Action(lambda: setattr(r, 'storage', ['MMM', 'RRR', 'JJJ'])),
-        # get_tri(r, ['MMM', 'RRR', 'JJJ']),
-        RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
-        RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
-        RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
-        RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
-        RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
-        RobotAction(r, MOVEMENT, 'rotate', math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', math.pi / 6),
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .1, 0.)
-    ))
+    sc_vert = sc_bleu.symetry()
 
     sc_panik = Scenario(r, pipe, SequenceNode(
         RobotAction(r, MOVEMENT, 'goto', .4, 0.),
