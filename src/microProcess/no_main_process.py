@@ -102,7 +102,7 @@ class RobotAction(Node):
         self.running = False
 
     def _goto(self):
-        return (self.args[0], -self.args[1]) + self.args[1:]
+        return (self.args[0], -self.args[1]) + self.args[2:]
 
     def _rotate(self):
         return -self.args[0],
