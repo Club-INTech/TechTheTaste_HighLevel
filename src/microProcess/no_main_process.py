@@ -228,7 +228,6 @@ def main_process(pipe):
         RobotAction(r, MOVEMENT, 'goto', .3, 0.),
         RobotAction(r, MOVEMENT, 'goto', .3, 0.),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .15, 0.),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
