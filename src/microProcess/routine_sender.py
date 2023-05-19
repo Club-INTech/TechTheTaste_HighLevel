@@ -82,6 +82,9 @@ def set_var(var, value):
     yield VAR_SET, var, BaseShell.float_to_int(value)
 
 
+def pump(value):
+    yield PUM, 1, value
+
 class Robot:
 
     def __init__(self, slot_size, axle_track):
@@ -160,9 +163,7 @@ class RoutineSender(Robot):
         self.micro_pipe.send((MOVEMENT, set_var, (var, value)))
 
     def pump(self, value=True):
-        def f():
-            yield PUM, 1, value
-        self.micro_pipe.send((ACTION, f, ()))
+        self.micro_pipe.send((ACTION, pump, (value,)))
 
 
 if __name__ == '__main__':
