@@ -7,7 +7,7 @@ import math
 import numpy as np
 
 group = 3
-dmin = 500
+dmin = 450
 DMAX = 2000
 BORD = 25
 
