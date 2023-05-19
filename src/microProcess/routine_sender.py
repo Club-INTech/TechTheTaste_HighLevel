@@ -164,6 +164,7 @@ class RoutineSender(Robot):
             yield PUM, 1, 0
         self.micro_pipe.send((ACTION, f, ()))
 
+
 if __name__ == '__main__':
     import multiprocessing as mp
     p, truc = mp.Pipe()
