@@ -299,8 +299,8 @@ def main_process(pipe):
     ))
 
     sc_test_speed = Scenario(r, pipe, SequenceNode(
-        Action(lambda: setattr(r, 'timeout_delay', .2)),
-        *(RobotAction(r, MOVEMENT, 'goto', .5, .0) for _ in range(20))
+        Action(lambda: setattr(r, 'timeout_delay', .05)),
+        *(RobotAction(r, MOVEMENT, 'goto', .5, .0) for _ in range(40))
     ))
 
     print('Main Process')
