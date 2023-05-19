@@ -79,7 +79,7 @@ def place_cherry():
     pass
 
 def set_var(var, value):
-    yield VAR_SET, var, BaseShell.float_to_int(valur)
+    yield VAR_SET, var, BaseShell.float_to_int(value)
 
 
 class Robot:
