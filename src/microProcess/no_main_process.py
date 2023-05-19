@@ -114,7 +114,7 @@ class RobotAction(Node):
 
     def symetry(self):
         sym_args = getattr(self, f'_{self.func_name}')() if self.func_name in self.managed else self.args
-        return RobotAction(self.robot, self.type_, self.func_name, sym_args)
+        return RobotAction(self.robot, self.type_, self.func_name, *sym_args)
 
 
 class Action(Node):
