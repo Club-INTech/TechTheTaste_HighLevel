@@ -290,7 +290,7 @@ def main_process(pipe):
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
         *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(3)),
         Action(lambda: setattr(lidarProcess.dmin, 'value', 250)),
-        *(RobotAction(r, MOVEMENT, 'goto', .6, 0.) for _ in range(4)),
+        *(RobotAction(r, MOVEMENT, 'goto', .06, 0.) for _ in range(4)),
     ))
 
     sc_test2 = Scenario(r, pipe, SequenceNode(
