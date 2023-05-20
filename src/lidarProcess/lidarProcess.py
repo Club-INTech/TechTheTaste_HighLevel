@@ -94,7 +94,7 @@ class Lili:
         proximity = '█■*÷×•º '
         for char, r in zip(proximity, char_range):
             if value < r:
-                if value < dmin:
+                if value < dmin.value:
                     # red
                     return f'\033[91m{char}\033[0m'
                 else:
