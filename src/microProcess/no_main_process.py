@@ -280,6 +280,15 @@ def main_process(pipe):
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
         RobotAction(r, MOVEMENT, 'goto', -.2, 0., True),
         RobotAction(r, MOVEMENT, 'goto', -.2, 0., True),
+        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+        *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(8)),
     ))
 
     sc_test2 = Scenario(r, pipe, SequenceNode(
