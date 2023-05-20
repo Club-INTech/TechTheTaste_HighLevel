@@ -289,11 +289,13 @@ def main_process(pipe):
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 5),
-        *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(5)),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
-        *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(3)),
+        PartyTimer(SequenceNode(
+            *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(5)),
+            RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
+            *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(3)),
+        ), 40.),
         Action(lambda: setattr(lidarProcess.dmin, 'value', 200)),
-        *(RobotAction(r, MOVEMENT, 'goto', .06, 0.) for _ in range(7)),
+        *(RobotAction(r, MOVEMENT, 'goto', .06, 0.) for _ in range(12)),
     ))
 
     sc_test2 = sc_test.symetry()
