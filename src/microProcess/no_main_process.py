@@ -229,45 +229,6 @@ def main_process(pipe):
     sc_bleu = Scenario(r, pipe, SequenceNode(
         Action(lambda: setattr(r, 'timeout_delay', 1.5)),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'rotate', math.pi / 8),
-        RobotAction(r, MOVEMENT, 'goto', .3, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .3, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .3, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .3, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .1, 0.),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 7),
-        RobotAction(r, MOVEMENT, 'goto', .3, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .3, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        Action(lambda: setattr(r, 'storage', ['MMM', 'RRR', 'JJJ'])),
-        PartyTimer(get_tri(r, ['MMM', 'RRR', 'JJJ']), 60.),
-        RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
-        RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
-        RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
-        RobotAction(r, MOVEMENT, 'goto', -.08, 0., True),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .1, 0.)
-    ))
-    # sc = Scenario.test(r, pipe)
-
-    sc_vert = sc_bleu.symetry()
-
-    sc_panik = Scenario(r, pipe, SequenceNode(
-        Action(lambda: setattr(r, 'timeout_delay', 1.5)),
-        RobotAction(r, MOVEMENT, 'goto', .4, 0.),
-        RobotAction(r, MOVEMENT, 'goto', -.4, 0., True)
-    ))
-
-    sc_test = Scenario(r, pipe, SequenceNode(
-        Action(lambda: setattr(r, 'timeout_delay', 1.5)),
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
         RobotAction(r, MOVEMENT, 'rotate', math.pi / 8),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
@@ -298,7 +259,7 @@ def main_process(pipe):
         *(RobotAction(r, MOVEMENT, 'goto', .06, 0.) for _ in range(12)),
     ))
 
-    sc_test2 = sc_test.symetry()
+    sc_vert = sc_bleu.symetry()
 
     print('Main Process')
 
@@ -306,8 +267,6 @@ def main_process(pipe):
         'vert': sc_vert,
         'panik': sc_panik,
         'bleu': sc_bleu,
-        'test': sc_test,
-        'test2': sc_test2
     }
     scenarios[sys.argv[1]].main_loop()
     # sc_vert.main_loop()
