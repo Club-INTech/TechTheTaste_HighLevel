@@ -280,6 +280,10 @@ def main_process(pipe):
         RobotAction(r, MOVEMENT, 'goto', .3, 0.),
         RobotAction(r, MOVEMENT, 'goto', -.2, 0., True),
         RobotAction(r, MOVEMENT, 'goto', -.2, 0., True),
+        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
+        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
+        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
+        *(RobotAction(r, MOVEMENT, 'goto', .3, 0.) for _ in range(6)),
     ))
 
     print('Main Process')
