@@ -283,7 +283,8 @@ def main_process(pipe):
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
-        *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(9)),
+        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
+        *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(4)),
     ))
 
     print('Main Process')
