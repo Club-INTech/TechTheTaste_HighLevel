@@ -302,6 +302,7 @@ def main_process(pipe):
         Action(lambda: setattr(r, 'timeout_delay', 1.5)),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
+        RobotAction(r, MOVEMENT, 'rotate', math.pi / 8),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
         RobotAction(r, MOVEMENT, 'rotate', math.pi / 8),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
