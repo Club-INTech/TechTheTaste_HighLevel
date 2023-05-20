@@ -273,23 +273,17 @@ def main_process(pipe):
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
         RobotAction(r, MOVEMENT, 'rotate', math.pi / 9),
         # Action(lambda: setattr(r, 'timeout_delay', .5)),
-        *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(10)),
+        *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(11)),
         Action(lambda: setattr(r, 'timeout_delay', 1.5)),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
         RobotAction(r, MOVEMENT, 'goto', -.2, 0., True),
         RobotAction(r, MOVEMENT, 'goto', -.2, 0., True),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
-        *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(2)),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
     ))
+
+
+
 
     print('Main Process')
 
