@@ -276,6 +276,7 @@ def main_process(pipe):
         *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(11)),
         RobotAction(r, MOVEMENT, 'goto', .15, 0.),
         Action(lambda: setattr(r, 'timeout_delay', 1.5)),
+        Action(lambda: setattr(lidarProcess.dmin, 'value', 200)),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
@@ -284,14 +285,15 @@ def main_process(pipe):
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
+        Action(lambda: setattr(lidarProcess.dmin, 'value', 450)),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 5),
         *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(5)),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
-        *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(3)),
+        *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(2)),
         Action(lambda: setattr(lidarProcess.dmin, 'value', 300)),
-        *(RobotAction(r, MOVEMENT, 'goto', .06, 0.) for _ in range(4)),
+        *(RobotAction(r, MOVEMENT, 'goto', .06, 0.) for _ in range(7)),
     ))
 
     sc_test2 = sc_test.symetry()
