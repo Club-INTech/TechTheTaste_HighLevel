@@ -5,9 +5,10 @@ import hokuyolx.exceptions
 from hokuyolx import hokuyo
 import math
 import numpy as np
+import multiprocessing as mp
 
 group = 3
-dmin = 450
+dmin = mp.Value('f', 450)
 DMAX = 2000
 BORD = 25
 
@@ -45,10 +46,10 @@ class Lili:
                 minlr = min(Lr)
                 if self.log:
                     print(f'Limite {dmin} : distance = ', minlr)
-                if minlr < dmin and self.state == 0 : #stop the process
+                if minlr < dmin.value and self.state == 0 : #stop the process
                     self.stop(conn)
                     self.state = 1
-                elif minlr > dmin and self.state == 1 : #retart the processus
+                elif minlr > dmin.value and self.state == 1 : #retart the processus
                     self.restart(conn)
                     self.state = 0
             time.sleep(0.1)
