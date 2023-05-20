@@ -46,10 +46,10 @@ class Lili:
                 minlr = min(Lr)
                 if self.log:
                     print(f'Limite {dmin} : distance = ', minlr)
-                if minlr < dmin.value and self.state == 0 : #stop the process
+                if minlr < dmin and self.state == 0 : #stop the process
                     self.stop(conn)
                     self.state = 1
-                elif minlr > dmin.value and self.state == 1 : #retart the processus
+                elif minlr > dmin and self.state == 1 : #retart the processus
                     self.restart(conn)
                     self.state = 0
             time.sleep(0.1)
@@ -68,7 +68,7 @@ class Lili:
                 _, data = self.laser.get_filtered_dist(start=start, end=end)
                 dists = data[:, 1]
 
-                old_state, self.state = self.state, dists.min() < dmin
+                old_state, self.state = self.state, dists.min() < dmin.value
                 if old_state != self.state:
                     conn.send(self.state)
 
