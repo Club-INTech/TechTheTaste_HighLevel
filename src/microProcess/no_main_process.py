@@ -294,18 +294,7 @@ def main_process(pipe):
         *(RobotAction(r, MOVEMENT, 'goto', .06, 0.) for _ in range(4)),
     ))
 
-    sc_test2 = Scenario(r, pipe, SequenceNode(
-        Action(lambda: setattr(r, 'timeout_delay', 1.5)),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
-        RobotAction(r, MOVEMENT, 'rotate', -math.pi / 6),
-        *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(12)),
-    ))
+    sc_test2 = sc_test.symetry()
 
     print('Main Process')
 
