@@ -265,7 +265,6 @@ def main_process(pipe):
 
     scenarios = {
         'vert': sc_vert,
-        'panik': sc_panik,
         'bleu': sc_bleu,
     }
     scenarios[sys.argv[1]].main_loop()
