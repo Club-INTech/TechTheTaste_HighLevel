@@ -273,7 +273,8 @@ def main_process(pipe):
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
         RobotAction(r, MOVEMENT, 'rotate', math.pi / 9),
         # Action(lambda: setattr(r, 'timeout_delay', .5)),
-        *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(12)),
+        *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(11)),
+        RobotAction(r, MOVEMENT, 'goto', .15, 0.),
         Action(lambda: setattr(r, 'timeout_delay', 1.5)),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
@@ -289,7 +290,7 @@ def main_process(pipe):
         *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(5)),
         RobotAction(r, MOVEMENT, 'rotate', -math.pi / 8),
         *(RobotAction(r, MOVEMENT, 'goto', .2, 0.) for _ in range(3)),
-        Action(lambda: setattr(lidarProcess.dmin, 'value', 250)),
+        Action(lambda: setattr(lidarProcess.dmin, 'value', 300)),
         *(RobotAction(r, MOVEMENT, 'goto', .06, 0.) for _ in range(4)),
     ))
 
