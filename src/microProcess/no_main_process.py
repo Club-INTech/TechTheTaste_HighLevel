@@ -225,39 +225,6 @@ class Scenario:
 
 
 def main_process(pipe):
-    # s.append(RobotAction(r, MOVEMENT, 'goto'))
-
-    # s.append(RobotAction(r, MOVEMENT, 'goto', .30, 0.))
-    # s.append(RobotAction(r, MOVEMENT, 'goto', .60, .0))
-    # s.append(RobotAction(r, MOVEMENT, 'goto', .70, -.3))
-    # s.append(RobotAction(r, MOVEMENT, 'goto', 1., -.4))
-    # s.append(RobotAction(r, MOVEMENT, 'goto', 1.35, -.4))
-    # s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.4))
-    # s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.1))
-    # s.append(RobotAction(r, MOVEMENT, 'goto', 1.75, -.3, True))
-    # s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    # s.append(RobotAction(r, MOVEMENT, 'goto', 1.3, -.25))
-    # s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    # s.append(RobotAction(r, MOVEMENT, 'goto', .85, -.18))
-    # s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    # s.append(RobotAction(r, MOVEMENT, 'goto', .5, -.1))
-    # s.append(RobotAction(r, MOVEMENT, 'goto', .1, -.05))
-
-    # ParallelNode(RobotAction(r, MOVEMENT, 'goto', 0.4, 0), RobotAction(r, ACTION, 'move_arm', 3000, 3000))
-
-    # s.append(Action(lambda: print('Position', r.x, r.y, r.h)))
-    # s.append(Action(r, MOVEMENT, 'goto', .4, 0.))
-
-    # w1 = TestWaiter(5.)
-    # w2 = TestWaiter(15.)
-    #
-    # p = ParallelNode(w1, w2)
-    # s = SequenceNode()
-    # s.append(p)
-    # s.append(Action(lambda: print('\nFinished')))
-
-    # sc = Scenario(r, pipe, s)
-    # sc = Scenario(r, pipe, RobotAction(r, ACTION, 'move_cake', LEFT, RIGHT))
 
     sc_bleu = Scenario(r, pipe, SequenceNode(
         Action(lambda: setattr(r, 'timeout_delay', 1.5)),
@@ -301,8 +268,6 @@ def main_process(pipe):
     sc_test = Scenario(r, pipe, SequenceNode(
         Action(lambda: setattr(r, 'timeout_delay', 1.5)),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'goto', .2, 0.),
-        RobotAction(r, MOVEMENT, 'rotate', math.pi / 8),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
         RobotAction(r, MOVEMENT, 'rotate', math.pi / 8),
         RobotAction(r, MOVEMENT, 'goto', .2, 0.),
